@@ -1,0 +1,61 @@
+/**
+ * ====== SIZES ======
+ */
+$unit: 16px;
+$defaultBorderRadius: $unit * 0.75;
+$defaultMargin: $unit;
+
+/**
+  * ====== FONTS ======
+  */
+$defaultFont: Roboto, "Source Sans Pro", sans-serif;
+$specialFont: "Quicksand", Roboto, cursive;
+
+/**
+  * ====== COLORS ======
+  */
+$shade100: #000;
+$shade80: #333;
+$shade70: #444;
+$shade60: #666;
+$shade50: #888;
+$shade40: #999;
+$shade30: #b2b2b2;
+$shade20: #cbcbcb;
+$shade15: #ddd;
+$shade10: #eee;
+$shade5: #f5f5f5;
+$shade0: #fff;
+
+$colorPrimary: #1e88e5;
+$colorSecondary: #ff504d;
+$colorGold: #f2c94c;
+
+$colorError: #f85f60;
+$colorWarning: #ffb41d;
+$colorInformation: #4585c0;
+$colorSuccess: #6daf4c;
+
+$colorTextLight: #f5f3ea;
+$colorTextDark: #302f2f;
+$colorBackground: #f4f5f9;
+$colorDisabled: $shade5;
+
+/**
+  * ====== SHADOWS ======
+  */
+$shadowDefault: 0 0 12px 0 rgba(0, 0, 0, 0.1);
+$shadowDefaultDark: 0 0 18px 0 rgba(0, 0, 0, 0.2);
+$shadowCard: $shadowDefault;
+$shadowCardHover: $shadowDefaultDark;
+$shadowInput: 0 0 0 2px rgba($colorPrimary, 0.3);
+$shadowInputError: 0 0 0 2px rgba($colorError, 0.3);
+$shadowInputWarning: 0 0 0 2px rgba($colorWarning, 0.3);
+
+/**
+  * ====== MEDIA QUERIES ======
+  */
+$xs: 24em;
+$sm: 47.5em;
+$md: 62em;
+$lg: 75em;

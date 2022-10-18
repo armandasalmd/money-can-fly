@@ -1,0 +1,51 @@
+@import "./Variables.scss";
+
+%ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+%overlay {
+  position: fixed;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  left: 0;
+  background: rgba(0, 0, 0, 0.25);
+  backdrop-filter: blur(2px);
+}
+
+%inputBase {
+  outline: none;
+  padding: 0.3em 0.7em;
+  border: 1px solid #c7c7c9;
+  border-radius: $defaultBorderRadius;
+  height: 36px;
+  box-sizing: border-box;
+  font-size: 0.9rem;
+}
+
+%inputError {
+  margin-bottom: 4px;
+  font-size: 0.9rem;
+  color: $colorError !important;  
+}
+
+%inputFocus {
+  border: 1px solid $colorPrimary;
+  box-shadow: $shadowInput;
+  background-color: white;
+}
+
+%inputIcon {
+  color: $shade60;
+  position: absolute;
+  left: 6px;
+  margin-top: 3px;
+}
+
+%inputTitle {
+  margin-bottom: $unit * 0.4;
+  color: black;
+}

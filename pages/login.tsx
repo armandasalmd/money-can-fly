@@ -1,29 +1,39 @@
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useRouter } from "next/router";
+import AuthPage, { ActionButton, FormInputState, FormItem} from "@templates/AuthPage/AuthPage";
+
 
 export default function Login() {
   const { user, login } = useAuth();
   const router = useRouter();
 
-  const [state, setState] = useState({
-    email: "",
-    password: "",
-  });
+  const actionButton: ActionButton = {
+    text: "Create an account",
+    path: "register",
+  };
 
-  async function handleSubmit(e) {
-    e.preventDefault();
+  const formItems: FormItem[] = [
+    {
+      name: "email",
+      placeholder: "Enter email",
+      title: "Email",
+    },
+    {
+      name: "password",
+      placeholder: "Enter password",
+      title: "Password",
+      isPassword: true,
+    },
+  ];
 
+  async function handleSubmit(state: FormInputState) {
     try {
-      await login(state.email, state.password);
+      await login(state.email.value, state.password.value);
       router.push("/dashboard");
     } catch (error) {
       console.error(error);
     }
-  }
-
-  function inputChange(e) {
-    setState({ ...state, [e.target.name]: e.target.value });
   }
 
   useEffect(() => {
@@ -32,12 +42,13 @@ export default function Login() {
     }
   }, [router, user]);
 
-  return <div>
-    <h1>Login</h1>
-    <form onSubmit={handleSubmit}>
-      <input type="text" name="email" value={state.email} onChange={inputChange} placeholder="Email" />
-      <input type="password" name="password" value={state.password} onChange={inputChange} placeholder="Password" />
-      <input type="submit" value="Login" />
-    </form>
-  </div>
+  return (
+    <AuthPage
+      actionButton={actionButton}
+      formItems={formItems}
+      onSubmit={handleSubmit}
+      submitText="Login"
+      title="Login"
+    />
+  );
 }

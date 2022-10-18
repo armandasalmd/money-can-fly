@@ -1,0 +1,31 @@
+.logo {
+  display: flex;
+  align-items: center;
+  padding: 0 $unit * 0.5;
+
+  &__text {
+    margin-left: $unit * 0.5;
+    color: var(--logo-text-color);
+    user-select: none;
+    font-family: $specialFont;
+  }
+
+  &--noText > p {
+    display: none;
+  }
+
+  &--selectable {
+    cursor: pointer;
+
+    &:hover {
+      background: rgba(0, 0, 0, 0.1);
+      border-radius: $defaultBorderRadius;
+    }
+  }
+}
+
+@media (max-width: $sm) {
+  .logo--noTextSmallScreen > p {
+    display: none;
+  }
+}

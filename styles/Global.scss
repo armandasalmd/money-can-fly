@@ -1,0 +1,66 @@
+@import "https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap";
+@import "https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Source+Sans+Pro:wght@400;600;700&display=swap";
+
+@import "./Variables.scss";
+@import "./Placeholders.scss";
+
+@import "./Components.scss";
+
+html,
+body {
+  padding: 0;
+  margin: 0;
+  font-family: $defaultFont;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5 {
+  margin: 0;
+  padding: 0;
+  color: $colorTextDark;
+}
+
+p {
+  margin: 0;
+  font-size: 16px;
+}
+
+img {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+  background-color: #ebebeb;
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+  background-color: #f5f5f5;
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
+  background-color: $shade10;
+
+  &:hover {
+    background-color: darken($shade10, 5%);
+  }
+}
