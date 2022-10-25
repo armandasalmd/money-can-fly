@@ -125,5 +125,9 @@
       margin-right: $unit * 0.25;
     }
   }
+
+  &--wrapContent {
+    width: unset;
+  }
   // <end> --MODIFIERS </end>
 }

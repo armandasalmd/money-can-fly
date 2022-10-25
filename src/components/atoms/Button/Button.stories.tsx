@@ -4,20 +4,15 @@ import { Story, Meta } from "@storybook/react";
 import Button, { ButtonProps } from "./Button";
 
 export default {
-  title: "Example/Button",
+  title: "Atoms/Button",
   component: Button,
 } as Meta;
 
-const Template: Story<ButtonProps> = (args) => <Button {...args} />;
+const Template: Story<ButtonProps> = (args) => <div style={{display: "flex"}}><Button {...args} /></div>;
 
-export const Primary = Template.bind({});
-Primary.args = {
+export const Default = Template.bind({});
+Default.args = {
   children: "Primary",
   type: "primary",
-};
-
-export const Danger = Template.bind({});
-Danger.args = {
-  children: "Danger",
-  type: "danger",
-};
+  wrapContent: true,
+} as ButtonProps;

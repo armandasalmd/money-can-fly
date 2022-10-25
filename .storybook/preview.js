@@ -9,8 +9,12 @@ export const parameters = {
     },
   },
   darkMode: {
-    darkClass: "theme theme--dark",
-    lightClass: "theme theme--light",
+    current: "light",
+    darkClass: "theme--dark",
+    lightClass: "theme--light",
     stylePreview: true,
+  },
+  backgrounds: {
+    disable: true,
   },
 };

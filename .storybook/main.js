@@ -10,6 +10,7 @@ module.exports = {
     "@storybook/addon-essentials",
     "@storybook/addon-interactions",
     "@storybook/preset-scss",
+    "storybook-dark-mode",
   ],
   "framework": "@storybook/react",
   "core": {

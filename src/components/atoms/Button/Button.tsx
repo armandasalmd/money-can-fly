@@ -12,6 +12,7 @@ export interface ButtonProps extends PropsWithChildren {
   style?: CSSProperties;
   tall?: boolean;
   type?: ButtonType;
+  wrapContent?: boolean;
 }
 
 export default function Button(props: ButtonProps) {
@@ -21,6 +22,7 @@ export default function Button(props: ButtonProps) {
       [`button--${props.type}`]: props.type,
       "button--centerText": props.centerText,
       "button--tall": props.tall,
+      "button--wrapContent": props.wrapContent,
     },
     props.className
   );
