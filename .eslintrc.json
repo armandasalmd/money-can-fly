@@ -6,7 +6,7 @@
   "ignorePatterns": [
     "node_modules/",
     ".next/",
-    "out/",
+    "dist/",
     "!.prettierrc.js"
   ]
 }
