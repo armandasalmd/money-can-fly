@@ -1,3 +1,5 @@
+import "@styles/Global.scss";
+
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },
   controls: {
@@ -7,8 +9,8 @@ export const parameters = {
     },
   },
   darkMode: {
-    darkClass: 'theme theme--dark',
-    lightClass: 'theme theme--light',
+    darkClass: "theme theme--dark",
+    lightClass: "theme theme--light",
     stylePreview: true,
   },
-}
+};
