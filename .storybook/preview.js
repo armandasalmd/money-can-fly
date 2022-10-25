@@ -1,4 +1,4 @@
-import "!style-loader!css-loader!sass-loader!../src/styles/Global.scss";
+import "@styles/Global.scss";
 
 export const parameters = {
   actions: { argTypesRegex: "^on[A-Z].*" },
@@ -9,8 +9,12 @@ export const parameters = {
     },
   },
   darkMode: {
-    darkClass: 'theme theme--dark',
-    lightClass: 'theme theme--light',
+    current: "light",
+    darkClass: "theme--dark",
+    lightClass: "theme--light",
     stylePreview: true,
   },
-}
+  backgrounds: {
+    disable: true,
+  },
+};

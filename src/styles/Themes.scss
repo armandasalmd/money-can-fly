@@ -1,0 +1,43 @@
+$themeDarkClass: ".theme--dark";
+$themeLightClass: ".theme--light";
+
+.theme {
+  height: 100vh;
+  width: 100vw;
+}
+
+:root {
+  --color-error: #{$colorError};
+  --color-warning: #{$colorWarning};
+  --color-information: #{$colorInformation};
+  --color-success: #{$colorSuccess};
+}
+
+// Global color variables
+#{$themeLightClass} {
+  --color-border: #eeeeee;
+  --color-primary: #{$colorPrimary};
+  --color-text: #{$colorTextDark};
+  --bg-card: white;
+  --bg-navbar: white;
+
+  background-color: #fcfcfc;
+}
+
+// Global color variables for dark
+#{$themeDarkClass} {
+  --color-border: #454545;
+  --color-primary: #{$colorPrimaryDark};
+  --color-text: #{$colorTextLight};
+  --color-warning: #ff9d5b;
+  --color-information: #34b6ff;
+  --color-success: #23b944;
+  --bg-card: #282828;
+  --bg-navbar: #282828;
+
+  background-color: #151515;
+
+  p {
+    color: #{$colorTextLight};
+  }
+}

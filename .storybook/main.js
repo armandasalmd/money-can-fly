@@ -2,45 +2,30 @@ const path = require("path");
 
 module.exports = {
   "stories": [
-    "../src/components/**/*.stories.@(js|jsx|ts|tsx)",
+    "../src/**/*.stories.mdx",
+    "../src/**/*.stories.@(js|jsx|ts|tsx)",
   ],
   "addons": [
     "@storybook/addon-links",
     "@storybook/addon-essentials",
     "@storybook/addon-interactions",
     "@storybook/preset-scss",
-    {
-      name: "@storybook/preset-typescript",
-      options: {
-        tsLoaderOptions: {
-          configFile: path.resolve(__dirname, "../tsconfig.json"),
-        },
-        include: [path.resolve(__dirname, "../src")],
-      },
-    },
+    "storybook-dark-mode",
   ],
   "framework": "@storybook/react",
   "core": {
     "builder": "@storybook/builder-webpack5",
   },
-  "staticDirs": [
-    "../public",
-  ],
-  webpackFinal: async (config, { configType }) => {
-    // Make whatever fine-grained changes you need
-    config.module.rules.push({
-      test: /\.scss$/,
-      loader: "sass-loader",
-      options: {
-        log: console.log(
-          '\n\n\n\npath.resolve(__dirname, "src/styles/")',
-          path.resolve(__dirname, "../src/styles"),
-        ),
-        includePaths: [path.resolve(__dirname, "src/styles")],
-      },
-    });
-
-    // Return the altered config
+  "webpackFinal": async (config) => {
+    config.resolve.alias = {
+      ...config.resolve.alias,
+      "@atoms": path.resolve(__dirname, "../src/components/atoms"),
+      "@molecules": path.resolve(__dirname, "../src/components/molecules"),
+      "@organisms": path.resolve(__dirname, "../src/components/organisms"),
+      "@templates": path.resolve(__dirname, "../src/components/templates"),
+      "@utils": path.resolve(__dirname, "../src/utils"),
+      "@styles": path.resolve(__dirname, "../src/styles"),
+    };
     return config;
   },
 };
