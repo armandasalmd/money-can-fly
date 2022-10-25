@@ -1,14 +1,17 @@
 .button {
+  --bg-button: #{$shade5};
+  --bg-button-hover: #{$shade10};
+  
   cursor: pointer;
   border-radius: $defaultBorderRadius;
   border: 1px solid rgba(0, 0, 0, 0.13);
-  color: $colorTextDark;
+  color: var(--color-text);
   display: inline-flex;
   align-items: center;
   vertical-align: middle;
   white-space: nowrap;
   user-select: none;
-  background: $shade5;
+  background: var(--bg-button);
   width: 100%;
   box-sizing: border-box;
   z-index: 0;
@@ -17,7 +20,7 @@
   padding: 0 1rem;
 
   &:hover {
-    background: $shade10;
+    background: var(--bg-button-hover);
   }
 
   svg {
@@ -130,4 +133,11 @@
     width: unset;
   }
   // <end> --MODIFIERS </end>
+}
+
+#{$themeDarkClass} {
+  .button {
+    --bg-button: #{$shade80};
+    --bg-button-hover: #{$shade70};
+  }
 }
