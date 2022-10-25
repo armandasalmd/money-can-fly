@@ -1,12 +1,13 @@
 import classNames from "classnames";
-import { CSSProperties, PropsWithChildren, ReactElement } from "react";
+import { CSSProperties, PropsWithChildren, createElement } from "react";
+import { IconComponentType } from "@utils/Types";
 
 type ButtonType = "default" | "easy" | "text" | "primary" | "danger" | "gentle" | "dashed";
 
 interface ButtonProps extends PropsWithChildren {
   centerText?: boolean;
   className?: string;
-  icon?: ReactElement;
+  icon?: IconComponentType;
   onClick?(): void;
   style?: CSSProperties;
   tall?: boolean;
@@ -24,8 +25,11 @@ export default function Button(props: ButtonProps) {
     props.className
   );
   return (
-    <div className={classes} style={props.style}>
-      {props.icon}
+    <div className={classes} style={props.style} onClick={props.onClick}>
+      {props.icon && createElement(props.icon, {
+        weight: "bold",
+        size: 20
+      })}
       <p>{props.children}</p>
     </div>
   );

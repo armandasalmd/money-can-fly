@@ -1,16 +1,14 @@
-@import "https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap";
-@import "https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&family=Source+Sans+Pro:wght@400;600;700&display=swap";
+@import url('https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Quicksand:wght@400;500;600;700&family=Roboto:wght@300;400;500;700&display=swap');
 
 @import "./Variables.scss";
 @import "./Placeholders.scss";
-
+@import "./Animations.scss";
 @import "./Components.scss";
 
 html,
 body {
   padding: 0;
   margin: 0;
-  font-family: $defaultFont;
 }
 
 a {
@@ -20,6 +18,8 @@ a {
 
 * {
   box-sizing: border-box;
+  transition: all 0.5s ease-out;
+  transition-property: background-color, color, border-color, box-shadow;
 }
 
 h1,
@@ -30,37 +30,35 @@ h5 {
   margin: 0;
   padding: 0;
   color: $colorTextDark;
+  font-family: $specialFont;
+  font-weight: 600;
 }
 
-p {
+p, span, div {
   margin: 0;
   font-size: 16px;
-}
-
-img {
-  user-select: none;
-  -webkit-user-select: none;
+  font-family: $defaultFont;
+  font-weight: 400;
 }
 
 ::-webkit-scrollbar-track {
-  border-radius: 10px;
-  background-color: #ebebeb;
+  background-color: white;
+  border-radius: 0px;
 }
 
 ::-webkit-scrollbar {
-  width: 12px;
-  height: 12px;
+  width: 14px;
   background-color: #f5f5f5;
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb {
   border-radius: 10px;
-  -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-  background-color: $shade10;
+  background-color: darken($shade20, 15%);
+  background-clip: padding-box;
+  border: 3px white solid;
 
   &:hover {
-    background-color: darken($shade10, 5%);
+    background-color: $shade20;
   }
 }

@@ -1,0 +1,26 @@
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 $unit;
+  background: var(--bg-navbar);
+  height: 67px;
+  width: 100%;
+  border-bottom: 1px solid var(--color-border);
+  
+  &__left, &__right {
+    display: flex;
+    gap: $unit * .5;
+  }
+
+  &__container {
+    display: flex;
+    align-items: center;
+    gap: $unit;
+  }
+
+  &--sticky {
+    position: sticky;
+    top: 0px;
+  }
+}

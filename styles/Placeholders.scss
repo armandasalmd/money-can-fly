@@ -1,4 +1,10 @@
-@import "./Variables.scss";
+%cardBase {
+  background: var(--card-background);
+  border: 1px solid rgba(0,0,0, 0.13);
+  border-radius: $defaultBorderRadius;
+  box-shadow: $shadowCard;
+  min-height: 2em;
+}
 
 %ellipsis {
   white-space: nowrap;
@@ -34,7 +40,6 @@
 
 %inputFocus {
   border: 1px solid $colorPrimary;
-  box-shadow: $shadowInput;
   background-color: white;
 }
 

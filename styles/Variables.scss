@@ -2,14 +2,17 @@
  * ====== SIZES ======
  */
 $unit: 16px;
+$halfUnit: $unit * 0.5;
 $defaultBorderRadius: $unit * 0.75;
+$containerBorderRadius: $unit;
 $defaultMargin: $unit;
+$navbarBlur: 6px;
 
 /**
   * ====== FONTS ======
   */
-$defaultFont: Roboto, "Source Sans Pro", sans-serif;
-$specialFont: "Quicksand", Roboto, cursive;
+$defaultFont: "Lato", Roboto, "Source Sans Pro", sans-serif;
+$specialFont: "Quicksand", Raleway, Roboto;
 
 /**
   * ====== COLORS ======
@@ -27,28 +30,28 @@ $shade10: #eee;
 $shade5: #f5f5f5;
 $shade0: #fff;
 
-$colorPrimary: #1e88e5;
-$colorSecondary: #ff504d;
-$colorGold: #f2c94c;
+$colorPrimary: #4A63A3;
+$colorPrimaryDark: #3D5183;
+$colorSecondary: #F3C243;
+$colorSecondaryDark: #c06121;
 
-$colorError: #f85f60;
-$colorWarning: #ffb41d;
+$colorError: #e95555;
+$colorWarning: #FFBC57;
 $colorInformation: #4585c0;
-$colorSuccess: #6daf4c;
+$colorSuccess: #338F48;
 
-$colorTextLight: #f5f3ea;
-$colorTextDark: #302f2f;
-$colorBackground: #f4f5f9;
+$colorTextLight: rgba(255, 255, 255, 0.9);
+$colorTextDark: #2B2F38;
 $colorDisabled: $shade5;
 
 /**
   * ====== SHADOWS ======
   */
-$shadowDefault: 0 0 12px 0 rgba(0, 0, 0, 0.1);
-$shadowDefaultDark: 0 0 18px 0 rgba(0, 0, 0, 0.2);
+$shadowDefault: 0px 2px 6px rgba(0, 0, 0, 0.14);
+$shadowDefaultDark: 0px 0px 6px rgba(255, 255, 255, 0.2);
 $shadowCard: $shadowDefault;
 $shadowCardHover: $shadowDefaultDark;
-$shadowInput: 0 0 0 2px rgba($colorPrimary, 0.3);
+
 $shadowInputError: 0 0 0 2px rgba($colorError, 0.3);
 $shadowInputWarning: 0 0 0 2px rgba($colorWarning, 0.3);
 
@@ -59,3 +62,48 @@ $xs: 24em;
 $sm: 47.5em;
 $md: 62em;
 $lg: 75em;
+
+/**
+  * ====== THEMES ======
+  */
+$themeDarkClass: ".theme--dark";
+$themeLightClass: ".theme--light";
+
+.theme {
+  --color-error: #{$colorError};
+  --color-warning: #{$colorWarning};
+  --color-information: #{$colorInformation};
+  --color-success: #{$colorSuccess};
+
+  height: 100vh;
+  width: 100vw;
+}
+
+// Global color variables
+#{$themeLightClass} {
+  --color-border: #EEEEEE;
+  --color-primary: #{$colorPrimary};
+  --color-text: #{$colorTextDark};
+  --bg-card: white;
+  --bg-navbar: white;
+  
+  background-color: #FCFCFC;
+}
+
+// Global color variables for dark
+#{$themeDarkClass} {
+  --color-border: #454545;
+  --color-primary: #{$colorPrimaryDark};
+  --color-text: #{$colorTextLight};
+  --color-warning: #FF9D5B;
+  --color-information: #34B6FF;
+  --color-success: #23B944;
+  --bg-card: #282828;
+  --bg-navbar: #282828;
+
+  background-color: #151515;
+
+  p {
+    color: #{$colorTextLight};
+  }
+}

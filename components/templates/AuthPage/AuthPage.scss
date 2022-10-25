@@ -7,10 +7,12 @@
   &__background {
     position: absolute;
     top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
     z-index: -1;
     user-select: none;
+    animation: pulse 5s infinite;
   }
   
   &__container {
@@ -35,6 +37,7 @@
 
   &__error {
     color: $colorError;
+    z-index: 1;
   }
 
   &__card {
@@ -61,12 +64,6 @@
   &__cardFooter {
     display: flex;
     justify-content: center;
-  }
-
-  &__mainFooter {
-    text-align: center;
-    color: $shade60;
-    margin-top: $unit;
   }
 
   &__termsWarning {

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/router";
 
+import { useTheme } from "context/ThemeContext";
 import Button from "@atoms/Button/Button";
 import Input from "@atoms/Input/Input";
 import Logo from "@atoms/Logo/Logo";
@@ -38,6 +39,7 @@ interface AuthFormProps {
 
 export default function AuthPage(props: AuthFormProps) {
   const router = useRouter();
+  const { setSuspend } = useTheme();
 
   const defaultState = props.formItems.reduce<FormInputState>(function (acc, item: FormItem) {
     return {
@@ -93,9 +95,11 @@ export default function AuthPage(props: AuthFormProps) {
 
   useEffect(() => {
     setFormState(defaultState);
+    setSuspend(true);
+
+    return () => setSuspend(false);
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
 
   return (
     <div className="auth">
@@ -123,7 +127,6 @@ export default function AuthPage(props: AuthFormProps) {
               </Button>
             </div>
           </div>
-          <div className="auth__mainFooter">Luggage card game &copy; Armandas Barkauskas</div>
         </div>
       </div>
     </div>

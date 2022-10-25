@@ -1,5 +1,8 @@
-import Button from "@atoms/Button/Button";
+import Navbar from "@molecules/Navbar/Navbar";
 
-export default function Home() {
-  return <Button>Hello woldd</Button>;
+export default function DashboardPage() {
+  return <div>
+    <Navbar />
+    <p>Hello world!</p>
+  </div>;
 }

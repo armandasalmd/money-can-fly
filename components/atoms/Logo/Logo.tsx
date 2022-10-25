@@ -1,6 +1,6 @@
-import Image from "next/image";
 import classNames from "classnames";
 import Constants from "@utils/Constants";
+import LogoSvg from "./LogoSvg"; 
 
 interface LogoProps {
   noText?: boolean;
@@ -30,7 +30,7 @@ export default function Logo(props: LogoProps) {
 
   return (
     <div className={classes} onClick={props.onClick}>
-      <Image width={imgSize} height={imgSize} src="/images/logo.svg" alt="logo" />
+      <LogoSvg width={imgSize} height={imgSize} />
       <p className="logo__text" style={{fontSize: fontSize}}>{Constants.appName}</p>
     </div>
   );

@@ -1,16 +1,17 @@
 import { useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useRouter } from "next/router";
-import AuthPage, { ActionButton, FormInputState, FormItem} from "@templates/AuthPage/AuthPage";
-
+import AuthPage, { ActionButton, FormInputState, FormItem } from "@templates/AuthPage/AuthPage";
+import Constants from "@utils/Constants";
 
 export default function Login() {
   const { user, login } = useAuth();
   const router = useRouter();
+  const pushPath = Constants.navbarLinks.find(o => o.default === true)?.path || "/";
 
   const actionButton: ActionButton = {
     text: "Create an account",
-    path: "register",
+    path: "/register",
   };
 
   const formItems: FormItem[] = [
@@ -28,9 +29,10 @@ export default function Login() {
   ];
 
   async function handleSubmit(state: FormInputState) {
+    console.log(state);
     try {
       await login(state.email.value, state.password.value);
-      router.push("/dashboard");
+      router.push(pushPath);
     } catch (error) {
       console.error(error);
     }
@@ -38,7 +40,7 @@ export default function Login() {
 
   useEffect(() => {
     if (user) {
-      router.push("/dashboard");
+      router.push(pushPath);
     }
   }, [router, user]);
 
@@ -49,6 +51,7 @@ export default function Login() {
       onSubmit={handleSubmit}
       submitText="Login"
       title="Login"
+      generalError="Invalid email or password"
     />
   );
 }
