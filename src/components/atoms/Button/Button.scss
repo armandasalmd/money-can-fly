@@ -1,0 +1,129 @@
+.button {
+  cursor: pointer;
+  border-radius: $defaultBorderRadius;
+  border: 1px solid rgba(0, 0, 0, 0.13);
+  color: $colorTextDark;
+  display: inline-flex;
+  align-items: center;
+  vertical-align: middle;
+  white-space: nowrap;
+  user-select: none;
+  background: $shade5;
+  width: 100%;
+  box-sizing: border-box;
+  z-index: 0;
+
+  height: 36px;
+  padding: 0 1rem;
+
+  &:hover {
+    background: $shade10;
+  }
+
+  svg {
+    margin-right: 0.5rem;
+  }
+
+  &:focus {
+    outline: none;
+  }
+
+  &--ghost:hover {
+    background: rgba($colorPrimary, 0.08);
+  }
+
+  // <start> --MODIFIERS </start>
+  &--accent {
+    $hoverColor: lighten($colorPrimary, 0.2);
+
+    background-color: $colorPrimary;
+    color: $colorTextLight;
+    border: none;
+
+    &:hover {
+      background-color: $hoverColor !important;
+    }
+
+    &:active {
+      background-color: saturate($hoverColor, 25%) !important;
+    }
+  }
+
+  &--bigText {
+    p {
+      font-size: 1.2rem;
+    }
+  }
+
+  &--tall {
+    height: 42px;
+  }
+
+  &--centerText {
+    justify-content: center;
+  }
+
+  &--minimal {
+    border: 1px dashed $shade20;
+
+    &:hover {
+      border-color: $colorPrimary;
+      color: $colorPrimary;
+    }
+  }
+
+  &--ghost {
+    background: mix($colorPrimary, #ffffff, 3%);
+    border: 1px solid $colorPrimary;
+    color: $colorPrimary;
+
+    &:hover {
+      background: mix($colorPrimary, #ffffff, 10%);
+    }
+
+    &:active {
+      background: mix($colorPrimary, #ffffff, 15%);
+    }
+  }
+
+  &--danger {
+    border: 1px solid $colorError;
+    color: $colorError;
+    background: white;
+
+    &:hover {
+      background: #feefef !important;
+    }
+  }
+
+  &--disabled {
+    cursor: not-allowed !important;
+    box-shadow: none !important;
+    border: none;
+
+    color: $shade20;
+    background-color: $shade5;
+  }
+
+  &--link {
+    cursor: pointer;
+    color: #0089f5;
+    border: none;
+    background: none;
+
+    &:hover {
+      box-shadow: none;
+      text-decoration: underline;
+    }
+  }
+
+  &--tightX {
+    padding-left: $unit * 0.4;
+    padding-right: $unit * 0.6;
+
+    svg {
+      margin-right: $unit * 0.25;
+    }
+  }
+  // <end> --MODIFIERS </end>
+}

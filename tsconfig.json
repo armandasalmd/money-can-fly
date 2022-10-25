@@ -18,10 +18,12 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "baseUrl": ".",
+    "baseUrl": "./src",
+    "outDir": "./dist",
     "paths": {
       "@atoms/*": ["components/atoms/*"],
       "@components/*": ["components/*"],
+      "@context/*": ["context/*"],
       "@molecules/*": ["components/molecules/*"],
       "@organisms/*": ["components/organisms/*"],
       "@styles/*": ["styles/*"],
