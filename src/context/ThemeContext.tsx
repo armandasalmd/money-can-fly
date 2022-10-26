@@ -18,7 +18,7 @@ const ThemeContext = createContext<UseThemeProps>({
 export const useTheme = () => useContext<UseThemeProps>(ThemeContext);
 
 export function ThemeContextProvider({ children }) {
-  const [theme, setTheme] = useState<Theme>(localStorage.getItem("theme") as Theme);
+  const [theme, setTheme] = useState<Theme>((localStorage.getItem("theme") || "light") as Theme);
   const [suspend, setSuspend] = useState(false);
   const classes = classNames("theme", "theme--" + theme);
 

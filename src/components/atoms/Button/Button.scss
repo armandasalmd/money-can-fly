@@ -67,10 +67,6 @@
       background-color: var(--bg-button-easy-hover);
       @include focusOutline(var(--bg-button-easy-outline));
     }
-
-    &:active {
-      background: mix($colorPrimary, #ffffff, 15%);
-    }
   }
 
   &--primary {
