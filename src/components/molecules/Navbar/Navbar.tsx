@@ -1,20 +1,15 @@
 import classNames from "classnames";
 import { useRouter } from "next/router";
-import Link from "next/link";
 import { MoonStars, Sun, SignOut, User } from "phosphor-react";
 
 import { useAuth, useTheme } from "@context/index";
 import { Button, Logo } from "@atoms/index";
 import Constants from "@utils/Constants";
 
-function getNavigationButton(currentPath: string, linkPath: string, text: string) {
-  const buttonType = currentPath === linkPath ? "easy" : "default";
+function getNavigationButton(pushFn: (path: string) => void, currentPath: string, linkPath: string, text: string) {
+  const buttonType = currentPath === linkPath ? "easy" : "text";
 
-  return (
-    <Link href={linkPath} key={linkPath}>
-      <Button type={buttonType}>{text}</Button>
-    </Link>
-  );
+  return <Button tall key={linkPath} type={buttonType} onClick={() => pushFn(linkPath)}>{text}</Button>;
 }
 
 export default function Navbar() {
@@ -35,7 +30,7 @@ export default function Navbar() {
     setTheme(theme === "dark" ? "light" : "dark");
   }
 
-  const navButtons = navbarLinks.map((link) => getNavigationButton(router.pathname, link.path, link.title));
+  const navButtons = navbarLinks.map((link) => getNavigationButton(router.push, router.pathname, link.path, link.title));
 
   return (
     <div className={classses}>
@@ -46,9 +41,9 @@ export default function Navbar() {
         <div className="navbar__container">{navButtons}</div>
       </div>
       <div className="navbar__right">
-        <Button icon={theme === "dark" ? Sun : MoonStars} onClick={toggleTheme} />
-        <Button icon={User}>{displayName}</Button>
-        <Button icon={SignOut} onClick={handleLogout} />
+        <Button tall icon={theme === "dark" ? Sun : MoonStars} onClick={toggleTheme} />
+        <Button tall icon={User}>{displayName}</Button>
+        <Button tall icon={SignOut} onClick={handleLogout} />
       </div>
     </div>
   );

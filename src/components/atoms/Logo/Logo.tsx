@@ -30,7 +30,7 @@ export default function Logo(props: LogoProps) {
   return (
     <div className={classes} onClick={props.onClick}>
       <LogoSvg width={imgSize} height={imgSize} />
-      <p className="logo__text" style={{ fontSize: fontSize }}>
+      <p className="logo__text text" style={{ fontSize: fontSize }}>
         {Constants.appName}
       </p>
     </div>

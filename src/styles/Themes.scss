@@ -15,29 +15,63 @@ $themeLightClass: ".theme--light";
 
 // Global color variables
 #{$themeLightClass} {
+  --bg-card: white;
+  --bg-navbar: white;
+  --bg-input: rgba(167, 164, 174, 0.09);
+  --bg-input-hover: rgba(167, 164, 174, 0.13);
   --color-border: #eeeeee;
   --color-primary: #{$colorPrimary};
   --color-text: #{$colorTextDark};
-  --bg-card: white;
-  --bg-navbar: white;
+  --color-text-inverse: #{$colorTextLight};
+  --color-text-primary: #{$colorPrimary};
+  --shade100: #{$shade100};
+  --shade80: #{$shade80};
+  --shade70: #{$shade70};
+  --shade60: #{$shade60};
+  --shade50: #{$shade50};
+  --shade40: #{$shade40};
+  --shade30: #{$shade30};
+  --shade20: #{$shade20};
+  --shade15: #{$shade15};
+  --shade10: #{$shade10};
+  --shade5: #{$shade5};
+  --shade0: #{$shade0};
 
+  color-scheme: light;
   background-color: #fcfcfc;
 }
 
 // Global color variables for dark
 #{$themeDarkClass} {
+  --bg-card: #282828;
+  --bg-navbar: #282828;
+  --bg-input: rgba(167, 164, 174, 0.12);
+  --bg-input-hover: rgba(167, 164, 174, 0.07);
   --color-border: #454545;
   --color-primary: #{$colorPrimaryDark};
   --color-text: #{$colorTextLight};
+  --color-text-inverse: #{$colorTextDark};
+  --color-text-primary: #BBCDFA;
   --color-warning: #ff9d5b;
   --color-information: #34b6ff;
   --color-success: #23b944;
-  --bg-card: #282828;
-  --bg-navbar: #282828;
+  --shade100: #{$shade0};
+  --shade80: #{$shade5};
+  --shade70: #{$shade10};
+  --shade60: #{$shade15};
+  --shade50: #{$shade20};
+  --shade40: #{$shade30};
+  --shade30: #{$shade40};
+  --shade20: #{$shade50};
+  --shade15: #{$shade60};
+  --shade10: #{$shade70};
+  --shade5: #{$shade80};
+  --shade0: #{$shade100};
 
+  color-scheme: dark;
   background-color: #151515;
 
-  p {
+  p.text {
     color: #{$colorTextLight};
   }
 }

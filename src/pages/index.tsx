@@ -1,10 +1,8 @@
-import { Navbar } from "@molecules/index";
 
 export default function DashboardPage() {
   return (
     <div>
-      <Navbar />
-      <p>Hello world!</p>
+      <p className="text">Hello world!</p>
     </div>
   );
 }
