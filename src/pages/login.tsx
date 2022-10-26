@@ -52,7 +52,6 @@ export default function Login() {
       onSubmit={handleSubmit}
       submitText="Login"
       title="Login"
-      generalError="Invalid email or password"
     />
   );
 }

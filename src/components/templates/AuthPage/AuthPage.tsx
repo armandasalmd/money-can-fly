@@ -101,7 +101,7 @@ export default function AuthPage(props: AuthFormProps) {
 
   return (
     <div className="auth">
-      <Image className="auth__background" alt="login-background" src="/images/login-bg-gradient.svg" layout="fill" />
+      <Image className="auth__background" alt="login-background" src="/images/login-bg-gradient.svg" layout="fill" style={{zIndex: 8}} />
       <div className="auth__container">
         <div className="auth__logo">
           <Logo size="L" />
@@ -120,7 +120,7 @@ export default function AuthPage(props: AuthFormProps) {
               </Button>
             </div>
             <div className="auth__cardFooter">
-              <Button onClick={onActionClick}>{props.actionButton.text}</Button>
+              <Button centerText onClick={onActionClick}>{props.actionButton.text}</Button>
             </div>
           </div>
         </div>
