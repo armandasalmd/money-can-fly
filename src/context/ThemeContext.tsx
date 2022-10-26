@@ -20,7 +20,7 @@ export const useTheme = () => useContext<UseThemeProps>(ThemeContext);
 export function ThemeContextProvider({ children }) {
   const [theme, setTheme] = useState<Theme>((localStorage.getItem("theme") || "light") as Theme);
   const [suspend, setSuspend] = useState(false);
-  const classes = classNames("theme", "theme--" + suspend ? "light" : theme);
+  const classes = classNames("theme", "theme--" + (suspend ? "light" : theme));
 
   useEffect(() => {
     localStorage.setItem("theme", theme);
