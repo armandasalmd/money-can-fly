@@ -1,0 +1,48 @@
+.card {
+  $base: &;
+  $paddingX: $unit * 0.85;
+  $paddingY: $unit * 0.85;
+
+  @extend %cardBase;
+
+  &__header {
+    padding: $paddingX $paddingY $paddingX / 2 $paddingY;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    border-bottom: 2px solid var(--shade5);
+
+    #{$base}__headerActions {
+      display: flex;
+      gap: $unit;
+    }
+  }
+
+  &__content {
+    padding: $paddingX $paddingY;
+  }
+
+  &__error {
+    background: rgba($colorError, 0.2);
+    color: var(--color-error);
+    padding: $paddingX $paddingY;
+  }
+
+  &--noContentPaddingX {
+    #{$base}__content {
+      padding-left: 0;
+      padding-right: 0;
+    }
+  }
+
+  &--noContentPaddingY {
+    #{$base}__content {
+      padding-top: 0;
+      padding-bottom: 0;
+    }
+  }
+
+  &--wrap {
+    display: inline-block;
+  }
+}

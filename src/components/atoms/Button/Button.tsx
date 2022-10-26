@@ -2,7 +2,7 @@ import classNames from "classnames";
 import { CSSProperties, PropsWithChildren, createElement } from "react";
 import { IconComponentType } from "@utils/Types";
 
-type ButtonType = "default" | "easy" | "text" | "primary" | "danger" | "transparent";
+export type ButtonType = "default" | "easy" | "text" | "primary" | "danger" | "transparent";
 
 export interface ButtonProps extends PropsWithChildren {
   centerText?: boolean;

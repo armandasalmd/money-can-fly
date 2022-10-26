@@ -1,8 +1,8 @@
 %cardBase {
-  background: var(--card-background);
-  border: 1px solid rgba(0, 0, 0, 0.13);
-  border-radius: $defaultBorderRadius;
-  box-shadow: $shadowCard;
+  background: var(--bg-card);
+  border-radius: $containerBorderRadius;
+  box-shadow: var(--card-shadow);
+  color: var(--color-text);
   min-height: 2em;
 }
 
@@ -12,45 +12,26 @@
   text-overflow: ellipsis;
 }
 
-%overlay {
-  position: fixed;
-  right: 0;
-  bottom: 0;
-  top: 0;
-  left: 0;
-  background: rgba(0, 0, 0, 0.25);
-  backdrop-filter: blur(2px);
-}
-
 %inputBase {
   outline: none;
-  padding: 0.3em 0.7em;
-  border: 1px solid #c7c7c9;
+  border: none;
+  background-color: var(--bg-input);
   border-radius: $defaultBorderRadius;
-  height: 36px;
-  box-sizing: border-box;
-  font-size: 0.9rem;
-}
-
-%inputError {
-  margin-bottom: 4px;
-  font-size: 0.9rem;
-  color: $colorError !important;
-}
-
-%inputFocus {
-  border: 1px solid $colorPrimary;
-  background-color: white;
-}
-
-%inputIcon {
-  color: $shade60;
-  position: absolute;
-  left: 6px;
-  margin-top: 3px;
+  height: $inputHeight;
+  font-size: 1rem;
+  padding: $unit * 0.75;
 }
 
 %inputTitle {
-  margin-bottom: $unit * 0.4;
-  color: black;
+  margin-bottom: $unit * 0.25;
+  margin-left: 6px;
+  color: var(--color-text);
+  font-size: 0.95rem;
+}
+
+%inputIcon {
+  color: var(--shade50);
+  position: absolute;
+  left: $unit * 0.6;
+  margin-top: $unit * 1.8;
 }

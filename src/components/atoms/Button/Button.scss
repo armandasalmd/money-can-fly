@@ -1,14 +1,13 @@
 .button {
   --bg-button: var(--bg-input);
   --bg-button-hover: var(--bg-input-hover);
-  --bg-button-easy: rgba(71, 110, 216, 0.2);
+  --bg-button-easy: rgba(71, 110, 216, 0.15);
   --bg-button-easy-hover: rgba(71, 110, 216, 0.2);
   --bg-button-easy-outline: rgba(46, 84, 190, 0.4);
   --bg-button-primary-hover: #{mix($shade100, $colorPrimary, 10%)};
   --bg-button-primary-outline: rgba(46, 84, 190, 0.2);
   --bg-button-danger: #{mix($shade0, $colorError, 80%)};
   --bg-button-danger-hover: #{mix($shade0, $colorError, 90%)};
-  --bg-button-danger-outline: #{mix($shade0, $colorError, 25%)};
 
   cursor: pointer;
   border-radius: $defaultBorderRadius;
@@ -19,7 +18,7 @@
   white-space: nowrap;
   user-select: none;
   background: var(--bg-button);
-  height: 36px;
+  height: $inputHeight;
   padding: 0 $unit;
   z-index: 0;
   width: 100%;
@@ -43,7 +42,7 @@
     background: var(--bg-button-danger);
 
     &:hover {
-      @include focusOutline(var(--bg-button-danger-outline));
+      @include focusOutline(var(--color-error-outline));
       background: var(--bg-button-danger-hover);
     }
   }
@@ -115,7 +114,6 @@
     --bg-button-easy-outline: rgba(122, 152, 236, 0.4);
     --bg-button-danger: #{mix($shade100, $colorError, 50%)};
     --bg-button-danger-hover: #{mix($shade100, $colorError, 20%)};
-    --bg-button-danger-outline: #{mix($shade100, $colorError, 40%)};
 
     &--danger {
       color: #{mix($shade0, $colorError, 90%)};

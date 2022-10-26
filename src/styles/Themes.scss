@@ -19,7 +19,10 @@ $themeLightClass: ".theme--light";
   --bg-navbar: white;
   --bg-input: rgba(167, 164, 174, 0.09);
   --bg-input-hover: rgba(167, 164, 174, 0.13);
+  --bg-input-error: #{mix($shade0, $colorError, 95%)};
   --color-border: #eeeeee;
+  --color-error-outline: #{mix($shade0, $colorError, 25%)};
+  --color-placeholder: #95939D;
   --color-primary: #{$colorPrimary};
   --color-text: #{$colorTextDark};
   --color-text-inverse: #{$colorTextLight};
@@ -37,6 +40,8 @@ $themeLightClass: ".theme--light";
   --shade5: #{$shade5};
   --shade0: #{$shade0};
 
+  --card-shadow: #{$shadowDefault};
+
   color-scheme: light;
   background-color: #fcfcfc;
 }
@@ -47,7 +52,10 @@ $themeLightClass: ".theme--light";
   --bg-navbar: #282828;
   --bg-input: rgba(167, 164, 174, 0.12);
   --bg-input-hover: rgba(167, 164, 174, 0.07);
+  --bg-input-error: #{mix($shade80, $colorError, 97%)};
   --color-border: #454545;
+  --color-error-outline: #{mix($shade0, $colorError, 40%)};
+  --color-placeholder: #95939D;
   --color-primary: #{$colorPrimaryDark};
   --color-text: #{$colorTextLight};
   --color-text-inverse: #{$colorTextDark};
@@ -67,6 +75,8 @@ $themeLightClass: ".theme--light";
   --shade10: #{$shade70};
   --shade5: #{$shade80};
   --shade0: #{$shade100};
+
+  --card-shadow: #{$shadowDefaultDark};
 
   color-scheme: dark;
   background-color: #151515;

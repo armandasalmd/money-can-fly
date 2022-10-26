@@ -1,0 +1,39 @@
+.header {
+  --header-color: var(--color-text-primary);
+
+  &__line {
+    height: $unit * 0.25;
+    width: $unit * 1.75;
+    border-radius: $unit * 0.25;
+    margin-bottom: $unit * 0.25;
+    background-color: var(--header-color);
+  }
+
+  &__description {
+    line-height: 1.5;
+    margin: 0;
+    color: var(--header-color);
+  }
+
+  &--success {
+    --header-color: var(--color-success);
+  }
+
+  &--error {
+    --header-color: var(--color-error);
+  }
+
+  &--warning {
+    --header-color: var(--color-warning);
+  }
+
+  &--info {
+    --header-color: var(--color-information);
+  }
+}
+
+#{$themeDarkClass} {
+  .header h2,h3,h4 {
+    color: var(--color-text);
+  }
+}

@@ -1,107 +1,83 @@
 .input {
   $base: &;
-  $iconSize: 24px;
+  $iconSize: $unit * 1.5;
   $iconPaddingX: 6px;
 
-  display: flex;
-  flex-flow: column;
   position: relative;
 
   input {
     @extend %inputBase;
+
+    &:focus {
+      @include focusOutline;
+    }
   }
 
   input::placeholder {
-    color: $shade30;
+    color: var(--color-placeholder);
   }
 
-  input:focus {
-    @extend %inputFocus;
-  }
   // <start> __ELEMENTS </start>
-  &__error {
-    @extend %inputError;
-  }
-
   &__icon {
     @extend %inputIcon;
   }
 
-  &__icon + input,
-  &__icon + &__title + input {
+  &__icon+input,
+  &__icon+&__title+input {
     padding-left: $iconSize + 2 * $iconPaddingX !important;
-  }
-
-  &__title + &__icon {
-    margin-top: 25px;
-  }
-
-  &__title,
-  &__error {
-    color: $colorTextDark;
-    margin-left: 2px;
   }
 
   &__title {
     @extend %inputTitle;
   }
-  // <end> __ELEMENTS </end>
-  // <start>--modifiers</start>
-  &--warning {
-    input {
-      border: 1px solid $colorWarning;
 
-      &:focus {
-        border-color: darken($colorWarning, 15%);
-        box-shadow: $shadowInputWarning;
-      }
+  &__error {
+    margin-left: 6px;
+    margin-top: 6px;
+    font-size: 0.95rem;
+    color: var(--color-error);
+  }
+
+  &--disabled {
+    input {
+      border: 1px dashed var(--shade20);
     }
 
-    i {
-      color: $colorWarning;
+    #{$base}__icon {
+      color: var(--shade20);
     }
   }
 
   &--error {
     input {
-      border: 1px solid $colorError;
-
-      &:focus {
-        border-color: darken($colorError, 15%);
-        box-shadow: $shadowInputError;
-      }
+      background-color: var(--bg-input-error);
     }
 
-    i {
-      color: $colorError;
+    input:focus {
+      background-color: transparent;
+      @include focusOutline(var(--color-error-outline));
+    }
+
+    #{$base}__icon {
+      color: var(--color-error-outline);
     }
   }
 
-  &--disabled {
-    input {
-      cursor: not-allowed;
-      background-color: $colorDisabled;
-      pointer-events: none;
-    }
-
-    i {
-      color: $colorDisabled;
-    }
+  &--fixedWidth {
+    width: $unit * 16;
   }
 
   &--required {
     #{$base}__title::after {
       content: "*";
-      font-size: 1.5rem;
-      line-height: 0;
-      vertical-align: middle;
-      color: $colorSecondary;
+      font-size: 1.2rem;
+      color: var(--color-error);
       margin-left: $unit * 0.125;
+      line-height: 0;
     }
   }
 
   &--tall input {
-    height: 42px;
+    height: $inputHeightLarge;
   }
-  // <end>--modifiers</end>
 }
