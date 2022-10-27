@@ -1,0 +1,51 @@
+import classNames from "classnames";
+import { callIfFunction } from "@utils/Global";
+
+export type ItemSelectHandler = (value: string, label: string, e: React.ChangeEvent<HTMLSelectElement>) => void;
+
+export interface SelectItem {
+  label: string;
+  value: string;
+}
+
+interface SelectMenuItemProps extends SelectItem {
+  selected: boolean;
+  onClick: ItemSelectHandler;
+}
+
+function SelectMenuItem(props: SelectMenuItemProps) {
+  const classes = classNames("selectMenuItem", {
+    "selectMenuItem--selected": props.selected,
+  });
+
+  return (
+    <div className={classes} onClick={(e) => callIfFunction(props.onClick, props.value, props.label, e)}>
+      {props.label}
+    </div>
+  );
+}
+
+export interface SelectMenuProps {
+  items: SelectItem[];
+  selectedValue: string;
+  onChange: ItemSelectHandler;
+}
+
+export default function SelectMenu(props: SelectMenuProps) {
+  return (
+    <div className="selectMenu">
+      {!props.items && <SelectMenuItem label="No items" value="" selected={false} onClick={() => {}} />}
+      {props.items &&
+        props.items.map(function (item, index) {
+          return (
+            <SelectMenuItem
+              selected={props.selectedValue === item.value}
+              {...item}
+              key={index}
+              onClick={props.onChange}
+            />
+          );
+        })}
+    </div>
+  );
+}

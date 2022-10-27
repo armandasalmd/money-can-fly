@@ -1,3 +1,10 @@
 @mixin focusOutline($color: var(--shade15)) {
   box-shadow: 0 0 0 2px $color;
 }
+
+@mixin ellipsis($lineClamp: 1) {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  -webkit-line-clamp: $lineClamp;
+}

@@ -6,13 +6,6 @@ $themeLightClass: ".theme--light";
   width: 100vw;
 }
 
-:root {
-  --color-error: #{$colorError};
-  --color-warning: #{$colorWarning};
-  --color-information: #{$colorInformation};
-  --color-success: #{$colorSuccess};
-}
-
 // Global color variables
 #{$themeLightClass} {
   --bg-card: white;
@@ -27,6 +20,10 @@ $themeLightClass: ".theme--light";
   --color-text: #{$colorTextDark};
   --color-text-inverse: #{$colorTextLight};
   --color-text-primary: #{$colorPrimary};
+  --color-error: #{$colorError};
+  --color-warning: #{$colorWarning};
+  --color-information: #{$colorInformation};
+  --color-success: #{$colorSuccess};
   --shade100: #{$shade100};
   --shade80: #{$shade80};
   --shade70: #{$shade70};
@@ -63,6 +60,7 @@ $themeLightClass: ".theme--light";
   --color-warning: #ff9d5b;
   --color-information: #34b6ff;
   --color-success: #23b944;
+  --color-error: #F86262;
   --shade100: #{$shade0};
   --shade80: #{$shade5};
   --shade70: #{$shade10};

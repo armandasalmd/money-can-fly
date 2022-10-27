@@ -47,13 +47,14 @@ div {
 }
 
 ::-webkit-scrollbar-track {
-  background-color: white;
+  background-color: transparent;
   border-radius: 0px;
 }
 
 ::-webkit-scrollbar {
-  width: 14px;
-  background-color: #f5f5f5;
+  width: 17px;
+  height: 17px;
+  background-color: transparent;
   border-radius: 10px;
 }
 
@@ -61,7 +62,7 @@ div {
   border-radius: 10px;
   background-color: darken($shade20, 15%);
   background-clip: padding-box;
-  border: 3px white solid;
+  border: 5px transparent solid;
 
   &:hover {
     background-color: $shade20;

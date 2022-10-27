@@ -1,0 +1,115 @@
+.select {
+  $base: &;
+
+  position: relative;
+
+  select {
+    display: none;
+  }
+
+  &__icon {
+    color: var(--shade50);
+  }
+
+  &__title {
+    @extend %inputTitle;
+  }
+
+  &__inputMain {
+    display: flex;
+  }
+
+  &__icon + &__inputText {
+    margin-left: $halfUnit;
+  }
+
+  &__inputText {
+    user-select: none;
+    color: var(--color-text);
+    white-space: nowrap;
+  }
+
+  &__input {
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    @extend %inputBase;
+  }
+
+  &__iconOpen {
+    transition: transform .4s ease-in-out !important;
+    flex-shrink: 0;
+  }
+
+  &--open {
+    #{$base}__input {
+      @include focusOutline;
+    }
+
+    #{$base}__iconOpen {
+      transform: rotate(180deg);
+    }
+  }
+
+  &:not(&--open)  {
+    svg {
+      fill: var(--shade50);
+    }
+    
+    #arrow {
+      stroke: var(--shade50);
+    }
+  }
+
+  &--fixedWidth {
+    width: $unit * 16;
+  }
+
+  &--tall &__input {
+    height: $inputHeightLarge;
+  }
+}
+
+.selectMenu {
+  @extend %cardBase;
+  box-shadow: $shadowDropdown;
+  position: absolute;
+
+  display: flex;
+  flex-direction: column;
+  min-width: $unit * 16;
+  max-height: $unit * 20;
+  margin-top: 8px;
+  padding: $halfUnit * 0.7 6px;
+  overflow-y: auto;
+}
+
+.selectMenuItem {
+  margin-bottom: $unit * 0.25;
+  padding: $halfUnit;
+  border-radius: $defaultBorderRadius;
+  height: $inputHeight;
+  cursor: pointer;
+
+  &--selected {
+    background-color: rgba($colorPrimary, 0.2);
+    color: var(--color-text-primary);
+  }
+
+  &:hover:not(&--selected) {
+    background-color: var(--shade10);
+  }
+}
+
+#{$themeDarkClass} {
+  .select--open .select__iconOpen {
+    svg {
+      fill: var(--color-text-primary);
+    }
+    
+    #arrow {
+      stroke: var(--color-text-primary);
+    }
+  }
+}

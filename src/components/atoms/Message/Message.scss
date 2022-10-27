@@ -1,0 +1,57 @@
+.message {
+  --bg-message: var(--color-information);
+  --color-message: var(--color-text-inverse);
+
+  background-color: var(--bg-message);
+  
+  display: flex;
+  flex-wrap: nowrap;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  padding: $unit * 0.75 $unit;
+  
+  &__text {
+    // @include ellipsis(3);
+    color: var(--color-message);
+  }
+  
+  &__dismiss {
+    color: var(--color-message);
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+    flex-shrink: 0;
+
+    &:hover {
+      transform: scale(1.1);
+    }
+  }
+
+  &--success {
+    --bg-message: #{rgba($colorSuccess, 20%)};
+    --color-message: var(--color-success);
+  }
+
+  &--error {
+    --bg-message: #{rgba($colorError, 20%)};
+    --color-message: var(--color-error);
+  }
+
+  &--warning {
+    --bg-message: #{rgba($colorWarning, 20%)};
+    --color-message: var(--color-warning);
+  }
+
+  &--info {
+    --bg-message: #{rgba($colorInformation, 20%)};
+    --color-message: var(--color-information);
+  }
+
+  &--card {
+    @extend %cardBase;
+  }
+
+  &--bordered {
+    border: 1px solid var(--color-message);
+  }
+}
