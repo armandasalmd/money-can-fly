@@ -1,0 +1,77 @@
+.uploadArea {
+  display: flex;
+  flex-flow: column;
+  gap: $halfUnit;
+
+  input[type="file"] {
+    display: none;
+  }
+
+  &__box {
+    background-color: rgba(152, 173, 228, 0.05);
+    border: 2px dashed var(--color-information);
+    border-radius: $containerBorderRadius;
+    padding: $unit * 3.2 $unit;
+    color: var(--color-text);
+    cursor: pointer;
+  }
+
+  &__content {
+    display: flex;
+    flex-flow: column;
+    align-items: center;
+  }
+
+  &__icon {
+    width: $unit * 4;
+    height: $unit * 4;
+    background-color: rgba($colorInformation, 20%);
+    border-radius: $unit * 3.5;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: $unit;
+  }
+
+  &__title span {
+    font-size: inherit;
+    font-family: inherit;
+    font-weight: inherit;
+    color: var(--color-information);
+  }
+
+  &__subtitle {
+    color: var(--shade50);
+    margin-top: $halfUnit;
+  }
+
+  &__selections {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $halfUnit;
+  }
+}
+
+.fileCard {
+  border-radius: $defaultBorderRadius;
+  background-color: var(--bg-input);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: $unit * 0.75;
+
+  &:hover {
+    background-color: var(--shade10);
+  }
+
+  &__name {
+    display: flex;
+    align-items: center;
+    gap: $halfUnit;
+    color: var(--color-text);
+  }
+
+  &__remove {
+    cursor: pointer;
+  }
+}

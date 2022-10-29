@@ -29,12 +29,23 @@ export default function Button(props: ButtonProps) {
     props.className
   );
 
+  let iconColor = "var(--shade50)";
+
+  if (props.type === "primary") {
+    iconColor = "white";
+  } else if (props.type === "danger") {
+    iconColor = "var(--danger)";
+  } else if (props.type === "easy" || props.type === "transparent") {
+    iconColor = "var(--color-text-primary)";
+  }
+
   return (
-    <div className={classes} style={props.style} onClick={props.onClick}>
+    <div className={classes} style={props.style} onClick={props.disabled ? undefined : props.onClick}>
       {props.icon &&
         createElement(props.icon, {
           weight: "bold",
           size: 20,
+          color: iconColor,
         })}
       {props.children && <p>{props.children}</p>}
     </div>

@@ -47,3 +47,15 @@ HeaderActions.args = {
     }
   ]
 } as CardProps;
+
+export const Loading = Template.bind({});
+Loading.args = {
+  header: {
+    title: "Actual spending by Category",
+    description: "Statistics for the last 30 days",
+    color: "warning",
+  },
+  children: <div>This is card content placeholder</div>,
+  loading: true,
+  loadingText: "Please wait while we save your changes",
+} as CardProps;

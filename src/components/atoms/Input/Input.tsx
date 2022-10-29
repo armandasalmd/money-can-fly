@@ -1,4 +1,4 @@
-import { createElement, CSSProperties } from "react";
+import React, { createElement, CSSProperties } from "react";
 import classNames from "classnames";
 
 import { callIfFunction } from "@utils/Global";
@@ -13,6 +13,7 @@ export interface InputProps {
   setValue?(value: string): void;
   style?: CSSProperties;
   name?: string;
+  onChange?(e: React.ChangeEvent<HTMLInputElement>): void;
   onSubmit?(): void;
   required?: boolean;
   password?: boolean;
@@ -35,16 +36,17 @@ export default function Input(props: InputProps) {
     props.className
   );
 
-  function setValue(value: string) {
-    callIfFunction(props.setValue, value);
-  }
-
   function onKeyUp(event: any) {
     // Enter key capture
     if (event.keyCode === 13) {
       event.preventDefault();
       callIfFunction(props.onSubmit);
     }
+  }
+
+  function onChange(e: React.ChangeEvent<HTMLInputElement>) {
+    callIfFunction(props.setValue, e.target.value);
+    callIfFunction(props.onChange, e);
   }
 
   const iconLeft = props.icon && createElement(props.icon, {
@@ -54,14 +56,16 @@ export default function Input(props: InputProps) {
 
   return (
     <div className={classes} style={props.style}>
-      {iconLeft && <div className="input__icon">{iconLeft}</div>}
+      {iconLeft && <div className={classNames("input__icon", {
+        "input__icon--noTitle": !props.title,
+      })}>{iconLeft}</div>}
       {props.title && <p className="input__title">{props.title}</p>}
       <input
         name={props.name}
         disabled={props.disabled}
         type={props.password ? "password" : "text"}
         value={props.value || ""}
-        onChange={({ target }) => setValue(target.value)}
+        onChange={onChange}
         placeholder={props.placeholder || "Enter value..."}
         onKeyUp={props.onSubmit && onKeyUp}
       />

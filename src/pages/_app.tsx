@@ -5,7 +5,6 @@ import NextNProgress from "nextjs-progressbar";
 import "@styles/Global.scss";
 import { AuthContextProvider, ThemeContextProvider } from "@context/index";
 import ProtectedRoute from "@components/ProtectedRoute";
-import { Navbar } from "@molecules/index";
 import Constants from "@utils/Constants";
 
 function MyApp({ Component, pageProps }) {
@@ -22,7 +21,6 @@ function MyApp({ Component, pageProps }) {
           <Component {...pageProps} />
         ) : (
           <ProtectedRoute>
-            <Navbar />
             <Component {...pageProps} />
           </ProtectedRoute>
         )}

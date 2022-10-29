@@ -24,6 +24,7 @@
       "@atoms/*": ["components/atoms/*"],
       "@components/*": ["components/*"],
       "@context/*": ["context/*"],
+      "@hooks/*": ["hooks/*"],
       "@molecules/*": ["components/molecules/*"],
       "@organisms/*": ["components/organisms/*"],
       "@styles/*": ["styles/*"],

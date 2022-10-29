@@ -20,6 +20,10 @@
   // <start> __ELEMENTS </start>
   &__icon {
     @extend %inputIcon;
+
+    &--noTitle {
+      margin-top: $unit * 0.5;
+    }
   }
 
   &__icon+input,
@@ -40,7 +44,7 @@
 
   &--disabled {
     input {
-      border: 1px dashed var(--shade20);
+      border: $disabledBorderStyle;
     }
 
     #{$base}__icon {

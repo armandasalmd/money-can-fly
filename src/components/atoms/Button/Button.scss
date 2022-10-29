@@ -52,6 +52,7 @@
     box-shadow: none !important;
     color: var(--shade20);
     background-color: var(--shade5);
+    border: $disabledBorderStyle;
 
     &:hover {
       background-color: var(--shade10) !important;
@@ -70,7 +71,7 @@
 
   &--primary {
     background: var(--color-primary);
-    color: var(--shade0);
+    color: $shade0;
 
     &:hover {
       background: var(--bg-button-primary-hover);
@@ -79,7 +80,7 @@
   }
 
   &--tall {
-    height: 40px;
+    height: $inputHeightLarge;
   }
 
   &--text {

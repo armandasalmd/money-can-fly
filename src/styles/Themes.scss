@@ -17,6 +17,7 @@ $themeLightClass: ".theme--light";
   --color-error-outline: #{mix($shade0, $colorError, 25%)};
   --color-placeholder: #95939D;
   --color-primary: #{$colorPrimary};
+  --color-secondary: #{$colorSecondary};
   --color-text: #{$colorTextDark};
   --color-text-inverse: #{$colorTextLight};
   --color-text-primary: #{$colorPrimary};
@@ -38,6 +39,7 @@ $themeLightClass: ".theme--light";
   --shade0: #{$shade0};
 
   --card-shadow: #{$shadowDefault};
+  --dropdown-shadow: #{$shadowDropdown};
 
   color-scheme: light;
   background-color: #fcfcfc;
@@ -54,6 +56,7 @@ $themeLightClass: ".theme--light";
   --color-error-outline: #{mix($shade0, $colorError, 40%)};
   --color-placeholder: #95939D;
   --color-primary: #{$colorPrimaryDark};
+  --color-secondary: #{$colorSecondaryDark};
   --color-text: #{$colorTextLight};
   --color-text-inverse: #{$colorTextDark};
   --color-text-primary: #BBCDFA;
@@ -75,6 +78,7 @@ $themeLightClass: ".theme--light";
   --shade0: #{$shade100};
 
   --card-shadow: #{$shadowDefaultDark};
+  --dropdown-shadow: #{$shadowDefaultDark};
 
   color-scheme: dark;
   background-color: #151515;

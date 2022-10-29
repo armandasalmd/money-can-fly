@@ -1,0 +1,20 @@
+.tSearchForm {
+  $base: &;
+
+  padding: $unit * 0.75;
+  border-bottom: $defaultBorder;
+
+  &__inputs {
+    display: grid;
+    gap: $halfUnit;
+    grid-template-columns: 1fr 1fr;
+
+    #{$base}__spanFull {
+      grid-column: 1 / span 2;
+    }
+  }
+
+  &__button {
+    margin-top: $unit * 0.75;
+  }
+}

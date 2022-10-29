@@ -1,5 +1,7 @@
+import { useRef } from "react";
 import classNames from "classnames";
 import { callIfFunction } from "@utils/Global";
+import { useOutsideClick } from "@hooks/index";
 
 export type ItemSelectHandler = (value: string, label: string, e: React.ChangeEvent<HTMLSelectElement>) => void;
 
@@ -29,11 +31,17 @@ export interface SelectMenuProps {
   items: SelectItem[];
   selectedValue: string;
   onChange: ItemSelectHandler;
+  baseRef: React.RefObject<HTMLDivElement>;
+  close: () => void;
 }
 
 export default function SelectMenu(props: SelectMenuProps) {
+  const thisRef = useRef<HTMLDivElement>(null);
+
+  useOutsideClick(thisRef, props.close, props.baseRef);
+
   return (
-    <div className="selectMenu">
+    <div ref={thisRef} className="selectMenu" style={{width: props.baseRef?.current?.offsetWidth || 100 }}>
       {!props.items && <SelectMenuItem label="No items" value="" selected={false} onClick={() => {}} />}
       {props.items &&
         props.items.map(function (item, index) {

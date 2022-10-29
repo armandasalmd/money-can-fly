@@ -55,3 +55,9 @@ export function toDisplayDate(
   }
   return "unknown";
 }
+
+export function dateFromNow(daysToAdd: number): Date {
+  const date = new Date();
+  date.setDate(date.getDate() + daysToAdd);
+  return date;
+}

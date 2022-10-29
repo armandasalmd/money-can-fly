@@ -12,14 +12,17 @@ function getNavigationButton(pushFn: (path: string) => void, currentPath: string
   return <Button tall key={linkPath} type={buttonType} onClick={() => pushFn(linkPath)}>{text}</Button>;
 }
 
-export default function Navbar() {
+interface NavbarProps {
+  className?: string;
+}
+
+export default function Navbar(props: NavbarProps) {
   const { navbarLinks } = Constants;
   const { user, logout } = useAuth();
   const { theme, setTheme } = useTheme();
   const router = useRouter();
   const displayName = user.displayName || user.email.split("@")[0];
-
-  const classses = classNames("navbar", {});
+  const classses = classNames("navbar", props.className);
 
   function handleLogout() {
     logout();

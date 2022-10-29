@@ -1,0 +1,61 @@
+.checkbox {
+  $base: &;
+
+  display: inline-flex;
+  flex-flow: column;
+
+  &__input {
+    width: $unit * 1.25 + 1px;
+    height: $unit * 1.25 + 1px;
+    background-color: rgba($colorPrimary, 0.1);
+    border: 2px solid var(--color-primary);
+    border-radius: 4px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: content-box;
+  }
+
+  &__input.unchecked {
+    background-color: transparent;
+    border: 2px solid var(--shade30);
+
+    &:hover {
+      border: 2px solid rgba($colorPrimary, 0.5);
+      background-color: rgba($colorPrimary, 0.1);
+    }
+  }
+
+  &__indeterminate {
+    width: $halfUnit + 3px;
+    height: $halfUnit - 4px;
+    background-color: var(--color-primary);
+    border-radius: 2px;
+  }
+  
+  &__checked polyline {
+    stroke-width: 44;
+    stroke: var(--color-primary);
+  }
+
+  &__text {
+    @extend %inputTitle;
+    margin-left: 0;
+    white-space: nowrap;
+    margin-bottom: $unit * .25;
+    user-select: none;
+    color: var(--color-text);
+  }
+
+  &--horizontal {
+    flex-flow: row-reverse;
+    align-items: center;
+    gap: $unit * 0.5;
+
+    #{$base}__text {
+      margin-bottom: 0;
+      font-size: 1rem;
+    }
+  }
+}

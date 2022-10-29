@@ -1,0 +1,81 @@
+.loader {
+  $base: &;
+  $bladeBorderStyle1: 5px solid var(--color-text-primary);
+  $bladeBorderStyle2: 5px solid $colorSecondary;
+
+  @mixin rotate-animation($name, $x1, $y1, $z1, $x2, $y2, $z2) {
+    @keyframes #{$name} {
+      0% {
+        transform: rotateX($x1) rotateY($y1) rotateZ($z1);
+      }
+      100% {
+        transform: rotateX($x2) rotateY($y2) rotateZ($z2);
+      }
+    }
+  }
+
+  @mixin blade-main($animation) {
+    left: 0%;
+    top: 0%;
+    animation: #{$animation} 1.5s linear infinite;
+  }
+
+  @mixin loader-blades($borderStyle) {
+    .one {
+      @include blade-main(rotate-one);
+      border-bottom: $borderStyle;
+    }
+  
+    .two {
+      @include blade-main(rotate-two);
+      border-right: $borderStyle;
+    }
+  
+    .three {
+      @include blade-main(rotate-three);
+      border-top: $borderStyle;
+    }
+  }
+
+  @include loader-blades($bladeBorderStyle1);
+
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+
+  &__wrapper {
+    $size: $unit * 4;
+    width: $size;
+    height: $size;
+    border-radius: 50%;
+    perspective: 400px;
+
+    #{$base}__inner {
+      position: absolute;
+      box-sizing: border-box;
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+    }
+  }
+
+  &__text {
+    font-family: $defaultFont;
+    font-size: 1.1rem;
+    margin-top: $unit;
+    user-select: none;
+    color: var(--color-text);
+  }
+
+  &--secondary {
+    @include loader-blades($bladeBorderStyle2);
+  }
+
+  &--marginY {
+    margin: $unit * 2 0;
+  }
+  
+  @include rotate-animation(rotate-one, 35deg, -45deg, 0deg, 35deg, -45deg, 360deg);
+  @include rotate-animation(rotate-two, 50deg, 10deg, 0deg, 50deg, 10deg, 360deg);
+  @include rotate-animation(rotate-three, 35deg, 55deg, 0deg, 35deg, 55deg, 360deg);
+}

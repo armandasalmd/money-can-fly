@@ -1,0 +1,95 @@
+import { IconComponentType } from "@utils/Types";
+import {
+  Bank,
+  CalendarCheck,
+  Confetti,
+  FirstAid,
+  ForkKnife,
+  Gift,
+  House,
+  Question,
+  ShoppingBag,
+  Student,
+  Tag,
+  TrainSimple,
+} from "phosphor-react";
+
+export interface TransactionCategory {
+  color: string;
+  icon: IconComponentType;
+  name: string;
+}
+
+export type TransactionCategories = {
+  [key: string]: TransactionCategory;
+};
+
+const incomeCategories: TransactionCategories = {
+  deposits: {
+    color: "#5fb041",
+    icon: Bank,
+    name: "Deposits",
+  },
+  salary: {
+    color: "#2c994d",
+    icon: CalendarCheck,
+    name: "Salary",
+  },
+};
+
+const transactionCategories: TransactionCategories = {
+  food: {
+    color: "#FFC107",
+    icon: ForkKnife,
+    name: "Food",
+  },
+  shopping: {
+    color: "#FF5722",
+    icon: ShoppingBag,
+    name: "Shopping",
+  },
+  transport: {
+    color: "#FF9800",
+    icon: TrainSimple,
+    name: "Transport",
+  },
+  health: {
+    color: "#4CAF50",
+    icon: FirstAid,
+    name: "Health",
+  },
+  entertainment: {
+    color: "#2196F3",
+    icon: Confetti,
+    name: "Entertainment",
+  },
+  education: {
+    color: "#673AB7",
+    icon: Student,
+    name: "Education",
+  },
+  home: {
+    color: "#9C27B0",
+    icon: House,
+    name: "Home",
+  },
+  bills: {
+    color: "#3F51B5",
+    icon: Tag,
+    name: "Utility bills",
+  },
+  gifts: {
+    color: "#E91E63",
+    icon: Gift,
+    name: "Gifts",
+  },
+  other: {
+    color: "#69818C",
+    icon: Question,
+    name: "Other",
+  },
+};
+
+const allCategories = {...incomeCategories, ...transactionCategories};
+
+export default allCategories;

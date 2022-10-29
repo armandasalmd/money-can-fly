@@ -1,0 +1,33 @@
+// .tList {}
+
+.tItem {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: $halfUnit;
+  border-bottom: $defaultBorder;
+  align-items: center;
+  padding: 0 $unit * 0.75;
+
+  &:hover {
+    background-color: var(--shade10);
+  }
+
+  &__title {
+    font-size: 1.2rem;
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: var(--color-text);
+  }
+  
+  &__subtitle {
+    color: var(--shade40);
+    font-size: 0.8rem;
+    font-weight: 300;
+    margin-bottom: 0.5rem;
+  }
+
+  &__amount {
+    font-size: 1.2rem;
+    font-weight: 500;
+  }
+}

@@ -1,12 +1,12 @@
 import classNames from "classnames";
+import { ActionColor, Size } from "@utils/Types";
 
-type HeaderColor = "primary" | "success" | "warning" | "error" | "info";
-type HeaderSize = "small" | "medium" | "large";
+type HeaderColor = "primary" | ActionColor;
 
 export interface HeaderProps {
   className?: string;
   color?: HeaderColor;
-  size?: HeaderSize;
+  size?: Size;
   title: string;
   description?: string;
 }

@@ -1,0 +1,59 @@
+.skeletonItem {
+  $base: &;
+
+  height: 60px;
+  display: flex;
+  align-items: center;
+  gap: $unit;
+  padding: 0 $halfUnit;
+
+  div {
+    border-radius: $defaultBorderRadius / 2;
+    background-color: var(--shade10);
+    animation: fadePulse 1.5s infinite ease-in-out;
+  }
+
+  &--transaction {
+    #{$base}__left {
+      width: 32px;
+      height: 32px;
+    }
+
+    #{$base}__right {
+      width: 51px;
+      height: 24px;
+    }
+  }
+
+  &--import {
+    #{$base}__right {
+      width: 26px;
+      height: 26px;
+    }
+  }
+
+  &--borderBottom {
+    border-bottom: 2px solid var(--color-border);
+  }
+  
+  &--borderTop {
+    border-top: 2px solid var(--color-border);
+  }
+
+  &__main {
+    flex-grow: 1;
+
+    #first {
+      width: 80%;
+      height: 18px;
+      margin-bottom: 4px;
+    }
+
+    #second {
+      width: 55%;
+      height: 18px;
+    }
+  }
+
+  
+}

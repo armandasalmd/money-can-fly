@@ -5,10 +5,13 @@ $unit: 16px;
 $halfUnit: $unit * 0.5;
 $defaultBorderRadius: $unit * 0.625;
 $containerBorderRadius: $unit * 0.75;
+$defaultBorder: 1px solid var(--color-border);
 $defaultMargin: $unit;
 $navbarBlur: 6px;
+$navbarHeight: 67px;
 $inputHeight: 38px;
 $inputHeightLarge: 42px;
+$disabledBorderStyle: 2px dashed var(--shade20);
 
 /**
   * ====== FONTS ======
@@ -35,11 +38,11 @@ $shade0: #fff;
 $colorPrimary: #4a63a3;
 $colorPrimaryDark: #3d5183;
 $colorSecondary: #f3c243;
-$colorSecondaryDark: #c06121;
+$colorSecondaryDark: #b38c29;
 
 $colorError: #e95555;
 $colorWarning: #ffbc57;
-$colorInformation: #4585c0;
+$colorInformation: #518ac0;
 $colorSuccess: #338f48;
 
 $colorTextLight: rgba(255, 255, 255, 0.9);

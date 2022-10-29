@@ -1,0 +1,27 @@
+.sidebarHeader {
+  border-left: $defaultBorder;
+  border-bottom: $defaultBorder;
+  display: flex;
+  justify-content: space-between;
+  padding: 0 $unit * 0.75;
+  align-items: center;
+
+  &__titles {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: $unit * 0.125;
+  }
+  
+  &__title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  &__subtitle {
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--shade30);
+  }
+}

@@ -1,4 +1,4 @@
-import { createElement, useState } from "react";
+import { createElement, useState, useRef } from "react";
 import classNames from "classnames";
 import SelectIconSvg from "./SelectIconSvg";
 
@@ -12,7 +12,8 @@ export interface SelectProps {
   icon?: IconComponentType;
   items: SelectItem[];
   name?: string;
-  onChange?(value: string, item: object): void;
+  onChange?: (value: string, name: string) => void;
+  setValue?(value: string, item: object): void;
   placeholder?: string;
   required?: boolean;
   value?: string;
@@ -22,6 +23,7 @@ export interface SelectProps {
 }
 
 export default function Select(props: SelectProps) {
+  const thisRef = useRef<HTMLDivElement>(null);
   const notSelectedItem: SelectItem = { label: props.placeholder || "Please select...", value: "not_selected" };
   const [isOpen, setIsOpen] = useState(false);
   const classes = classNames(
@@ -38,7 +40,7 @@ export default function Select(props: SelectProps) {
   const onChange: ItemSelectHandler = (value, label, e) => {
     e.target.blur(); // remove focus
     setIsOpen(false);
-    callIfFunction(props.onChange, value, { label, value });
+    callIfFunction(props.onChange, value, props.name);
   };
 
   const menuItems = [
@@ -67,9 +69,14 @@ export default function Select(props: SelectProps) {
   })?.label;
 
   return (
-    <div className={classes}>
+    <div className={classes} ref={thisRef}>
       {props.title && <p className="select__title">{props.title}</p>}
-      <div className="select__input" onClick={() => setIsOpen(!isOpen)}>
+      <div
+        className="select__input"
+        onClick={(e) => {
+          setIsOpen(!isOpen);
+        }}
+      >
         <div className="select__inputMain">
           {iconLeft}
           <p className="select__inputText">{selectedLabel || notSelectedItem.label}</p>
@@ -78,12 +85,14 @@ export default function Select(props: SelectProps) {
       </div>
       {isOpen && (
         <SelectMenu
+          close={() => setIsOpen(false)}
+          baseRef={thisRef}
           items={props.required ? props.items : [notSelectedItem, ...props.items]}
           selectedValue={props.value}
           onChange={onChange}
         />
       )}
-      <select name={props.name} value={props.value || notSelectedItem.value} onChange={()=>{}}>
+      <select name={props.name} value={props.value || notSelectedItem.value} onChange={() => {}}>
         {menuItems}
       </select>
     </div>

@@ -1,0 +1,14 @@
+.empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  flex-flow: column;
+  padding: $unit 0;
+  user-select: none;
+
+  &__text {
+    color: $shade50;
+    margin-top: $unit;
+  }
+}

@@ -1,5 +1,6 @@
 import React from "react";
 import { Story, Meta } from "@storybook/react";
+import { ShieldPlus } from "phosphor-react";
 
 import Button, { ButtonProps } from "./Button";
 
@@ -17,11 +18,27 @@ Default.args = {
   wrapContent: true,
 } as ButtonProps;
 
+export const DefaultWithIcon = Template.bind({});
+DefaultWithIcon.args = {
+  children: "Default button",
+  type: "default",
+  wrapContent: true,
+  icon: ShieldPlus,
+} as ButtonProps;
+
 export const Primary = Template.bind({});
 Primary.args = {
   children: "Primary button",
   type: "primary",
   wrapContent: true,
+} as ButtonProps;
+
+export const PrimaryWithIcon = Template.bind({});
+PrimaryWithIcon.args = {
+  children: "Primary button",
+  type: "primary",
+  wrapContent: true,
+  icon: ShieldPlus,
 } as ButtonProps;
 
 export const Easy = Template.bind({});

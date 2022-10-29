@@ -4,6 +4,7 @@
   $paddingY: $unit * 0.85;
 
   @extend %cardBase;
+  position: relative;
 
   &__header {
     padding: $paddingX $paddingY $paddingX / 2 $paddingY;
@@ -26,6 +27,29 @@
     background: rgba($colorError, 0.2);
     color: var(--color-error);
     padding: $paddingX $paddingY;
+  }
+
+  &__loader {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: $containerBorderRadius;
+    background-color: rgba($shade50, 0.2);
+    backdrop-filter: blur(4px);
+
+    p {
+      color: var(--color-text);
+    }
+  }
+
+  &--loading {
+    min-height: $unit * 10;
+
   }
 
   &--noContentPaddingX {

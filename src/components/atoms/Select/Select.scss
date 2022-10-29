@@ -73,15 +73,16 @@
 
 .selectMenu {
   @extend %cardBase;
-  box-shadow: $shadowDropdown;
+  box-shadow: var(--dropdown-shadow);
   position: absolute;
+  z-index: 15;
 
   display: flex;
   flex-direction: column;
-  min-width: $unit * 16;
+  width: $unit * 16;
   max-height: $unit * 20;
   margin-top: 8px;
-  padding: $halfUnit * 0.7 6px;
+  padding: $halfUnit * 0.7 2px $halfUnit * 0.7 6px;
   overflow-y: auto;
 }
 
