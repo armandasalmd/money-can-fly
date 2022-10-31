@@ -27,6 +27,10 @@
     }
   }
 
+  &--fade {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+
   &--success {
     --bg-message: #{rgba($colorSuccess, 20%)};
     --color-message: var(--color-success);

@@ -3,6 +3,7 @@
 
   display: inline-flex;
   flex-flow: column;
+  cursor: pointer;
 
   &__input {
     width: $unit * 1.25 + 1px;
@@ -10,7 +11,6 @@
     background-color: rgba($colorPrimary, 0.1);
     border: 2px solid var(--color-primary);
     border-radius: 4px;
-    cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -36,7 +36,7 @@
   
   &__checked polyline {
     stroke-width: 44;
-    stroke: var(--color-primary);
+    stroke: var(--color-text-primary);
   }
 
   &__text {
@@ -50,6 +50,7 @@
 
   &--horizontal {
     flex-flow: row-reverse;
+    justify-content: flex-end;
     align-items: center;
     gap: $unit * 0.5;
 

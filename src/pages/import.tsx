@@ -1,5 +1,6 @@
-import { Button, SidebarHeaderProps } from "@atoms/index";
-import { AppLayout } from "@templates/index";
+import { SidebarHeaderProps } from "@atoms/index";
+import { ImportSidebar } from "@organisms/index";
+import { AppLayout, ImportsBody } from "@templates/index";
 
 export default function ImportPage() {
   const header: SidebarHeaderProps = {
@@ -10,14 +11,10 @@ export default function ImportPage() {
   return (
     <AppLayout header={header}>
       <AppLayout.Sidebar>
-        <h1>Dashboard sidebar</h1>
+        <ImportSidebar />
       </AppLayout.Sidebar>
       <AppLayout.Content>
-        <div>
-          <Button wrapContent centerText>
-            Welcome to import page!
-          </Button>
-        </div>
+        <ImportsBody />
       </AppLayout.Content>
     </AppLayout>
   );

@@ -14,7 +14,7 @@ const constants = {
       path: "/transactions",
     },
     {
-      title: "Import transactions",
+      title: "Imports",
       path: "/import",
     },
   ],

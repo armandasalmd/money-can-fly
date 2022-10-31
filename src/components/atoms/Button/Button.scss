@@ -25,6 +25,11 @@
 
   svg+p {
     margin-left: 0.5rem;
+    margin-bottom: 0 !important;
+  }
+
+  &--ellipsis {
+    @include ellipsis(1);
   }
 
   &:hover {

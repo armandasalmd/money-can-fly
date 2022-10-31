@@ -1,0 +1,44 @@
+.importConfig {
+  $base: &;
+
+  &__presets {
+    background-color: var(--shade5);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: $halfUnit $unit;
+
+    &List {
+      display: flex;
+      gap: $halfUnit;
+    }
+
+    &Title {
+      font-size: 1.2rem;
+      font-weight: 500;
+      color: var(--shade50);
+    }
+  }
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: $unit;
+    padding: $unit $unit;
+
+    section {
+      #{$base}__sectionTitle {
+        margin-bottom: $unit;
+        color: var(--color-text-primary);
+        font-size: 1.2rem;
+      }
+
+      #{$base}__sectionInputs {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: $unit;
+        margin-bottom: $unit;
+      }
+    }
+  }
+}

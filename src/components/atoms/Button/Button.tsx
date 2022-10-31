@@ -8,6 +8,7 @@ export interface ButtonProps extends PropsWithChildren {
   centerText?: boolean;
   className?: string;
   disabled?: boolean;
+  ellipsis?: boolean;
   icon?: IconComponentType;
   onClick?(): void;
   style?: CSSProperties;
@@ -25,6 +26,7 @@ export default function Button(props: ButtonProps) {
       "button--disabled": props.disabled,
       "button--tall": props.tall,
       "button--wrapContent": props.wrapContent,
+      "button--ellipsis": props.ellipsis,
     },
     props.className
   );

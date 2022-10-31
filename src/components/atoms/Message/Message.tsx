@@ -9,6 +9,7 @@ export interface MessageProps extends PropsWithChildren {
   messageStyle?: MessageStyle;
   colorType: MessageColor;
   onDismiss?(): void;
+  fadeIn?: boolean;
 }
 
 export default function Message(props: MessageProps) {
@@ -18,6 +19,7 @@ export default function Message(props: MessageProps) {
   const classes = classNames("message", {
     [`message--${props.messageStyle}`]: messageStyle,
     [`message--${props.colorType}`]: colorType,
+    "message--fade": props.fadeIn,
   });
 
   return <div className={classes}>

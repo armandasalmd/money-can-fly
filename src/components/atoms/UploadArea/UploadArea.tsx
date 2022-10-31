@@ -11,11 +11,12 @@ export interface UploadAreaProps {
   name: string;
   maxFileSizeInMb: number;
   multiple?: boolean;
+  submitButtonText?: string;
   onChange?: (filesState: FileState) => void;
   onSubmit?: (filesState: FileState) => void;
 }
 
-type FileState = {
+export type FileState = {
   [fileName: string]: File;
 };
 
@@ -56,9 +57,14 @@ export default function UploadArea(props: UploadAreaProps) {
       return acc;
     }, {} as FileState);
 
-    const newState = { ...files, ...filesState };
-    setFiles(newState);
-    callIfFunction(props.onChange, newState);
+    if (props.multiple) {
+      const newState = { ...files, ...filesState };
+      setFiles(newState);
+      callIfFunction(props.onChange, newState);
+    } else {
+      setFiles(filesState);
+      callIfFunction(props.onChange, filesState);
+    }
   }
 
   function onRemove(fileName: string) {
@@ -109,7 +115,7 @@ export default function UploadArea(props: UploadAreaProps) {
       {Object.values(files).length > 0 && (
         <div>
           <Button wrapContent tall type="primary" onClick={onSubmit}>
-            Submit and upload
+            {props.submitButtonText || "Submit and upload"}
           </Button>
         </div>
       )}

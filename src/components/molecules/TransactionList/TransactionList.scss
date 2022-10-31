@@ -1,33 +1,49 @@
 // .tList {}
 
 .tItem {
+  $base: &;
+
   display: grid;
   grid-template-columns: auto 1fr auto;
   gap: $halfUnit;
   border-bottom: $defaultBorder;
   align-items: center;
-  padding: 0 $unit * 0.75;
+  padding: $unit * 0.5 $unit * 0.75;
 
   &:hover {
     background-color: var(--shade10);
   }
 
   &__title {
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: 500;
-    margin-bottom: 0.5rem;
     color: var(--color-text);
+    line-height: 1;
   }
   
   &__subtitle {
-    color: var(--shade40);
-    font-size: 0.8rem;
-    font-weight: 300;
-    margin-bottom: 0.5rem;
+    color: var(--shade30);
+    font-size: 1rem;
+    margin-top: $unit * 0.15;
   }
 
   &__amount {
-    font-size: 1.2rem;
+    font-size: 1.25rem;
     font-weight: 500;
+    color: var(--color-error);
+    margin-right: $unit * 0.25;
+
+  }
+
+  &--positive {
+    background-color: rgba($colorSuccess, 0.1);
+    
+    #{$base}__amount {
+      color: var(--color-success);
+    }
+
+    &:hover {
+      background-color: rgba($colorSuccess, 0.3);
+    }
   }
 }

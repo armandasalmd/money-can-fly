@@ -33,6 +33,7 @@ export default function Select(props: SelectProps) {
       "select--tall": props.tall,
       "select--fixedWidth": props.fixedWidth,
       "select--open": isOpen,
+      "select--required": props.required,
     },
     props.className
   );
@@ -40,7 +41,9 @@ export default function Select(props: SelectProps) {
   const onChange: ItemSelectHandler = (value, label, e) => {
     e.target.blur(); // remove focus
     setIsOpen(false);
-    callIfFunction(props.onChange, value, props.name);
+    if (props.disabled !== true) {
+      callIfFunction(props.onChange, value, props.name);
+    }
   };
 
   const menuItems = [
@@ -74,7 +77,9 @@ export default function Select(props: SelectProps) {
       <div
         className="select__input"
         onClick={(e) => {
-          setIsOpen(!isOpen);
+          if (props.disabled !== true) {
+            setIsOpen(!isOpen);
+          }
         }}
       >
         <div className="select__inputMain">

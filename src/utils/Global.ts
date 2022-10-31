@@ -1,3 +1,10 @@
+import { CheckState } from "./Types";
+
+export function toCheckState(value: boolean | null): CheckState {
+  if (value === null) return "indeterminate";
+  return value ? "checked" : "unchecked";
+}
+
 export function callIfFunction(...args: any[]) {
   if (typeof args[0] === "function") {
     args[0](...args.splice(1));
@@ -60,4 +67,18 @@ export function dateFromNow(daysToAdd: number): Date {
   const date = new Date();
   date.setDate(date.getDate() + daysToAdd);
   return date;
+}
+
+export function dateString(date: Date) {
+  if (date instanceof Date) {
+    const day = date.getDate();
+    const month = date.getMonth() + 1;
+    const year = date.getFullYear();
+
+    return `${year}.${month}.${day}`;
+  }
+}
+
+export function capitalise(str: string) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
 }

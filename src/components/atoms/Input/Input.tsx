@@ -13,7 +13,8 @@ export interface InputProps {
   setValue?(value: string): void;
   style?: CSSProperties;
   name?: string;
-  onChange?(e: React.ChangeEvent<HTMLInputElement>): void;
+  onChange?(value: string, name: string): void;
+  onChangeEvent?(e: React.ChangeEvent<HTMLInputElement>): void;
   onSubmit?(): void;
   required?: boolean;
   password?: boolean;
@@ -45,8 +46,11 @@ export default function Input(props: InputProps) {
   }
 
   function onChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const { name, value } = e.target;
+
+    callIfFunction(props.onChange, value, name || null);
     callIfFunction(props.setValue, e.target.value);
-    callIfFunction(props.onChange, e);
+    callIfFunction(props.onChangeEvent, e);
   }
 
   const iconLeft = props.icon && createElement(props.icon, {

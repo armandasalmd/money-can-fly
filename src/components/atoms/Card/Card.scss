@@ -1,13 +1,13 @@
 .card {
   $base: &;
-  $paddingX: $unit * 0.85;
-  $paddingY: $unit * 0.85;
+  $paddingX: $unit;
+  $paddingY: $unit;
 
   @extend %cardBase;
   position: relative;
 
   &__header {
-    padding: $paddingX $paddingY $paddingX / 2 $paddingY;
+    padding: $paddingX $paddingY;
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
@@ -68,5 +68,11 @@
 
   &--wrap {
     display: inline-block;
+  }
+
+  &--noDivider {
+    #{$base}__header {
+      border-bottom: none;
+    }
   }
 }

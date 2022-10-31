@@ -26,6 +26,7 @@ module.exports = {
       "@hooks": path.resolve(__dirname, "../src/hooks"),
       "@utils": path.resolve(__dirname, "../src/utils"),
       "@styles": path.resolve(__dirname, "../src/styles"),
+      "@context": path.resolve(__dirname, "../src/context"),
     };
     return config;
   },

@@ -1,16 +1,16 @@
 import { useState } from "react";
-import { Calendar, MagnifyingGlass } from "phosphor-react";
+import { MagnifyingGlass } from "phosphor-react";
+import { DateRange, DayPickerRangeProps } from "react-day-picker/dist/index";
 
-import { Button, Input, Select } from "@atoms/index";
+import { Button, Input, Select, DateRangePicker } from "@atoms/index";
 import { Category, Currency } from "@utils/Types";
-import { dateFromNow } from "@utils/Global";
 import { categotyPreset, currencyPreset } from "@utils/SelectPresets";
+import { dateFromNow } from "@utils/Global";
 
 export interface TransactionForm {
   category: Category;
   currency: Currency;
-  dateFrom: Date;
-  dateTo: Date;
+  dateRange: DateRange | undefined;
   searchTerm: string;
 }
 
@@ -22,28 +22,34 @@ export default function TransactionSearchForm(props: TransactionSearchFormProps)
   const [form, setForm] = useState<TransactionForm>({
     category: "other",
     currency: "GBP",
-    dateFrom: dateFromNow(-30),
-    dateTo: dateFromNow(0),
+    dateRange: {
+      from: dateFromNow(-30),
+      to: dateFromNow(0),
+    },
     searchTerm: "",
   });
 
-  function onChange(event: any) {
-    const { name, value } = event.target;
+  function onInputChange(value: string, name: string) {
     setForm({ ...form, [name]: value });
   }
 
-  function onSelectChange(value: string, name: string) {
-    setForm({ ...form, [name]: value });
+  function setDateRange(value: DateRange | undefined) {
+    setForm({ ...form, dateRange: value });
   }
+
+  const pickerOptions: DayPickerRangeProps = {
+    mode: "range",
+    selected: form.dateRange,
+    onSelect: setDateRange
+  };
 
   return (
     <div className="tSearchForm">
       <div className="tSearchForm__inputs">
-        <Input title="Date from" value={form.dateFrom.toDateString()} icon={Calendar} name="dateFrom" placeholder="Date from" onChange={onChange} />
-        <Input title="Date to" value={form.dateTo.toDateString()} icon={Calendar} name="dateTo" placeholder="Date to" onChange={onChange} />
-        <Select items={categotyPreset} title="Category" value={form.category} name="category" onChange={onSelectChange} />
-        <Select items={currencyPreset} title="Currency" value={form.currency} name="currency" onChange={onSelectChange} />
-        <Input className="tSearchForm__spanFull" title="Filter description" value={form.searchTerm} icon={MagnifyingGlass} name="searchTerm" onChange={onChange} />
+        <Select items={categotyPreset} title="Category" value={form.category} name="category" onChange={onInputChange} />
+        <Select items={currencyPreset} title="Currency" value={form.currency} name="currency" onChange={onInputChange} />
+        <DateRangePicker options={pickerOptions} className="tSearchForm__spanFull" title="Transaction date" />
+        <Input className="tSearchForm__spanFull" title="Filter description" value={form.searchTerm} icon={MagnifyingGlass} name="searchTerm" onChange={onInputChange} />
       </div>
       <Button className="tSearchForm__button" centerText type="primary" onClick={() => props.onSubmit(form)}>
         Apply filters
