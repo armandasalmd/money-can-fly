@@ -4,7 +4,8 @@ import SelectIconSvg from "./SelectIconSvg";
 
 import { IconComponentType } from "@utils/Types";
 import { callIfFunction } from "@utils/Global";
-import SelectMenu, { SelectItem, ItemSelectHandler } from "./SelectMenu";
+import SelectMenu, { ItemSelectHandler } from "./SelectMenu";
+import { SelectItem } from "@utils/SelectItems";
 
 export interface SelectProps {
   className?: string;

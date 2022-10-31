@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Story, Meta } from "@storybook/react";
-import { DateRange, DayPickerProps } from "react-day-picker/dist/index";
+import { DateRange, DayPickerRangeProps } from "react-day-picker/dist/index";
 
 import DatePickerRange, { DatePickerRangeProps } from "./DateRangePicker";
 import { dateFromNow } from "@utils/Global";
@@ -15,7 +15,8 @@ function DatePickerRangeWithState(props: DatePickerRangeProps) {
     from: dateFromNow(-30),
     to: dateFromNow(0),
   });
-  const pickerOptions: DayPickerProps = {
+  const pickerOptions: DayPickerRangeProps = {
+    mode: "range",
     selected: dateRange,
     onSelect: setDateRange
   };

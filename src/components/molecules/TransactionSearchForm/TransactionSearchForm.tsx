@@ -4,7 +4,7 @@ import { DateRange, DayPickerRangeProps } from "react-day-picker/dist/index";
 
 import { Button, Input, Select, DateRangePicker } from "@atoms/index";
 import { Category, Currency } from "@utils/Types";
-import { categotyPreset, currencyPreset } from "@utils/SelectPresets";
+import { categotyPreset, currencyPreset } from "@utils/SelectItems";
 import { dateFromNow } from "@utils/Global";
 
 export interface TransactionForm {

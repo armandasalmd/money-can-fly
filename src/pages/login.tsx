@@ -43,7 +43,7 @@ export default function Login() {
     if (user) {
       router.push(pushPath);
     }
-  }, [router, user]);
+  }, [router, user, pushPath]);
 
   return (
     <AuthPage
