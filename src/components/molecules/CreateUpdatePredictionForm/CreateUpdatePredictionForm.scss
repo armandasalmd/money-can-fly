@@ -1,0 +1,65 @@
+.predictionForm {
+  padding: $unit * 0.75;
+  background: var(--bg-card);
+  border-bottom: $defaultBorder;
+
+  &__item {
+    &:not(:last-child) {
+      margin-bottom: $unit * 0.75;
+    }
+
+    &--double {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: $halfUnit;
+    }
+  }
+
+  &__divider {
+    margin: $unit 0;
+    border-bottom: 2px solid var(--shade15);
+    position: relative;
+
+    &::after {
+      position: absolute;
+      content: "";
+      width: $unit * 0.6;
+      height: $unit * 0.6;
+      border-radius: 50%;
+      background: var(--shade15);
+      left: 49%;
+      top: -$unit * 0.2;
+    }
+  }
+
+  &__tip {
+    color: var(--color-text-primary);
+    font-size: 1rem;
+    margin-bottom: $unit;
+  }
+
+  &__week {
+    display: grid;
+    grid-template-columns: $unit * 8 1fr 1fr;
+    gap: $halfUnit;
+
+    &:not(:last-child) {
+      margin-bottom: $unit * 0.75;
+    }
+  }
+
+  &__weekLabel {
+    @extend %inputBase;
+
+    color: var(--color-text);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      outline: none;
+      background: var(--bg-input-hover);
+      @include focusOutline;
+    }
+  }
+}

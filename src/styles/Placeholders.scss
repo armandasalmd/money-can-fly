@@ -29,5 +29,62 @@
   color: var(--shade50);
   position: absolute;
   left: $unit * 0.6;
-  margin-top: $unit * 1.8;
+  margin-top: $unit * 0.5;
+}
+
+%listItemTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-text);
+  line-height: 1;
+}
+
+%listItemSubtitle {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--shade40);
+}
+
+%listItemAmount {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: var(--shade60);
+  transition-property: transform;
+  transition-duration: 0.3s;
+}
+
+%reactDayPickerOverride {
+  --rdp-accent-color: #{$colorPrimary} !important;
+  --rdp-background-color: #{rgba($colorPrimary, 0.3)} !important;
+  /* Dark themes */
+  --rdp-accent-color-dark: #{rgba($colorPrimary, 0.3)} !important;
+  --rdp-background-color-dark: #{$colorPrimary} !important;
+
+  @extend %cardBase;
+  box-shadow: var(--dropdown-shadow);
+  z-index: 11;
+  margin: $unit * 2.75 0 0 0 !important;
+  padding: $unit * 0.5;
+  display: inline-flex;
+  position: absolute;
+  left: 0;
+  background-color: var(--bg-select-menu);
+
+  h2,
+  span {
+    font-family: $specialFont;
+  }
+
+  h2 {
+    font-size: 1.4rem;
+    font-weight: 600;
+  }
+}
+
+%inputRequiredAfterTitle {
+  content: "*";
+  font-size: 1.2rem;
+  color: var(--color-error);
+  margin-left: $unit * 0.125;
+  line-height: 0;
 }

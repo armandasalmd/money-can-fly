@@ -3,25 +3,25 @@ const constants = {
   defaultTitle: "Money Can Fly",
   defaultErrorMessage: "Unexpected error",
   env: process.env.NODE_ENV,
-  navbarLinks: [
-    {
+  navbarLinks: {
+    dashboard: {
       title: "Dashboard",
       path: "/",
-      default: true,
     },
-    {
-      title: "Transactions",
-      path: "/transactions",
-    },
-    {
+    imports: {
       title: "Imports",
       path: "/import",
     },
-  ],
-  publicRoutes: [
-    "/login",
-    "/register",
-  ],
+    predictions: {
+      title: "Predictions",
+      path: "/predictions",
+    },
+    transactions: {
+      title: "Transactions",
+      path: "/transactions",
+    },
+  },
+  publicRoutes: ["/login", "/register"],
 };
 
 export default constants;

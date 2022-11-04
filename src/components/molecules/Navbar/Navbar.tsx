@@ -6,10 +6,24 @@ import { useAuth, useTheme } from "@context/index";
 import { Button, Logo } from "@atoms/index";
 import Constants from "@utils/Constants";
 
-function getNavigationButton(pushFn: (path: string) => void, currentPath: string, linkPath: string, text: string) {
+function getNavigationButton(
+  pushFn: (path: string) => void,
+  currentPath: string,
+  linkPath: string,
+  text: string
+) {
   const buttonType = currentPath === linkPath ? "easy" : "text";
 
-  return <Button tall key={linkPath} type={buttonType} onClick={() => pushFn(linkPath)}>{text}</Button>;
+  return (
+    <Button
+      tall
+      key={linkPath}
+      type={buttonType}
+      onClick={() => pushFn(linkPath)}
+    >
+      {text}
+    </Button>
+  );
 }
 
 interface NavbarProps {
@@ -33,7 +47,9 @@ export default function Navbar(props: NavbarProps) {
     setTheme(theme === "dark" ? "light" : "dark");
   }
 
-  const navButtons = navbarLinks.map((link) => getNavigationButton(router.push, router.pathname, link.path, link.title));
+  const navButtons = Object.values(navbarLinks).map((link) =>
+    getNavigationButton(router.push, router.pathname, link.path, link.title)
+  );
 
   return (
     <div className={classses}>
@@ -44,8 +60,14 @@ export default function Navbar(props: NavbarProps) {
         <div className="navbar__container">{navButtons}</div>
       </div>
       <div className="navbar__right">
-        <Button tall icon={theme === "dark" ? Sun : MoonStars} onClick={toggleTheme} />
-        <Button tall icon={User}>{displayName}</Button>
+        <Button
+          tall
+          icon={theme === "dark" ? Sun : MoonStars}
+          onClick={toggleTheme}
+        />
+        <Button tall icon={User}>
+          {displayName}
+        </Button>
         <Button tall icon={SignOut} onClick={handleLogout} />
       </div>
     </div>

@@ -18,16 +18,27 @@ function DatePickerRangeWithState(props: DatePickerRangeProps) {
   const pickerOptions: DayPickerRangeProps = {
     mode: "range",
     selected: dateRange,
-    onSelect: setDateRange
+    onSelect: setDateRange,
   };
 
   return <DatePickerRange {...props} options={pickerOptions} />;
 }
 
-const Template: Story<DatePickerRangeProps> = (args) => <DatePickerRangeWithState {...args} />;
+const Template: Story<DatePickerRangeProps> = (args) => (
+  <DatePickerRangeWithState {...args} />
+);
 
 export const Default = Template.bind({});
 Default.args = {
   placeholder: "Date range",
   title: "Date range",
+  wrapContent: true,
+} as DatePickerRangeProps;
+
+export const WithDatePresets = Template.bind({});
+WithDatePresets.args = {
+  placeholder: "Date range",
+  title: "Date range",
+  withDatePresets: true,
+  wrapContent: true,
 } as DatePickerRangeProps;

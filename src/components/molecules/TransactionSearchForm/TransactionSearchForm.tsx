@@ -18,12 +18,14 @@ export interface TransactionSearchFormProps {
   onSubmit: (state: TransactionForm) => void;
 }
 
-export default function TransactionSearchForm(props: TransactionSearchFormProps) {
+export default function TransactionSearchForm(
+  props: TransactionSearchFormProps
+) {
   const [form, setForm] = useState<TransactionForm>({
     category: "other",
     currency: "GBP",
     dateRange: {
-      from: dateFromNow(-30),
+      from: dateFromNow(-7),
       to: dateFromNow(0),
     },
     searchTerm: "",
@@ -37,21 +39,54 @@ export default function TransactionSearchForm(props: TransactionSearchFormProps)
     setForm({ ...form, dateRange: value });
   }
 
+  function onSubmit() {
+    props.onSubmit(form);
+  }
+
   const pickerOptions: DayPickerRangeProps = {
     mode: "range",
     selected: form.dateRange,
-    onSelect: setDateRange
+    onSelect: setDateRange,
   };
 
   return (
     <div className="tSearchForm">
       <div className="tSearchForm__inputs">
-        <Select items={categotyPreset} title="Category" value={form.category} name="category" onChange={onInputChange} />
-        <Select items={currencyPreset} title="Currency" value={form.currency} name="currency" onChange={onInputChange} />
-        <DateRangePicker options={pickerOptions} className="tSearchForm__spanFull" title="Transaction date" />
-        <Input className="tSearchForm__spanFull" title="Filter description" value={form.searchTerm} icon={MagnifyingGlass} name="searchTerm" onChange={onInputChange} />
+        <Select
+          items={categotyPreset}
+          title="Category"
+          value={form.category}
+          name="category"
+          onChange={onInputChange}
+        />
+        <Select
+          items={currencyPreset}
+          title="Currency"
+          value={form.currency}
+          name="currency"
+          onChange={onInputChange}
+        />
+        <DateRangePicker
+          options={pickerOptions}
+          className="tSearchForm__spanFull"
+          title="Transaction date"
+        />
+        <Input
+          className="tSearchForm__spanFull"
+          title="Filter description"
+          value={form.searchTerm}
+          icon={MagnifyingGlass}
+          name="searchTerm"
+          onChange={onInputChange}
+          onSubmit={onSubmit}
+        />
       </div>
-      <Button className="tSearchForm__button" centerText type="primary" onClick={() => props.onSubmit(form)}>
+      <Button
+        className="tSearchForm__button"
+        centerText
+        type="primary"
+        onClick={onSubmit}
+      >
         Apply filters
       </Button>
     </div>

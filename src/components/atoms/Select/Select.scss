@@ -40,6 +40,8 @@
     user-select: none;
     color: var(--color-text);
     white-space: nowrap;
+    font-family: $defaultFont;
+    padding-right: $halfUnit;
   }
 
   &__input {
@@ -110,6 +112,7 @@
 
 .selectMenu {
   @extend %cardBase;
+  background-color: var(--bg-select-menu);
   box-shadow: var(--dropdown-shadow);
   position: absolute;
   z-index: 15;
@@ -121,6 +124,10 @@
   margin-top: 8px;
   padding: $halfUnit * 0.7 4px $halfUnit * 0.7 6px;
   overflow-y: auto;
+
+  &--above {
+    bottom: $inputHeight + $halfUnit;
+  }
 }
 
 .selectMenuItem {
@@ -129,6 +136,7 @@
   border-radius: $defaultBorderRadius;
   height: $inputHeight;
   cursor: pointer;
+  user-select: none;
 
   &--selected {
     background-color: rgba($colorPrimary, 0.2);

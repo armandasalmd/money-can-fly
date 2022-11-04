@@ -4,40 +4,55 @@
   $base: &;
 
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: auto 1fr auto auto;
   gap: $halfUnit;
-  border-bottom: $defaultBorder;
+  border-top: $defaultBorder;
   align-items: center;
   padding: $unit * 0.5 $unit * 0.75;
+  overflow: hidden;
 
   &:hover {
     background-color: var(--shade10);
+
+    #{$base}__amount,
+    #{$base}__delete {
+      transform: translateX(0);
+    }
+
+    #{$base}__delete {
+      animation: fadeIn 0.3s ease-in-out;
+      opacity: 1;
+    }
   }
 
   &__title {
-    font-size: 1.1rem;
-    font-weight: 500;
-    color: var(--color-text);
-    line-height: 1;
+    @extend %listItemTitle;
   }
-  
+
   &__subtitle {
-    color: var(--shade30);
-    font-size: 1rem;
-    margin-top: $unit * 0.15;
+    @extend %listItemSubtitle;
   }
 
   &__amount {
-    font-size: 1.25rem;
-    font-weight: 500;
-    color: var(--color-error);
-    margin-right: $unit * 0.25;
+    @extend %listItemAmount;
+    transition-property: transform;
+    transition-duration: 0.3s;
+  }
 
+  &__amount,
+  &__delete {
+    transform: translateX($unit * 1.5);
+  }
+
+  #{$base}__delete {
+    cursor: pointer;
+    user-select: none;
+    opacity: 0;
   }
 
   &--positive {
     background-color: rgba($colorSuccess, 0.1);
-    
+
     #{$base}__amount {
       color: var(--color-success);
     }

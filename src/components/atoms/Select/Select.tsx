@@ -15,6 +15,7 @@ export interface SelectProps {
   name?: string;
   onChange?: (value: string, name: string) => void;
   setValue?(value: string, item: object): void;
+  menuAbove?: boolean;
   placeholder?: string;
   required?: boolean;
   value?: string;
@@ -25,7 +26,10 @@ export interface SelectProps {
 
 export default function Select(props: SelectProps) {
   const thisRef = useRef<HTMLDivElement>(null);
-  const notSelectedItem: SelectItem = { label: props.placeholder || "Please select...", value: "not_selected" };
+  const notSelectedItem: SelectItem = {
+    label: props.placeholder || "Please select...",
+    value: "not_selected",
+  };
   const [isOpen, setIsOpen] = useState(false);
   const classes = classNames(
     "select",
@@ -46,19 +50,6 @@ export default function Select(props: SelectProps) {
       callIfFunction(props.onChange, value, props.name);
     }
   };
-
-  const menuItems = [
-    <option value={notSelectedItem.value} key={notSelectedItem.value} disabled={props.required} hidden={props.required}>
-      {notSelectedItem.label}
-    </option>,
-    ...props.items.map(function (item: SelectItem) {
-      return (
-        <option value={item.value} key={item.value}>
-          {item.label}
-        </option>
-      );
-    }),
-  ];
 
   const iconLeft =
     props.icon &&
@@ -85,7 +76,9 @@ export default function Select(props: SelectProps) {
       >
         <div className="select__inputMain">
           {iconLeft}
-          <p className="select__inputText">{selectedLabel || notSelectedItem.label}</p>
+          <p className="select__inputText">
+            {selectedLabel || notSelectedItem.label}
+          </p>
         </div>
         <SelectIconSvg />
       </div>
@@ -93,14 +86,14 @@ export default function Select(props: SelectProps) {
         <SelectMenu
           close={() => setIsOpen(false)}
           baseRef={thisRef}
-          items={props.required ? props.items : [notSelectedItem, ...props.items]}
+          items={
+            props.required ? props.items : [notSelectedItem, ...props.items]
+          }
           selectedValue={props.value}
           onChange={onChange}
+          menuAbove={props.menuAbove}
         />
       )}
-      <select name={props.name} value={props.value || notSelectedItem.value} onChange={() => {}}>
-        {menuItems}
-      </select>
     </div>
   );
 }

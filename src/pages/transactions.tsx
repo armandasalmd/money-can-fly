@@ -1,4 +1,5 @@
 import { Button, SidebarHeaderProps } from "@atoms/index";
+import { CreateTransactionSidebar } from "@components/organisms";
 import { AppLayout } from "@templates/index";
 
 export default function TransactionsPage() {
@@ -10,7 +11,7 @@ export default function TransactionsPage() {
   return (
     <AppLayout header={header}>
       <AppLayout.Sidebar>
-        <h1>Dashboard sidebar</h1>
+        <CreateTransactionSidebar />
       </AppLayout.Sidebar>
       <AppLayout.Content>
         <div>

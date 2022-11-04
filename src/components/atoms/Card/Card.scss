@@ -16,17 +16,18 @@
     #{$base}__headerActions {
       display: flex;
       gap: $unit;
+      transform: translateY(-$halfUnit * 0.5);
+      margin-bottom: -$halfUnit;
     }
   }
 
   &__content {
-    padding: $paddingX $paddingY;
+    padding: 0 $paddingY $paddingX $paddingY;
   }
 
   &__error {
-    background: rgba($colorError, 0.2);
-    color: var(--color-error);
-    padding: $paddingX $paddingY;
+    margin-top: -$unit * 0.25;
+    margin-bottom: $unit * 0.75 !important;
   }
 
   &__loader {
@@ -49,7 +50,6 @@
 
   &--loading {
     min-height: $unit * 10;
-
   }
 
   &--noContentPaddingX {

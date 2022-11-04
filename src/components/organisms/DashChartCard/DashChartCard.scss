@@ -1,0 +1,17 @@
+.dashChart {
+  $base: &;
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+    gap: $halfUnit;
+
+    #{$base}__chart {
+      flex: 1;
+    }
+
+    #{$base}__filters {
+      display: flex;
+    }
+  }
+}

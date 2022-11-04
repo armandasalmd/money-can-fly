@@ -1,0 +1,23 @@
+.dashboardBody {
+  $base: &;
+
+  padding: $unit * 1.5 3%;
+
+  &__insights {
+    margin-bottom: $unit * 1.5;
+  }
+
+  &__cards {
+    $gap: $unit * 0.75;
+
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: $gap;
+
+    #{$base}__column {
+      display: flex;
+      flex-direction: column;
+      gap: $gap;
+    }
+  }
+}

@@ -6,6 +6,7 @@ import { IconComponentType } from "@utils/Types";
 
 export interface InputProps {
   className?: string;
+  dropdownExtension?: React.ReactNode;
   disabled?: boolean;
   error?: string;
   icon?: IconComponentType;
@@ -53,26 +54,41 @@ export default function Input(props: InputProps) {
     callIfFunction(props.onChangeEvent, e);
   }
 
-  const iconLeft = props.icon && createElement(props.icon, {
-    weight: "bold",
-    size: 20,
-  });
+  const iconLeft =
+    props.icon &&
+    createElement(props.icon, {
+      weight: "bold",
+      size: 20,
+    });
 
   return (
     <div className={classes} style={props.style}>
-      {iconLeft && <div className={classNames("input__icon", {
-        "input__icon--noTitle": !props.title,
-      })}>{iconLeft}</div>}
       {props.title && <p className="input__title">{props.title}</p>}
-      <input
-        name={props.name}
-        disabled={props.disabled}
-        type={props.password ? "password" : "text"}
-        value={props.value || ""}
-        onChange={onChange}
-        placeholder={props.placeholder || "Enter value..."}
-        onKeyUp={props.onSubmit && onKeyUp}
-      />
+      <div
+        className={classNames("input__main", {
+          "input__main--hasDropdown": props.dropdownExtension,
+        })}
+      >
+        {iconLeft && (
+          <div
+            className={classNames("input__icon", {
+              "input__icon--noTitle": !props.title,
+            })}
+          >
+            {iconLeft}
+          </div>
+        )}
+        <input
+          name={props.name}
+          disabled={props.disabled}
+          type={props.password ? "password" : "text"}
+          value={props.value || ""}
+          onChange={onChange}
+          placeholder={props.placeholder || "Enter value..."}
+          onKeyUp={props.onSubmit && onKeyUp}
+        />
+        {props.dropdownExtension ? props.dropdownExtension : null}
+      </div>
       {props.error && <p className="input__error">{props.error}</p>}
     </div>
   );

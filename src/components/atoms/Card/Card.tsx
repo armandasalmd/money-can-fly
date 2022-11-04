@@ -3,7 +3,7 @@ import classNames from "classnames";
 
 import Header, { HeaderProps } from "@atoms/Header/Header";
 import Button, { ButtonType } from "@atoms/Button/Button";
-import { Loader } from "@atoms/index";
+import { Message, Loader } from "@atoms/index";
 import { IconComponentType } from "@utils/Types";
 
 export interface CardHeaderAction {
@@ -43,18 +43,40 @@ export default function Card(props: CardProps) {
   );
 
   const headerActions = props.headerActions?.map((action, index) => (
-    <Button key={index} wrapContent onClick={action.onClick} type={action.type} icon={action.icon}>{action.text}</Button>
+    <Button
+      key={index}
+      wrapContent
+      onClick={action.onClick}
+      type={action.type}
+      icon={action.icon}
+    >
+      {action.text}
+    </Button>
   ));
 
   return (
     <div className={classes} style={props.style}>
       <div className="card__header">
-        {props.header && <Header className="card__headerTitle" {...props.header} />}
-        {props.headerActions && <div className="card__headerActions">{headerActions}</div>}
+        {props.header && (
+          <Header className="card__headerTitle" {...props.header} />
+        )}
+        {props.headerActions && (
+          <div className="card__headerActions">{headerActions}</div>
+        )}
       </div>
-      {props.error && <div className="card__error">{props.error}</div>}
+      {props.error && (
+        <Message className="card__error" colorType="error" fadeIn>
+          {props.error}
+        </Message>
+      )}
       <div className="card__content">{props.children}</div>
-      {props.loading && <Loader className="card__loader" text={props.loadingText} color="secondary" />}
+      {props.loading && (
+        <Loader
+          className="card__loader"
+          text={props.loadingText}
+          color="secondary"
+        />
+      )}
     </div>
   );
 }

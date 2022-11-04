@@ -1,23 +1,35 @@
 .dateRangePicker {
+  $base: &;
+
   position: relative;
-  
-  p {
+  display: flex;
+  gap: $halfUnit;
+  grid-template-columns: auto;
+  align-items: flex-end;
+
+  &--pickerAbove {
+    #{$base}__picker {
+      bottom: $inputHeight + $halfUnit;
+    }
+  }
+
+  &--withSelect {
+    grid-template-columns: auto $unit * 10;
+
+    #{$base}__main {
+      width: auto;
+    }
+  }
+
+  &__label {
     @extend %inputTitle;
   }
-  
+
   &__picker {
-    --rdp-accent-color: #{$colorPrimary} !important;
-    --rdp-background-color: #{rgba($colorPrimary, 0.3)} !important;
-    /* Dark themes */
-    --rdp-accent-color-dark: #{rgba($colorPrimary, 0.3)} !important;
-    --rdp-background-color-dark: #{$colorPrimary} !important;
-    
-    @extend %cardBase;
-    z-index: 11;
-    margin: $unit * 2.75 0 0 0 !important;
-    padding: $unit * 0.5;
-    display: inline-flex;
-    position: absolute;
-    left: 0;
+    @extend %reactDayPickerOverride;
+  }
+
+  &__main {
+    width: 100%;
   }
 }

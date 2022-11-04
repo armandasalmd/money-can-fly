@@ -2,9 +2,11 @@
 @import "@atoms/Card/Card.scss";
 @import "@atoms/CategoryIcon/CategoryIcon.scss";
 @import "@atoms/Checkbox/Checkbox.scss";
+@import "@atoms/DatePicker/DatePicker.scss";
 @import "@atoms/DateRangePicker/DateRangePicker.scss";
 @import "@atoms/Empty/Empty.scss";
 @import "@atoms/Header/Header.scss";
+@import "@atoms/Insight/Insight.scss";
 @import "@atoms/Input/Input.scss";
 @import "@atoms/Loader/Loader.scss";
 @import "@atoms/Logo/Logo.scss";
@@ -14,16 +16,25 @@
 @import "@atoms/SkeletonItem/SkeletonItem.scss";
 @import "@atoms/UploadArea/UploadArea.scss";
 
+@import "@molecules/BorrowList/BorrowList.scss";
+@import "@molecules/CreateUpdatePredictionForm/CreateUpdatePredictionForm.scss";
+@import "@molecules/CreateUpdateTransactionForm/CreateUpdateTransactionForm.scss";
 @import "@molecules/CurrencyInput/CurrencyInput.scss";
 @import "@molecules/ImportList/ImportList.scss";
+@import "@molecules/InsightsCollection/InsightsCollection.scss";
 @import "@molecules/Navbar/Navbar.scss";
 @import "@molecules/Pagination/Pagination.scss";
 @import "@molecules/TransactionList/TransactionList.scss";
 @import "@molecules/TransactionSearchForm/TransactionSearchForm.scss";
 
+@import "@organisms/DashBorrowingsCard/DashBorrowingsCard.scss";
+@import "@organisms/DashCategorySpendingCard/DashCategorySpendingCard.scss";
+@import "@organisms/DashChartCard/DashChartCard.scss";
+@import "@organisms/DashQuickAddCard/DashQuickAddCard.scss";
 @import "@organisms/TransactionSidebar/TransactionSidebar.scss";
 @import "@organisms/ImportConfigForm/ImportConfigForm.scss";
 
 @import "@templates/AppLayout/AppLayout.scss";
 @import "@templates/AuthPage/AuthPage.scss";
+@import "@templates/DashboardBody/DashboardBody.scss";
 @import "@templates/ImportsBody/ImportsBody.scss";

@@ -2,7 +2,12 @@ import { useEffect } from "react";
 import { useRouter } from "next/router";
 
 import { useAuth } from "@context/index";
-import AuthPage, { ActionButton, FormInputState, FormItem } from "@templates/AuthPage/AuthPage";
+import Constants from "@utils/Constants";
+import AuthPage, {
+  ActionButton,
+  FormInputState,
+  FormItem,
+} from "@templates/AuthPage/AuthPage";
 
 export default function Register() {
   const { user, register } = useAuth();
@@ -36,7 +41,7 @@ export default function Register() {
   async function handleSubmit(state: FormInputState) {
     try {
       await register(state.email.value, state.password.value);
-      router.push("/dashboard");
+      router.push(Constants.navbarLinks.dashboard.path);
     } catch (error) {
       console.error(error);
     }

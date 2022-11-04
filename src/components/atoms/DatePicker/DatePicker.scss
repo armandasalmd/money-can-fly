@@ -1,0 +1,21 @@
+.datePicker {
+  $base: &;
+
+  position: relative;
+
+  &__label {
+    @extend %inputTitle;
+  }
+
+  &__picker {
+    @extend %reactDayPickerOverride;
+    right: 0;
+    left: unset;
+  }
+
+  &--required {
+    #{$base}__label::after {
+      @extend %inputRequiredAfterTitle;
+    }
+  }
+}

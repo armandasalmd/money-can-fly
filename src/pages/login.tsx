@@ -2,13 +2,17 @@ import { useEffect } from "react";
 import { useRouter } from "next/router";
 
 import { useAuth } from "@context/index";
-import AuthPage, { ActionButton, FormInputState, FormItem } from "@templates/AuthPage/AuthPage";
+import AuthPage, {
+  ActionButton,
+  FormInputState,
+  FormItem,
+} from "@templates/AuthPage/AuthPage";
 import Constants from "@utils/Constants";
 
 export default function Login() {
   const { user, login } = useAuth();
   const router = useRouter();
-  const pushPath = Constants.navbarLinks.find((o) => o.default === true)?.path || "/";
+  const pushPath = Constants.navbarLinks.dashboard.path || "/";
 
   const actionButton: ActionButton = {
     text: "Create an account",

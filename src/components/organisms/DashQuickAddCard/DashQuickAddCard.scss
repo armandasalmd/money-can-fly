@@ -1,0 +1,35 @@
+.dashQuickAdd {
+  $base: &;
+
+  &__form {
+    padding: 0 $unit $halfUnit;
+
+    #{$base}__rowOne {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: $halfUnit;
+    }
+
+    #{$base}__rowTwo {
+      margin-top: $unit * 0.75;
+      display: flex;
+      align-items: flex-end;
+      gap: $halfUnit;
+
+      :first-child {
+        flex: 1;
+      }
+    }
+  }
+
+  &__label {
+    margin: $unit * 0.5 0 $halfUnit $unit;
+    color: var(--shade50);
+  }
+
+  &__list {
+    overflow-y: hidden;
+    border-bottom-left-radius: $defaultBorderRadius;
+    border-bottom-right-radius: $defaultBorderRadius;
+  }
+}

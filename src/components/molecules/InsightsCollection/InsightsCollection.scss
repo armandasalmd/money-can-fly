@@ -1,0 +1,10 @@
+.insightsCollection {
+  display: grid;
+  gap: $unit * 0.75;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
+
+  &__alignEnd {
+    display: flex;
+    justify-content: flex-end;
+  }
+}

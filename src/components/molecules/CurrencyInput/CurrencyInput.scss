@@ -1,3 +1,9 @@
-.currency {
-  background-color: green;
+.currencyInput {
+  position: relative;
+
+  &--fixedWidth {
+    .selectMenu {
+      width: $unit * 16 !important;
+    }
+  }
 }

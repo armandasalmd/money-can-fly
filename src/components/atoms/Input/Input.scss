@@ -26,8 +26,8 @@
     }
   }
 
-  &__icon+input,
-  &__icon+&__title+input {
+  &__icon + input,
+  &__icon + &__title + input {
     padding-left: $iconSize + 2 * $iconPaddingX !important;
   }
 
@@ -40,6 +40,27 @@
     margin-top: 6px;
     font-size: 0.95rem;
     color: var(--color-error);
+  }
+
+  &__main--hasDropdown {
+    display: flex;
+
+    input {
+      border-radius: $defaultBorderRadius 0 0 $defaultBorderRadius;
+    }
+
+    input + div {
+      cursor: pointer;
+      user-select: none;
+      border-radius: 0 $defaultBorderRadius $defaultBorderRadius 0;
+      background-color: var(--shade10);
+      padding: $halfUnit;
+      color: var(--color-text);
+
+      &:hover {
+        background-color: var(--shade15);
+      }
+    }
   }
 
   &--disabled {
@@ -74,11 +95,7 @@
 
   &--required {
     #{$base}__title::after {
-      content: "*";
-      font-size: 1.2rem;
-      color: var(--color-error);
-      margin-left: $unit * 0.125;
-      line-height: 0;
+      @extend %inputRequiredAfterTitle;
     }
   }
 

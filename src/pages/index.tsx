@@ -2,7 +2,7 @@ import { useState } from "react";
 
 import { SidebarHeaderProps } from "@atoms/index";
 import { TransactionSidebar } from "@organisms/index";
-import { AppLayout } from "@templates/index";
+import { AppLayout, DashboardBody } from "@templates/index";
 
 export default function DashboardPage() {
   const [searchFormOpen, setSearchFormOpen] = useState(true);
@@ -25,7 +25,7 @@ export default function DashboardPage() {
         <TransactionSidebar searchFormOpen={searchFormOpen} />
       </AppLayout.Sidebar>
       <AppLayout.Content>
-        <h1>Dashboard content</h1>
+        <DashboardBody />
       </AppLayout.Content>
     </AppLayout>
   );

@@ -9,6 +9,7 @@ $themeLightClass: ".theme--light";
 // Global color variables
 #{$themeLightClass} {
   --bg-card: white;
+  --bg-select-menu: white;
   --bg-navbar: white;
   --bg-input: rgba(167, 164, 174, 0.09);
   --bg-input-hover: rgba(167, 164, 174, 0.13);
@@ -49,6 +50,7 @@ $themeLightClass: ".theme--light";
 // Global color variables for dark
 #{$themeDarkClass} {
   --bg-card: #282828;
+  --bg-select-menu: #373738;
   --bg-navbar: #282828;
   --bg-input: rgba(167, 164, 174, 0.12);
   --bg-input-hover: rgba(167, 164, 174, 0.07);
@@ -62,10 +64,10 @@ $themeLightClass: ".theme--light";
   --color-text: #{$colorTextLight};
   --color-text-inverse: #{$colorTextDark};
   --color-text-primary: #BBCDFA;
-  --color-warning: #ff9d5b;
-  --color-information: #34b6ff;
-  --color-success: #23b944;
-  --color-error: #F86262;
+  --color-error: #{$colorErrorDark};
+  --color-warning: #{$colorWarningDark};
+  --color-information: #{$colorInformationDark};
+  --color-success: #{$colorSuccessDark};
   --shade100: #{$shade0};
   --shade80: #{$shade5};
   --shade70: #{$shade10};
@@ -87,5 +89,9 @@ $themeLightClass: ".theme--light";
 
   p.text {
     color: #{$colorTextLight};
+  }
+
+  .invertColors {
+    filter: invert(1) hue-rotate(180deg) saturate(2);
   }
 }

@@ -1,0 +1,17 @@
+.tForm {
+  padding: $unit * 0.75;
+  background: var(--bg-card);
+  border-bottom: $defaultBorder;
+
+  &__item {
+    &:not(:last-child) {
+      margin-bottom: $unit * 0.75;
+    }
+
+    &--double {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: $halfUnit;
+    }
+  }
+}

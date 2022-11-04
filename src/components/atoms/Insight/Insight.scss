@@ -1,0 +1,99 @@
+.insight {
+  @extend %cardBase;
+
+  --color-shader: rgba(255, 188, 87, 0.3);
+
+  background: linear-gradient(
+    45deg,
+    var(--bg-card) 0%,
+    var(--bg-card),
+    var(--color-shader) 100%
+  );
+
+  padding: $unit * 0.75 $unit;
+  display: flex;
+  flex-direction: column;
+  gap: $unit * 0.5;
+
+  &__title {
+    font-weight: $specialFont;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  label {
+    font-family: $specialFont;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: text;
+  }
+
+  p.hint {
+    font-family: $specialFont;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--shade40);
+    margin-bottom: $halfUnit;
+  }
+
+  h1 {
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--shade70);
+    margin-bottom: $unit * 0.35;
+
+    span {
+      font-size: 1.1rem;
+      font-weight: 400;
+      margin-left: $halfUnit;
+    }
+  }
+
+  &:hover {
+    box-shadow: 0px 0px 8px 8px rgba(0, 0, 0, 0.08);
+  }
+
+  &--success {
+    color: var(--color-success);
+    --color-shader: #{rgba($colorSuccess, 0.3)};
+  }
+
+  &--warning {
+    color: var(--color-warning);
+    --color-shader: #{rgba($colorWarning, 0.3)};
+  }
+
+  &--error {
+    color: var(--color-error);
+    --color-shader: #{rgba($colorError, 0.2)};
+  }
+
+  &--info {
+    color: var(--color-information);
+    --color-shader: #{rgba($colorInformation, 0.3)};
+  }
+}
+
+#{$themeDarkClass} {
+  .insight {
+    &--success {
+      --color-shader: #{rgba($colorSuccessDark, 0.3)};
+    }
+
+    &--warning {
+      --color-shader: #{rgba($colorWarningDark, 0.3)};
+    }
+
+    &--error {
+      --color-shader: #{rgba($colorErrorDark, 0.3)};
+    }
+
+    &--info {
+      --color-shader: #{rgba($colorInformationDark, 0.3)};
+    }
+
+    &:hover {
+      box-shadow: 0px 0px 8px 8px rgba(255, 255, 255, 0.2);
+    }
+  }
+}
