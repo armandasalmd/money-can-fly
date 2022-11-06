@@ -19,3 +19,26 @@ export function percentForDisplay(percent: number): string {
     maximumFractionDigits: 2,
   }).format(percent);
 }
+
+export function parseCurrency(text: string, onlyPositive: boolean): number {
+  if (!text || text === "") {
+      return 0;
+  } else if (text === "-") {
+      return onlyPositive ? NaN : 0;
+  } else if (text.match(/(\d|\.|\,)$/)) {
+      text = text.replace(",", ".");
+
+      let commaCount = text.match(/\./g);
+
+      if (commaCount && commaCount.length > 1) {
+          return NaN;
+      }
+      
+      const parsed = parseFloat(text);
+      const rounded = Math.floor(parsed * 100) / 100;
+
+      return rounded === parsed ? parsed : NaN;
+  }
+
+  return NaN;
+}

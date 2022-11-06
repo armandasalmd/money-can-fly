@@ -42,6 +42,7 @@
     display: grid;
     grid-template-columns: $unit * 8 1fr 1fr;
     gap: $halfUnit;
+    align-items: flex-end;
 
     &:not(:last-child) {
       margin-bottom: $unit * 0.75;
@@ -55,6 +56,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    
 
     &:hover {
       outline: none;

@@ -9,7 +9,7 @@ interface AppLayoutProps extends PropsWithChildren {
 const AppLayout = (props: AppLayoutProps) => {
   const subComponents = Object.keys(AppLayout).map((key) => {
     return Children.map(props.children, (child: ReactElement<PropsWithChildren, NamedExoticComponent>) => {
-      return child.type.name === key ? child : null;
+      return child.type.displayName === key ? child : null;
     });
   });
 

@@ -3,6 +3,7 @@ import classNames from "classnames";
 import { Money, Currency } from "@utils/Types";
 import { Input, InputProps, SelectMenu } from "@atoms/index";
 import { currencyPreset } from "@utils/SelectItems";
+import { parseCurrency } from "@utils/Currency";
 
 type MyInputProps = Omit<
   InputProps,
@@ -12,39 +13,26 @@ type MyInputProps = Omit<
 export interface CurrencyInputProps extends MyInputProps {
   value: Required<Money>;
   onChange: (money: Money, name: string) => void;
-  nonNegative?: boolean;
+  onlyPositive?: boolean;
 }
 
 export default function CurrencyInput(props: CurrencyInputProps) {
-  const { nonNegative, value, onChange, ...rest } = props;
+  const { onlyPositive, value, onChange, ...rest } = props;
   const thisRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
-  const [trailingComma, setTrailingComma] = useState(false);
+  const [text, setText] = useState("");
   const classes = classNames("currencyInput", {
     "currencyInput--fixedWidth": props.fixedWidth,
   });
 
   function valueChange(v: string, name: string) {
-    let endsWithComma = v.endsWith(".") || v.endsWith(",");
+    const amount = parseCurrency(v, onlyPositive);
 
-    if (endsWithComma) {
-      v = v.slice(0, -1);
-    }
-
-    let parsed = parseFloat(v);
-
-    if (v === "") {
-      parsed = 0;
-    }
-
-    if (!isNaN(parsed) && (!nonNegative || parsed > 0)) {
-      if (trailingComma !== endsWithComma) {
-        setTrailingComma(endsWithComma);
-      }
-
+    if (!isNaN(amount)) {
+      setText(v);
       onChange(
         {
-          amount: parsed === 0 ? 0 : Math.floor(parsed * 100) / 100,
+          amount,
           currency: value.currency,
         },
         name
@@ -68,7 +56,7 @@ export default function CurrencyInput(props: CurrencyInputProps) {
       <Input
         {...rest}
         placeholder="0.00"
-        value={value.amount.toString() + (trailingComma ? "." : "")}
+        value={text}
         onChange={valueChange}
         dropdownExtension={inputDropdown}
       />

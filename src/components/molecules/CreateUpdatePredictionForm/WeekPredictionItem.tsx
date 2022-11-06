@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { WeekPrediction } from "@utils/Types";
 import { Input } from "@atoms/index";
+import { parseCurrency } from "@utils/Currency";
 
 interface WeekPredictionItemProps {
   week: WeekPrediction;
@@ -16,15 +17,11 @@ export default function WeekPredictionItem(props: WeekPredictionItemProps) {
   );
 
   function inputChange(value: string, name: string) {
-    let num = parseFloat(value);
-
-    if (isNaN(num) && value === "") {
-      num = 0;
-    }
+    let num = parseCurrency(value, true);
 
     if (!isNaN(num)) {
       props.onChange({ ...props.week, [name]: num });
-
+  
       if (name === "moneyIn") {
         setInValue(value);
       } else {
@@ -41,12 +38,14 @@ export default function WeekPredictionItem(props: WeekPredictionItemProps) {
         name="moneyIn"
         onChange={inputChange}
         value={inValue}
+        title="Money in"
       />
       <Input
         placeholder="Money out"
         name="moneyOut"
         onChange={inputChange}
         value={outValue}
+        title="Money out"
       />
     </div>
   );
