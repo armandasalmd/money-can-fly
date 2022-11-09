@@ -16,8 +16,8 @@ export default function TransactionFullList(props: PredictionPreviewListProps) {
     <div className="tFullList">
       <div className="tFullList__filters">Filters section</div>
       <div className="tFullList__items">
-        {currentData()?.map((t) => (
-          <TransactionFullListItem {...t} />
+        {currentData()?.map((t, index) => (
+          <TransactionFullListItem {...t} key={index} />
         ))}
       </div>
       {maxPage > 1 && (
