@@ -6,7 +6,7 @@ export { default as DatePeriodSelect, getPeriodNow } from "./DatePeriodSelect/Da
 export { default as DatePicker } from "./DatePicker/DatePicker";
 export { default as DateRangePicker } from "./DateRangePicker/DateRangePicker";
 export { default as Empty } from "./Empty/Empty";
-export { default as Header } from "./Header/Header";
+export { default as Header, type HeaderProps } from "./Header/Header";
 export { default as Input, type InputProps } from "./Input/Input";
 export { default as Insight } from "./Insight/Insight";
 export { default as Loader } from "./Loader/Loader";

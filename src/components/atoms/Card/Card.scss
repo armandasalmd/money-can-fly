@@ -15,7 +15,7 @@
 
     #{$base}__headerActions {
       display: flex;
-      gap: $unit;
+      gap: $halfUnit;
       transform: translateY(-$halfUnit * 0.5);
       margin-bottom: -$halfUnit;
     }

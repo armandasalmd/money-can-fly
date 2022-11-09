@@ -24,7 +24,9 @@ export type Category =
   | "gifts"
   | "other"
   | "deposits"
-  | "salary";
+  | "salary"
+  | "trendUp"
+  | "trendDown";
 export type ImportState = "running" | "success" | "error";
 export type TransactionBank = "barclays" | "revolut" | "cash";
 export type ImportPresetType = Exclude<TransactionBank, "cash"> | "custom";
@@ -66,7 +68,8 @@ export interface WeekPrediction {
 }
 
 export interface MonthPrediction {
-  month: DateRange;
+  period: DateRange;
   currency: Currency;
   predictions: WeekPrediction[];
+  totalChange?: number;
 }

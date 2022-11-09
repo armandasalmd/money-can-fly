@@ -1,0 +1,58 @@
+
+
+.predictionList {
+  
+  &__item {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    grid-template-rows: auto auto;
+    position: relative;
+    padding: $halfUnit $unit;
+    cursor: pointer;
+    user-select: none;
+    border-top: 1px solid var(--shade10);
+    border-bottom: 0px solid var(--shade10); // fixes color transition
+
+    &--selected {
+      background-color: rgba($colorSecondary, 0.1) !important;
+
+      ::after {
+        content: "";
+        width: $unit * 0.8;
+        height: $unit * 0.8;
+        border-radius: 50%;
+        position: absolute;
+        background-color: var(--color-secondary);
+        right: $unit * 0.75;
+        top: calc(50% - #{$unit * 0.4});
+      }
+    }
+
+    &:hover {
+      background-color: var(--shade5);
+
+    }
+    
+    &:last-child {
+      border-bottom-left-radius: $defaultBorderRadius;
+      border-bottom-right-radius: $defaultBorderRadius;
+    }
+  }
+
+  &__itemIcon {
+    grid-row: 1 / span 2;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: $unit * 0.75;
+  }
+
+  &__itemTitle {
+    font-weight: 500;
+  }
+
+  &__itemSubtitle {
+    font-size: 1.1rem;
+    color: var(--shade40);
+  }
+}

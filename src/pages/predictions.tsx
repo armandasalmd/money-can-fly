@@ -1,6 +1,6 @@
-import { Button, SidebarHeaderProps } from "@atoms/index";
+import { SidebarHeaderProps } from "@atoms/index";
 import { CreatePredictionSidebar } from "@components/organisms";
-import { AppLayout } from "@templates/index";
+import { AppLayout, PredictionsBody } from "@templates/index";
 
 export default function PredictionsPage() {
   const header: SidebarHeaderProps = {
@@ -14,9 +14,7 @@ export default function PredictionsPage() {
         <CreatePredictionSidebar />
       </AppLayout.Sidebar>
       <AppLayout.Content>
-        <div>
-          <Button wrapContent>Welcome to Predictions page! Hehe</Button>
-        </div>
+        <PredictionsBody />
       </AppLayout.Content>
     </AppLayout>
   );

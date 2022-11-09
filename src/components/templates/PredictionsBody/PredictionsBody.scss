@@ -1,0 +1,16 @@
+
+.predictionsBody {
+  padding: $unit * 1.5 3%;
+  display: grid;
+  grid-template-areas: "periods chart";
+  grid-template-columns: 1fr 2fr;
+  gap: $unit;
+
+  &__periods {
+    grid-area: periods;
+  }
+
+  &__chart {
+    grid-area: chart;
+  }
+}

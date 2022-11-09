@@ -1,0 +1,36 @@
+.tFullList {
+
+  $base: &;
+  $item: #{$base}Item;
+  padding-bottom: $unit;
+
+  &__filters {
+    font-size: 2rem;
+    color: red;
+  }
+
+  &__items {
+
+    #{$item} {
+      padding: $unit * 0.75;
+      border-top: $defaultBorder;
+      
+      
+      &:hover {
+        background-color: var(--bg-input);
+      }
+      
+      &:last-child {
+        border-bottom: $defaultBorder;
+      }
+
+    }
+  }
+
+
+  &__pagination {
+    margin-top: $unit;
+    display: flex;
+    justify-content: center;
+  }
+}

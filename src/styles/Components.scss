@@ -24,6 +24,8 @@
 @import "@molecules/InsightsCollection/InsightsCollection.scss";
 @import "@molecules/Navbar/Navbar.scss";
 @import "@molecules/Pagination/Pagination.scss";
+@import "@molecules/PredictionPreviewList/PredictionPreviewList.scss";
+@import "@molecules/TransactionFullList/TransactionFullList.scss";
 @import "@molecules/TransactionList/TransactionList.scss";
 @import "@molecules/TransactionSearchForm/TransactionSearchForm.scss";
 
@@ -38,3 +40,5 @@
 @import "@templates/AuthPage/AuthPage.scss";
 @import "@templates/DashboardBody/DashboardBody.scss";
 @import "@templates/ImportsBody/ImportsBody.scss";
+@import "@templates/PredictionsBody/PredictionsBody.scss";
+@import "@templates/TransactionsBody/TransactionsBody.scss";

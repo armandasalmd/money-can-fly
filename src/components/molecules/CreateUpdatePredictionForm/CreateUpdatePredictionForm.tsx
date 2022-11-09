@@ -24,7 +24,7 @@ function getDefaultWeekPrediction(): WeekPrediction[] {
   }
 
   weeks.push({
-    label: `Day 29 - End`,
+    label: "Day 29 - End",
     week: 5,
     moneyIn: 0,
     moneyOut: 0,
@@ -38,7 +38,7 @@ export default function CreateUpdatePredictionForm(
 ) {
   const [formState, setFormState] = useState<MonthPrediction>(
     props.prediction || {
-      month: getPeriodNow(),
+      period: getPeriodNow(),
       currency: "GBP",
       predictions: getDefaultWeekPrediction(),
     }
@@ -60,13 +60,13 @@ export default function CreateUpdatePredictionForm(
       <div className="predictionForm__item predictionForm__item--double">
         <DatePeriodSelect
           title="Monthly period"
-          value={formState.month}
+          value={formState.period}
           monthsAhead={12}
           monthsBehind={12}
           onChange={(range: DateRange) => {
             setFormState({
               ...formState,
-              month: range,
+              period: range,
             });
           }}
         />

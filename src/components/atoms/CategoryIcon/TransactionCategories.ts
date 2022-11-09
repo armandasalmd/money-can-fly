@@ -12,6 +12,8 @@ import {
   Student,
   Tag,
   TrainSimple,
+  TrendUp,
+  TrendDown
 } from "phosphor-react";
 
 export interface TransactionCategory {
@@ -34,6 +36,11 @@ const incomeCategories: TransactionCategories = {
     color: "#2c994d",
     icon: CalendarCheck,
     name: "Salary",
+  },
+  trendUp: {
+    color: "#338f48",
+    icon: TrendUp,
+    name: "Trend up"
   },
 };
 
@@ -88,6 +95,11 @@ const transactionCategories: TransactionCategories = {
     icon: Question,
     name: "Other",
   },
+  trendDown: {
+    color: "#f86262",
+    icon: TrendDown,
+    name: "Trend down"
+  }
 };
 
 const allCategories = {...incomeCategories, ...transactionCategories};
