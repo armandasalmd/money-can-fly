@@ -4,7 +4,7 @@ import { Bank, CurrencyGbp, CurrencyDollar, CurrencyEur, Coin, Article, Tag, Bra
 import { Button, Checkbox, Card, Message, Select, Input } from "@atoms/index";
 import importPresets, { ImportFormState, ImportPreset } from "./ImportPresets";
 import { capitalise, toCheckState } from "@utils/Global";
-import { bankNames, defaultCurrency } from "@utils/SelectItems";
+import { bankNamesPreset, currencyPreset } from "@utils/SelectItems";
 import { SelectItem } from "@utils/SelectItems";
 import { ImportCsvReader } from "@utils/CsvReader";
 
@@ -125,7 +125,7 @@ export default function ImportConfigForm(props: ImportConfigFormProps) {
             <p className="importConfig__sectionTitle">Import settings</p>
             <div className="importConfig__sectionInputs">
               <Select
-                items={bankNames}
+                items={bankNamesPreset}
                 name="bank"
                 icon={Bank}
                 required
@@ -134,7 +134,7 @@ export default function ImportConfigForm(props: ImportConfigFormProps) {
                 onChange={onInputChange}
               />
               <Select
-                items={defaultCurrency}
+                items={currencyPreset}
                 name="defaultCurrency"
                 icon={currencyIcons[formState.defaultCurrency]}
                 required

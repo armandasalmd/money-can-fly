@@ -6,7 +6,7 @@ export interface EmptyProps {
 
 export default function Empty(props: EmptyProps) {
   return (
-    <div className="empty">
+    <div className="empty invertColors">
       <Image width={128} height={128} alt="no data" src="/images/no-data.svg" />
       <p className="empty__text">
         {props.text ? props.text : "Nothing to display"}

@@ -2,7 +2,6 @@
   $base: &;
 
   padding: $unit * 0.75;
-  border-bottom: $defaultBorder;
 
   &__inputs {
     display: grid;
@@ -15,6 +14,6 @@
   }
 
   &__button {
-    margin-top: $unit * 0.75;
+    margin-top: $unit;
   }
 }

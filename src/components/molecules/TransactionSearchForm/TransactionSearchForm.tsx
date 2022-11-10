@@ -3,18 +3,26 @@ import { MagnifyingGlass } from "phosphor-react";
 import { DateRange, DayPickerRangeProps } from "react-day-picker/dist/index";
 
 import { Button, Input, Select, DateRangePicker } from "@atoms/index";
-import { Category, Currency } from "@utils/Types";
-import { categotyPreset, currencyPreset } from "@utils/SelectItems";
+import { Category, Currency, TransactionStatusFilter } from "@utils/Types";
+import {
+  amountFilterPreset,
+  categotyPreset,
+  currencyPreset,
+  transactionStatusPreset,
+} from "@utils/SelectItems";
 import { dateFromNow } from "@utils/Global";
 
 export interface TransactionForm {
-  category: Category;
-  currency: Currency;
+  amountFilter: string | undefined;
+  statusFilter: TransactionStatusFilter | undefined;
+  category: Category | undefined;
+  currency: Currency | undefined;
   dateRange: DateRange | undefined;
   searchTerm: string;
 }
 
 export interface TransactionSearchFormProps {
+  showStatusFilter?: boolean;
   onSubmit: (state: TransactionForm) => void;
 }
 
@@ -22,8 +30,10 @@ export default function TransactionSearchForm(
   props: TransactionSearchFormProps
 ) {
   const [form, setForm] = useState<TransactionForm>({
-    category: "other",
-    currency: "GBP",
+    amountFilter: undefined,
+    statusFilter: undefined,
+    category: undefined,
+    currency: undefined,
     dateRange: {
       from: dateFromNow(-7),
       to: dateFromNow(0),
@@ -31,7 +41,7 @@ export default function TransactionSearchForm(
     searchTerm: "",
   });
 
-  function onInputChange(value: string, name: string) {
+  function onInputChange(value: string | boolean, name: string) {
     setForm({ ...form, [name]: value });
   }
 
@@ -53,6 +63,7 @@ export default function TransactionSearchForm(
     <div className="tSearchForm">
       <div className="tSearchForm__inputs">
         <Select
+          placeholder="All"
           items={categotyPreset}
           title="Category"
           value={form.category}
@@ -60,10 +71,27 @@ export default function TransactionSearchForm(
           onChange={onInputChange}
         />
         <Select
+          placeholder="All"
           items={currencyPreset}
           title="Currency"
           value={form.currency}
           name="currency"
+          onChange={onInputChange}
+        />
+        <Select
+          placeholder="All"
+          items={transactionStatusPreset}
+          title="Status filter"
+          value={form.statusFilter}
+          name="statusFilter"
+          onChange={onInputChange}
+        />
+        <Select
+          placeholder="None"
+          items={amountFilterPreset}
+          title="Amount filter"
+          value={form.amountFilter}
+          name="amountFilter"
           onChange={onInputChange}
         />
         <DateRangePicker

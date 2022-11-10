@@ -3,7 +3,7 @@ import { DateRange } from "react-day-picker";
 
 import { WeekPrediction, MonthPrediction } from "@utils/Types";
 import { Button, DatePeriodSelect, Select, getPeriodNow } from "@atoms/index";
-import { defaultCurrency } from "@utils/SelectItems";
+import { currencyPreset } from "@utils/SelectItems";
 import WeekPredictionItem from "./WeekPredictionItem";
 
 export interface CreateUpdatePredictionFormProps {
@@ -71,7 +71,7 @@ export default function CreateUpdatePredictionForm(
           }}
         />
         <Select
-          items={defaultCurrency}
+          items={currencyPreset}
           title="Currency"
           name="currency"
           required

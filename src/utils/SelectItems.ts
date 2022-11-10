@@ -1,4 +1,4 @@
-import { TransactionBank, Currency } from "@utils/Types";
+import { TransactionBank, Currency, TransactionStatusFilter } from "@utils/Types";
 import Categories from "@atoms/CategoryIcon/TransactionCategories";
 
 export type SelectItemsObject<T extends string> = { [key in T]: string };
@@ -19,11 +19,25 @@ const bankNamesSelect: SelectItemsObject<TransactionBank> = {
   cash: "Cash",
 };
 
-const defaultCurrencySelect: SelectItemsObject<Currency> = {
+const currencySelect: SelectItemsObject<Currency> = {
   USD: "USD",
   EUR: "EUR",
   GBP: "GBP",
 };
+
+const transactionStatusFilterSelect: SelectItemsObject<TransactionStatusFilter> = {
+  active: "Active",
+  inactive: "Inactive",
+};
+
+const amountFilterSelect: SelectItemsObject<any> = {
+  incomeOnly: "Income only",
+  moneyOutMoreThan10: ">10 spent",
+  moneyOutMoreThan25: ">25 spent",
+  moneyOutMoreThan50: ">50 spent",
+  moneyOutMoreThan100: ">100 spent",
+  moneyOutMoreThan250: ">250 spent",
+}
 
 export const categotyPreset: SelectItem[] = Object.keys(Categories).map((
   key,
@@ -32,20 +46,7 @@ export const categotyPreset: SelectItem[] = Object.keys(Categories).map((
   value: key,
 }));
 
-export const currencyPreset: SelectItem[] = [
-  {
-    label: "USD",
-    value: "USD",
-  },
-  {
-    label: "EUR",
-    value: "EUR",
-  },
-  {
-    label: "GBP",
-    value: "GBP",
-  },
-];
-
-export const bankNames = toSelectItems(bankNamesSelect);
-export const defaultCurrency = toSelectItems(defaultCurrencySelect);
+export const amountFilterPreset = toSelectItems(amountFilterSelect);
+export const bankNamesPreset = toSelectItems(bankNamesSelect);
+export const currencyPreset = toSelectItems(currencySelect);
+export const transactionStatusPreset = toSelectItems(transactionStatusFilterSelect);

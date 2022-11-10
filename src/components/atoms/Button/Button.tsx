@@ -49,7 +49,7 @@ export default function Button(props: ButtonProps) {
           size: 20,
           color: iconColor,
         })}
-      {props.children && <p>{props.children}</p>}
+      {typeof props.children === "string" ? <p>{props.children}</p> : props.children}
     </div>
   );
 }

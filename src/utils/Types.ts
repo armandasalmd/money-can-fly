@@ -31,6 +31,7 @@ export type ImportState = "running" | "success" | "error";
 export type TransactionBank = "barclays" | "revolut" | "cash";
 export type ImportPresetType = Exclude<TransactionBank, "cash"> | "custom";
 export type FormMode = "create" | "update";
+export type TransactionStatusFilter = "active" | "inactive";
 
 export interface Money {
   amount: number;
@@ -47,9 +48,11 @@ export interface Borrowing {
 export interface Transaction extends Money {
   id?: string;
   date: Date;
+  inserted: Date;
   category: Category;
   description: string;
   source: TransactionBank;
+  active: boolean;
 }
 
 export interface Import {

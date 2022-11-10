@@ -5,18 +5,24 @@ import { callIfFunction } from "@utils/Global";
 import { CheckState } from "@utils/Types";
 
 export interface CheckboxProps {
+  className?: string;
   onCheck?(state: CheckState, checked: boolean): void;
   onChange?(value: boolean, name: string): void;
   name?: string;
   horizontal?: boolean;
-  title: string;
+  title?: string;
   value: CheckState;
 }
 
 export default function Checkbox(props: CheckboxProps) {
-  const classes = classNames("checkbox",`checkbox--${props.value}`, {
-    "checkbox--horizontal": props.horizontal,
-  });
+  const classes = classNames(
+    "checkbox",
+    `checkbox--${props.value}`,
+    {
+      "checkbox--horizontal": props.horizontal,
+    },
+    props.className
+  );
 
   function onCheck() {
     const newValue = props.value === "unchecked" ? "checked" : "unchecked";
@@ -26,12 +32,14 @@ export default function Checkbox(props: CheckboxProps) {
 
   return (
     <div className={classes} onClick={onCheck}>
-      <p className="checkbox__text">
-        {props.title}
-      </p>
+      {props.title && <p className="checkbox__text">{props.title}</p>}
       <div className={`checkbox__input ${props.value}`}>
-        {props.value === "indeterminate" && <div className="checkbox__indeterminate" />}
-        {props.value === "checked" && <Check className="checkbox__checked" weight="bold" size={16} />}
+        {props.value === "indeterminate" && (
+          <div className="checkbox__indeterminate" />
+        )}
+        {props.value === "checked" && (
+          <Check className="checkbox__checked" weight="bold" size={16} />
+        )}
       </div>
     </div>
   );

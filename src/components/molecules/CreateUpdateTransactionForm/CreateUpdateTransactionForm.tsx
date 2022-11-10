@@ -5,7 +5,7 @@ import { useState } from "react";
 import { FormMode, Money, Transaction } from "@utils/Types";
 import { Button, Input, Select, DatePicker } from "@atoms/index";
 import { CurrencyInput } from "@molecules/index";
-import { bankNames, categotyPreset } from "@utils/SelectItems";
+import { bankNamesPreset, categotyPreset } from "@utils/SelectItems";
 
 export interface CreateUpdateTransactionFormProps {
   transaction?: Transaction;
@@ -25,6 +25,8 @@ export default function CreateUpdateTransactionForm(
       date: new Date(),
       description: "",
       source: "cash",
+      active: true,
+      inserted: new Date(),
     }
   );
 
@@ -77,7 +79,7 @@ export default function CreateUpdateTransactionForm(
       <div className="tForm__item tForm__item--double">
         <Select
           name="source"
-          items={bankNames}
+          items={bankNamesPreset}
           title="Source or bank"
           value={formState.source}
           icon={Bank}
@@ -92,7 +94,7 @@ export default function CreateUpdateTransactionForm(
           value={formState.date}
         />
       </div>
-      <div className="tForm__item">
+      <div className="tForm__submit">
         <Button centerText type="primary">
           {formMode === "create" ? "Create transaction" : "Update transaction"}
         </Button>

@@ -3,7 +3,7 @@
   background: var(--bg-card);
   border-bottom: $defaultBorder;
 
-  &__item {
+  &__item, &__submit {
     &:not(:last-child) {
       margin-bottom: $unit * 0.75;
     }
@@ -13,5 +13,9 @@
       grid-template-columns: 1fr 1fr;
       gap: $halfUnit;
     }
+  }
+
+  &__submit {
+    margin-top: $unit;
   }
 }

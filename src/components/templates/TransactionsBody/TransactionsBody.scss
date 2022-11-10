@@ -1,6 +1,24 @@
-
-
 .transactionsBody {
-  padding: $unit * 1.5 3%;
+  $base: &;
+  $gapTop: $unit * 1.5;
 
+  padding: $gapTop 3%;
+  display: grid;
+  grid-template-columns: 1fr 2fr;
+  gap: $unit;
+
+  &__filters {
+    grid-column: 1;
+    align-self: start;
+    position: sticky;
+    top: $gapTop;
+  }
+
+  &__transactions {
+    grid-column: 2;
+  }
+
+  &__header {
+    margin-bottom: $unit;
+  }
 }

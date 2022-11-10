@@ -9,7 +9,7 @@ import {
   mockTransactions,
 } from "@molecules/index";
 import constants from "@utils/Constants";
-import { bankNames, categotyPreset } from "@utils/SelectItems";
+import { bankNamesPreset, categotyPreset } from "@utils/SelectItems";
 import { Category, Money, TransactionBank } from "@utils/Types";
 
 const recentQuicAdds = mockTransactions.slice(0, 3);
@@ -77,7 +77,7 @@ export default function DashQuickAddCard() {
             onChange={inputChange}
           />
           <Select
-            items={bankNames}
+            items={bankNamesPreset}
             icon={Bank}
             name="bank"
             title="Source of money"

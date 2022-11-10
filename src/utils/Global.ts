@@ -1,3 +1,4 @@
+import { IconProps } from "phosphor-react";
 import { CheckState } from "./Types";
 
 export function toCheckState(value: boolean | null): CheckState {
@@ -82,3 +83,9 @@ export function dateString(date: Date) {
 export function capitalise(str: string) {
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
+
+export const iconOptions: IconProps = {
+  weight: "bold",
+  size: 20,
+  color: "var(--shade40)",
+};
