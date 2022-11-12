@@ -1,24 +1,69 @@
 .transactionsBody {
+  --bg-header: #{rgba($shade5, 0.55)};
+
   $base: &;
   $gapTop: $unit * 1.5;
 
-  padding: $gapTop 3%;
   display: grid;
   grid-template-columns: 1fr 2fr;
-  gap: $unit;
+  grid-template-rows: auto 1fr;
+  height: calc(100vh - #{$navbarHeight});
+  overflow-y: hidden;
 
   &__filters {
     grid-column: 1;
-    align-self: start;
-    position: sticky;
-    top: $gapTop;
-  }
+    grid-row: 1 / span 2;
+    border-right: $defaultBorder;
 
+    & > div {
+      background-color: var(--bg-card);
+      border-bottom: $defaultBorder;
+    }
+
+    &Header {
+      @include headerGradient();
+      padding-left: $unit * 0.75;
+      padding-top: $unit * 0.75;
+    }
+  }
+  
   &__transactions {
     grid-column: 2;
-  }
+    grid-row: 2;
+    overflow-y: auto;
 
+    & > :not(#{$base}__header) {
+      padding: $unit 3%;
+    }
+  }
+  
   &__header {
-    margin-bottom: $unit;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    grid-column: 2;
+    grid-row: 1;
+    background-color: var(--bg-header);
+    backdrop-filter: blur(4px);
+    padding: $unit 3%;
+    border-bottom: $defaultBorder;
+    padding: $halfUnit $unit * 0.75;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    h2 {
+      @include headerGradient();
+    }
+    
+    #{$base}__Subtitle {
+      color: var(--shade40);
+    }
+  }
+}
+
+#{$themeDarkClass} {
+  .transactionsBody {
+    --bg-header: #{rgba($shade70, 0.65)};
   }
 }

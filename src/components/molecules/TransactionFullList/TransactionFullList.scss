@@ -115,14 +115,15 @@
   }
 
   &__pagination {
-    @extend %cardBase;
+    background: var(--bg-card);
     box-shadow: var(--dropdown-shadow);
-    
+    border-top-left-radius: $containerBorderRadius;
+    border-top-right-radius: $containerBorderRadius;
     margin-top: $unit;
     display: flex;
     justify-content: center;
     position: fixed;
-    bottom: $unit;
+    bottom: 0;
     left: 50%;
     transform: translate(-50%, 0);
     padding: $halfUnit;

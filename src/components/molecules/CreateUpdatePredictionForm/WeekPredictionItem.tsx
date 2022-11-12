@@ -34,14 +34,16 @@ export default function WeekPredictionItem(props: WeekPredictionItemProps) {
     <div className="predictionForm__week">
       <div className="predictionForm__weekLabel">{props.week.label}</div>
       <Input
-        placeholder="Money in"
+        disabled={props.week.week === -1}
+        placeholder={props.week.moneyIn.toString()}
         name="moneyIn"
         onChange={inputChange}
         value={inValue}
         title="Money in"
       />
       <Input
-        placeholder="Money out"
+        disabled={props.week.week === -1}
+        placeholder={props.week.moneyOut.toString()}
         name="moneyOut"
         onChange={inputChange}
         value={outValue}

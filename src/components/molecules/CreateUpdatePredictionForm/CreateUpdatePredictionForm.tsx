@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { DateRange } from "react-day-picker";
 
 import { WeekPrediction, MonthPrediction } from "@utils/Types";
@@ -43,6 +43,7 @@ export default function CreateUpdatePredictionForm(
       predictions: getDefaultWeekPrediction(),
     }
   );
+  const [totalPrediction, setTotalPrediction] = useState<WeekPrediction | null>(null);
 
   function inputChange(value: string | DateRange, name: string) {
     setFormState({ ...formState, [name]: value });
@@ -54,6 +55,21 @@ export default function CreateUpdatePredictionForm(
     );
     setFormState({ ...formState, predictions });
   }
+
+  useEffect(() => {
+    setTotalPrediction({
+      week: -1,
+      label: "Total",
+      moneyIn: formState.predictions.reduce(
+        (acc, o) => acc + o.moneyIn,
+        0
+      ),
+      moneyOut: formState.predictions.reduce(
+        (acc, o) => acc + o.moneyOut,
+        0
+      ),
+    });
+  }, [formState]);
 
   return (
     <div className="predictionForm">
@@ -91,6 +107,11 @@ export default function CreateUpdatePredictionForm(
             onChange={weekPredictionChange}
           />
         ))}
+        {totalPrediction && <WeekPredictionItem
+          key={totalPrediction.week}
+          week={totalPrediction}
+          onChange={() => {}}
+        />}
       </div>
       <Button
         centerText

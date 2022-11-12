@@ -112,7 +112,7 @@ export default function TransactionSearchForm(
       <Button
         className="tSearchForm__button"
         centerText
-        type="primary"
+        type="easy"
         onClick={onSubmit}
       >
         Apply filters

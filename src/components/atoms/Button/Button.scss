@@ -1,8 +1,8 @@
 .button {
   --bg-button: var(--bg-input);
   --bg-button-hover: var(--bg-input-hover);
-  --bg-button-easy: rgba(71, 110, 216, 0.15);
-  --bg-button-easy-hover: rgba(71, 110, 216, 0.2);
+  --bg-button-easy: rgba(71, 110, 216, 0.18);
+  --bg-button-easy-hover: rgba(71, 110, 216, 0.22);
   --bg-button-easy-outline: rgba(46, 84, 190, 0.4);
   --bg-button-primary-hover: #{mix($shade100, $colorPrimary, 10%)};
   --bg-button-primary-outline: rgba(46, 84, 190, 0.2);
@@ -116,8 +116,9 @@
   .button {
     --bg-button: #{$shade80};
     --bg-button-hover: #{$shade70};
+    --bg-button-easy: rgba(92, 130, 234, 0.2);
     --bg-button-easy-hover: rgba(122, 152, 236, 0.3);
-    --bg-button-easy-outline: rgba(122, 152, 236, 0.4);
+    --bg-button-easy-outline: rgba(122, 152, 236, 0.6);
     --bg-button-danger: #{mix($shade100, $colorError, 50%)};
     --bg-button-danger-hover: #{mix($shade100, $colorError, 20%)};
 
