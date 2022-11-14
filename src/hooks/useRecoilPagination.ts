@@ -71,6 +71,7 @@ export default function useRecoilPagination<SingleItemType>(
     if (state.loading === null) {
       init();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return {

@@ -15,13 +15,13 @@ function PaginationWithState(props: PaginationProps) {
     console.log("Page changed to", page);
   }, [page]);
 
-  return <Pagination {...props} onChange={setPage} />;
+  return <Pagination {...props} jump={setPage} />;
 }
 
 const Template: Story<PaginationProps> = (args) => <PaginationWithState {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {
-  pageCount: 10,
-  defaultPage: 2,
+  currentPage: 1,
+  maxPage: 10,
 } as PaginationProps;

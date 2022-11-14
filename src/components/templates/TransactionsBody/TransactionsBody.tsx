@@ -16,7 +16,7 @@ export default function TransactionsBody() {
   function scrollListToTop() {
     const list = document.querySelector(".transactionsBody__transactions");
     
-    if (list) {
+  if (list) {
       list.scrollTo({ 
         behavior: "smooth",
         top: 0,  
@@ -30,6 +30,7 @@ export default function TransactionsBody() {
     return () => {
       setSelectedTransactions([]);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
