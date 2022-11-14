@@ -2,10 +2,10 @@
   --bg-header: #{rgba($shade5, 0.55)};
 
   $base: &;
-  $gapTop: $unit * 1.5;
+  $extraSpaceX: 12vw;
 
   display: grid;
-  grid-template-columns: 1fr 2fr;
+  grid-template-columns: 1.2fr 2fr;
   grid-template-rows: auto 1fr;
   height: calc(100vh - #{$navbarHeight});
   overflow-y: hidden;
@@ -13,17 +13,21 @@
   &__filters {
     grid-column: 1;
     grid-row: 1 / span 2;
-    border-right: $defaultBorder;
-
-    & > div {
-      background-color: var(--bg-card);
-      border-bottom: $defaultBorder;
+    
+    #{$base}__header {
+      border-right: $defaultBorder;
+    }
+    
+    #{$base}__filterForm {
+      @extend %cardBase;
     }
 
-    &Header {
-      @include headerGradient();
-      padding-left: $unit * 0.75;
-      padding-top: $unit * 0.75;
+    & > :not(#{$base}__header) {
+      padding: $unit $unit * 0.6 0;
+    }
+
+    & > * {
+      padding-left: calc(#{$unit} + #{$extraSpaceX}) !important;
     }
   }
   
@@ -33,7 +37,11 @@
     overflow-y: auto;
 
     & > :not(#{$base}__header) {
-      padding: $unit 3%;
+      padding: $unit $unit $unit $unit * 0.6;
+    }
+
+    & > * {
+      padding-right: calc(#{$unit} + #{$extraSpaceX}) !important;
     }
   }
   
@@ -45,9 +53,8 @@
     grid-row: 1;
     background-color: var(--bg-header);
     backdrop-filter: blur(4px);
-    padding: $unit 3%;
     border-bottom: $defaultBorder;
-    padding: $halfUnit $unit * 0.75;
+    padding: $unit * 0.25 $unit;
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -58,6 +65,11 @@
     
     #{$base}__Subtitle {
       color: var(--shade40);
+    }
+
+    &Actions {
+      display: flex;
+      gap: $halfUnit;
     }
   }
 }

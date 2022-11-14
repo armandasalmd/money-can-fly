@@ -36,7 +36,7 @@ export default function Button(props: ButtonProps) {
   if (props.type === "primary") {
     iconColor = "white";
   } else if (props.type === "danger") {
-    iconColor = "var(--danger)";
+    iconColor = "var(--color-danger)";
   } else if (props.type === "easy" || props.type === "transparent") {
     iconColor = "var(--color-text-primary)";
   }

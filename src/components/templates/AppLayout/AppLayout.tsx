@@ -1,9 +1,10 @@
+import classNames from "classnames";
 import { PropsWithChildren, Children, ReactElement, NamedExoticComponent } from "react";
 import { Navbar } from "@molecules/index";
 import SidebarHeader, { SidebarHeaderProps } from "@atoms/SidebarHeader/SidebarHeader";
 
 interface AppLayoutProps extends PropsWithChildren {
-  header: SidebarHeaderProps;
+  header?: SidebarHeaderProps;
 }
 
 const AppLayout = (props: AppLayoutProps) => {
@@ -12,11 +13,15 @@ const AppLayout = (props: AppLayoutProps) => {
       return child.type.displayName === key ? child : null;
     });
   });
+  
+  const classes = classNames("app", {
+    "app--noHeader": !props.header,
+  });
 
   return (
-    <div className="app">
+    <div className={classes}>
       <Navbar className="app__navbar" />
-      <SidebarHeader {...props.header} className="app__sidebarHeader" />
+      {props.header && <SidebarHeader {...props.header} className="app__sidebarHeader" />}
       {subComponents}
     </div>
   );

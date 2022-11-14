@@ -1,45 +1,18 @@
-import { useState } from "react";
 import { MagnifyingGlass } from "phosphor-react";
 import { DateRange, DayPickerRangeProps } from "react-day-picker/dist/index";
+import { useRecoilState } from "recoil";
 
 import { Button, Input, Select, DateRangePicker } from "@atoms/index";
-import { Category, Currency, TransactionStatusFilter } from "@utils/Types";
 import {
   amountFilterPreset,
   categotyPreset,
   currencyPreset,
   transactionStatusPreset,
 } from "@utils/SelectItems";
-import { dateFromNow } from "@utils/Global";
+import { filterFormState } from "@recoil/transactions/atoms";
 
-export interface TransactionForm {
-  amountFilter: string | undefined;
-  statusFilter: TransactionStatusFilter | undefined;
-  category: Category | undefined;
-  currency: Currency | undefined;
-  dateRange: DateRange | undefined;
-  searchTerm: string;
-}
-
-export interface TransactionSearchFormProps {
-  showStatusFilter?: boolean;
-  onSubmit: (state: TransactionForm) => void;
-}
-
-export default function TransactionSearchForm(
-  props: TransactionSearchFormProps
-) {
-  const [form, setForm] = useState<TransactionForm>({
-    amountFilter: undefined,
-    statusFilter: undefined,
-    category: undefined,
-    currency: undefined,
-    dateRange: {
-      from: dateFromNow(-7),
-      to: dateFromNow(0),
-    },
-    searchTerm: "",
-  });
+export default function TransactionSearchForm() {
+  const [form, setForm] = useRecoilState(filterFormState);
 
   function onInputChange(value: string | boolean, name: string) {
     setForm({ ...form, [name]: value });
@@ -50,7 +23,10 @@ export default function TransactionSearchForm(
   }
 
   function onSubmit() {
-    props.onSubmit(form);
+    // fetch new data
+    // change recoil state
+    // else will automatically re-render
+    console.log("Submit form", form);
   }
 
   const pickerOptions: DayPickerRangeProps = {

@@ -8,6 +8,7 @@
   --bg-button-primary-outline: rgba(46, 84, 190, 0.2);
   --bg-button-danger: #{mix($shade0, $colorError, 80%)};
   --bg-button-danger-hover: #{mix($shade0, $colorError, 90%)};
+  --color-danger: #{$colorError};
 
   cursor: pointer;
   border-radius: $defaultBorderRadius;
@@ -43,7 +44,7 @@
   }
 
   &--danger {
-    color: $colorError;
+    color: var(--color-danger);
     background: var(--bg-button-danger);
 
     &:hover {
@@ -121,9 +122,6 @@
     --bg-button-easy-outline: rgba(122, 152, 236, 0.6);
     --bg-button-danger: #{mix($shade100, $colorError, 50%)};
     --bg-button-danger-hover: #{mix($shade100, $colorError, 20%)};
-
-    &--danger {
-      color: #{mix($shade0, $colorError, 90%)};
-    }
+    --color-danger: #{mix($shade0, $colorError, 90%)};
   }
 }

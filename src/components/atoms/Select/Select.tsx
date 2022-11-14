@@ -28,7 +28,7 @@ export default function Select(props: SelectProps) {
   const thisRef = useRef<HTMLDivElement>(null);
   const notSelectedItem: SelectItem = {
     label: props.placeholder || "Please select...",
-    value: "not_selected",
+    value: "",
   };
   const [isOpen, setIsOpen] = useState(false);
   const classes = classNames(

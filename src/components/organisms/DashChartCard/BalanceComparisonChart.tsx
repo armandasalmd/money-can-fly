@@ -43,8 +43,6 @@ export const data = {
       label: "Expected",
       backgroundColor: "rgb(75, 192, 192)",
       data: labels.map(() => faker.datatype.number({ min: 0, max: 5645 })),
-      borderColor: "white",
-      borderWidth: 2,
     },
   ],
 };

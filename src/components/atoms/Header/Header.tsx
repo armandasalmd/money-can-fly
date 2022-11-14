@@ -22,7 +22,6 @@ export default function Header(props: HeaderProps) {
 
   return (
     <div className={classes}>
-      <div className="header__line" />
       {props.size === "large" && <h2>{props.title}</h2>}
       {(!props.size || props.size === "medium") && <h3>{props.title}</h3>}
       {props.size === "small" && <h4>{props.title}</h4>}

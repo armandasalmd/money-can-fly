@@ -27,6 +27,7 @@
       "@hooks/*": ["hooks/*"],
       "@molecules/*": ["components/molecules/*"],
       "@organisms/*": ["components/organisms/*"],
+      "@recoil/*": ["recoil/*"],
       "@styles/*": ["styles/*"],
       "@templates/*": ["components/templates/*"],
       "@utils/*": ["utils/*"]

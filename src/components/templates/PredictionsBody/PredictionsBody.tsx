@@ -22,7 +22,7 @@ function getCardHeader(p: MonthPrediction): HeaderProps {
       currency: p.currency,
       amount: p.totalChange || 0,
     })}`,
-    color: "warning",
+    color: "info",
   };
 }
 

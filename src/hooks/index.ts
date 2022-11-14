@@ -1,4 +1,4 @@
 export { default as useDebounce } from "./useDebounce";
 export { default as useOutsideClick } from "./useOutsideClick";
-export { default as usePagination } from "./usePagination";
+export { default as useRecoilPagination, type IRecoilPaginationState, type IRecoilPaginationFetchResponse } from "./useRecoilPagination";
 export { default as useTimeout } from "./useTimeout";

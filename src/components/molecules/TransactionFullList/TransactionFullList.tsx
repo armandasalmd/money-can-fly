@@ -1,24 +1,23 @@
-import { useState } from "react";
-import { Transaction } from "@utils/Types";
+import { useRecoilValue } from "recoil";
+
 import TransactionFullListItem from "./TransactionFullListItem";
 import { Pagination, mockTransactions } from "@molecules/index";
-import { usePagination } from "@hooks/index";
+import { useRecoilPagination, IRecoilPaginationFetchResponse } from "@hooks/index";
+import { Transaction } from "@utils/Types";
+import { Empty } from "@atoms/index";
+import { pagedTransactionsState, filterFormState, TransactionForm } from "@recoil/transactions/atoms";
 
-// 1. Delete selected should should select count (<count>). Also this button should be hidden if no transactions are selected.
-// 2. Clicking edit action, should transfer Transaction object to "Create/Edit Transaction sidebar".
-// 3. Card header UX design should change. That bar is not looking cool
-// 4. Pagination should work with mock transaction data list
-
-export interface PredictionPreviewListProps {}
+export interface PredictionPreviewListProps {
+  selectedTransactions: Transaction[];
+  setSelectedTransactions: (transactions: Transaction[]) => void;
+  scrollToTop: () => void;
+}
 
 export default function TransactionFullList(props: PredictionPreviewListProps) {
-  const [selectedTransactions, setSelectedTransactions] = useState<
-    Transaction[]
-  >([]);
-  const { currentData, maxPage, jump } = usePagination<Transaction>(
-    mockTransactions,
-    20
-  );
+  const { selectedTransactions, setSelectedTransactions } = props;
+  const filterForm = useRecoilValue(filterFormState);
+  const { currentData, currentPage, maxPage, jump, isEmpty } = useRecoilPagination<Transaction>(
+    pagedTransactionsState, mockFetchTransactions, postPageChange);
 
   function onSelect(t: Transaction) {
     if (selectedTransactions.includes(t)) {
@@ -30,10 +29,32 @@ export default function TransactionFullList(props: PredictionPreviewListProps) {
     }
   }
 
+  async function mockFetchTransactions(page: number, size: number): Promise<IRecoilPaginationFetchResponse<Transaction>> {
+    const filteredList = mockTransactions.filter((item) => {
+      let isMatch = true;
+
+      if (filterForm.currency) {
+        return item.currency === filterForm.currency;
+      }
+
+      return isMatch;
+    });
+
+    return Promise.resolve({
+      totalItems: mockTransactions.length,
+      items: filteredList.slice((page - 1) * size, page * size),
+    });
+  }
+
+  function postPageChange(items: Transaction[]) {
+    setSelectedTransactions([]);
+    props.scrollToTop();
+  }
+
   return (
     <div className="tFullList">
       <div className="tFullList__items">
-        {currentData()?.map((t, index) => (
+        {currentData?.map((t, index) => (
           <TransactionFullListItem
             onSelect={onSelect}
             selected={selectedTransactions.includes(t)}
@@ -41,10 +62,13 @@ export default function TransactionFullList(props: PredictionPreviewListProps) {
             key={index}
           />
         ))}
+        {isEmpty ? (
+          <div className="tFullList__empty"><Empty text="No transactions found" /></div>
+        ) : null}
       </div>
-      {maxPage > 0 && (
+      {maxPage > 0 && !isEmpty && (
         <div className="tFullList__pagination">
-          <Pagination pageCount={maxPage} onChange={jump} />
+          <Pagination jump={jump} maxPage={maxPage} currentPage={currentPage} />
         </div>
       )}
     </div>

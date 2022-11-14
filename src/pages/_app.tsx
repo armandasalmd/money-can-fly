@@ -1,6 +1,7 @@
 import Head from "next/head";
 import { useRouter } from "next/router";
 import NextNProgress from "nextjs-progressbar";
+import { RecoilRoot } from "recoil";
 
 import "@styles/Global.scss";
 import { AuthContextProvider, ThemeContextProvider } from "@context/index";
@@ -13,17 +14,19 @@ function MyApp({ Component, pageProps }) {
   return (
     <AuthContextProvider>
       <ThemeContextProvider>
-        <NextNProgress />
-        <Head>
-          <title>{Constants.defaultTitle}</title>
-        </Head>
-        {Constants.publicRoutes.includes(router.pathname) ? (
-          <Component {...pageProps} />
-        ) : (
-          <ProtectedRoute>
+        <RecoilRoot>
+          <NextNProgress />
+          <Head>
+            <title>{Constants.defaultTitle}</title>
+          </Head>
+          {Constants.publicRoutes.includes(router.pathname) ? (
             <Component {...pageProps} />
-          </ProtectedRoute>
-        )}
+          ) : (
+            <ProtectedRoute>
+              <Component {...pageProps} />
+            </ProtectedRoute>
+          )}
+        </RecoilRoot>
       </ThemeContextProvider>
     </AuthContextProvider>
   );
