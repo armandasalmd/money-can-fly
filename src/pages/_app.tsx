@@ -18,6 +18,7 @@ function MyApp({ Component, pageProps }) {
           <NextNProgress />
           <Head>
             <title>{Constants.defaultTitle}</title>
+            <link rel="icon" href="/logo.svg" />
           </Head>
           {Constants.publicRoutes.includes(router.pathname) ? (
             <Component {...pageProps} />

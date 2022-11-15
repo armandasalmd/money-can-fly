@@ -27,6 +27,11 @@
   100% { opacity: 1; }
 }
 
+@keyframes fadeOut {
+  0% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
 @keyframes fixedPaginationFadeIn {
   0% { 
     opacity: 0.3;
@@ -35,5 +40,34 @@
   100% { 
     opacity: 1;
     transform: translate(-50%, 0);
+  }
+}
+
+@keyframes authFadeInLeft {
+  0% { 
+    opacity: 0.5;
+    transform: translateX(10%);
+  }
+  100% { 
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInFromRight {
+  0% { 
+    transform: translateX(100%);
+  }
+  100% { 
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideOutToRight {
+  0% { 
+    transform: translateX(0);
+  }
+  100% { 
+    transform: translateX(100%);
   }
 }

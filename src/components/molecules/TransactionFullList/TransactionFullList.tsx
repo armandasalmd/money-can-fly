@@ -5,7 +5,7 @@ import { Pagination, mockTransactions } from "@molecules/index";
 import { useRecoilPagination, IRecoilPaginationFetchResponse } from "@hooks/index";
 import { Transaction } from "@utils/Types";
 import { Empty } from "@atoms/index";
-import { pagedTransactionsState, filterFormState, TransactionForm } from "@recoil/transactions/atoms";
+import { pagedTransactionsState, filterFormState } from "@recoil/transactions/atoms";
 
 export interface PredictionPreviewListProps {
   selectedTransactions: Transaction[];

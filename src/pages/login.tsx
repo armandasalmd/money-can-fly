@@ -55,7 +55,7 @@ export default function Login() {
       formItems={formItems}
       onSubmit={handleSubmit}
       submitText="Login"
-      title="Login"
+      title="Welcome back!"
     />
   );
 }

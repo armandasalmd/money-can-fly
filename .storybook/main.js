@@ -27,6 +27,7 @@ module.exports = {
       "@utils": path.resolve(__dirname, "../src/utils"),
       "@styles": path.resolve(__dirname, "../src/styles"),
       "@context": path.resolve(__dirname, "../src/context"),
+      "@recoil": path.resolve(__dirname, "../src/recoil"),
     };
     return config;
   },

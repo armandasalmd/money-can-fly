@@ -39,7 +39,10 @@ export default function AuthPage(props: AuthFormProps) {
   const router = useRouter();
   const { setSuspend } = useTheme();
 
-  const defaultState = props.formItems.reduce<FormInputState>(function (acc, item: FormItem) {
+  const defaultState = props.formItems.reduce<FormInputState>(function (
+    acc,
+    item: FormItem
+  ) {
     return {
       ...acc,
       [item.name]: {
@@ -47,7 +50,8 @@ export default function AuthPage(props: AuthFormProps) {
         error: "",
       },
     };
-  }, {});
+  },
+  {});
 
   const [formState, setFormState] = useState(defaultState);
 
@@ -87,6 +91,7 @@ export default function AuthPage(props: AuthFormProps) {
         onSubmit={handleSubmit}
         error={getError(item.name)}
         password={item.isPassword}
+        white
       />
     );
   });
@@ -101,27 +106,40 @@ export default function AuthPage(props: AuthFormProps) {
 
   return (
     <div className="auth">
-      <Image className="auth__background" alt="login-background" src="/images/login-bg-gradient.svg" layout="fill" style={{zIndex: 8}} />
+      <Image
+        className="auth__background"
+        alt="login-background"
+        src="/images/unsplash/sunset.jpg"
+        layout="fill"
+      />
       <div className="auth__container">
-        <div className="auth__logo">
-          <Logo size="L" />
-        </div>
-        <div className="auth__main">
-          <div className="auth__card">
-            <h1 className="auth__cardTitle">{props.title}</h1>
-            <div className="auth__cardBody">
-              {inputs}
-              {props.generalError && <p className="auth__error">{props.generalError}</p>}
-              {props.termsWarning && (
-                <p className="auth__termsWarning">By creating an account you agree with Terms and Conditions</p>
-              )}
+        <div className="auth__card">
+          <div className="auth__logo">
+            <Logo size="M" />
+          </div>
+          <div className="auth__form">
+            <h3 className="auth__title">{props.title}</h3>
+            {inputs}
+            {props.generalError && (
+              <p className="auth__error">{props.generalError}</p>
+            )}
+            {props.termsWarning && (
+              <p className="auth__termsWarning">
+                By creating an account you agree with Terms and Conditions
+              </p>
+            )}
+            <div className="auth__buttons">
               <Button type="primary" centerText tall onClick={handleSubmit}>
                 {props.submitText}
               </Button>
+              <Button type="text" centerText onClick={onActionClick}>
+                {props.actionButton.text}
+              </Button>
             </div>
-            <div className="auth__cardFooter">
-              <Button centerText onClick={onActionClick}>{props.actionButton.text}</Button>
-            </div>
+          </div>
+          <div className="auth__footer">
+            {/* Generate me copyright text */}
+            <p className="auth__footerText">&copy; 2021 Armandas Barkauskas</p>
           </div>
         </div>
       </div>

@@ -1,0 +1,102 @@
+
+.drawer {
+  $base: &;
+  inset: 0;
+  display: none;
+
+  &__mask {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--bg-mask);
+  }
+
+  &__card {
+    position: fixed;
+    z-index: 1001;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    box-shadow: var(--card-shadow);
+    width: 540px;
+    background-color: var(--bg-card);
+    
+    #{$base}__header {
+      border-bottom: $defaultBorder;
+      display: flex;
+      gap: $unit * 0.5;
+      align-items: center;
+      padding: $unit * 0.5 $unit $unit * 0.5 $unit * 0.5;
+      min-height: $unit * 3;
+      
+      #{$base}__closeIcon {
+        cursor: pointer;
+        border-radius: $defaultBorderRadius;
+        padding: $unit * 0.33;
+        height: $unit * 2;
+        width: $unit * 2;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        
+        &:hover {
+          background-color: var(--shade10);
+        }
+      }
+
+      #{$base}__headerText {
+        flex-grow: 1;
+
+        #{$base}__title {
+          font-size: 1.3rem;
+          font-weight: 600;
+          color: var(--color-text);
+        }
+
+        #{$base}__subtitle {
+          font-size: 1rem;
+          font-weight: 500;
+          color: var(--shade40);
+        }
+      }
+    }
+
+    #{$base}__body {
+      padding: $unit;
+    }
+  }
+
+
+  &--large {
+    #{$base}__card {
+      width: 720px;
+    }
+  }
+
+  &--open {
+    display: block;
+
+    #{$base}__mask {
+      animation: fadeIn 0.4s ease-in-out;
+    }
+
+    #{$base}__card {
+      animation: slideInFromRight 0.4s ease-in-out;
+    }
+  }
+
+  &--animatingExit {
+    $exitTime: 0.4s;
+    $exitFunction: ease-in-out;
+
+    #{$base}__mask {
+      animation: fadeOut $exitTime $exitFunction forwards;
+    }
+
+    #{$base}__card {
+      animation: slideOutToRight $exitTime $exitFunction forwards;
+    }
+  }
+}

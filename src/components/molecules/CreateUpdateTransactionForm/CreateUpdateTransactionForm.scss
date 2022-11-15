@@ -1,7 +1,5 @@
 .tForm {
-  padding: $unit * 0.75;
   background: var(--bg-card);
-  border-bottom: $defaultBorder;
 
   &__item, &__submit {
     &:not(:last-child) {

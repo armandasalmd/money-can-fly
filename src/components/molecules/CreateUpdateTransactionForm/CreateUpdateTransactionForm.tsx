@@ -3,7 +3,7 @@ import { Article, Bank, Bookmark } from "phosphor-react";
 import { useState } from "react";
 
 import { FormMode, Money, Transaction } from "@utils/Types";
-import { Button, Input, Select, DatePicker } from "@atoms/index";
+import { Input, Select, DatePicker } from "@atoms/index";
 import { CurrencyInput } from "@molecules/index";
 import { bankNamesPreset, categotyPreset } from "@utils/SelectItems";
 
@@ -16,7 +16,7 @@ export default function CreateUpdateTransactionForm(
   props: CreateUpdateTransactionFormProps
 ) {
   const classes = classNames("tForm", {});
-  const formMode: FormMode = props.transaction ? "update" : "create";
+  
   const [formState, setFormState] = useState<Transaction>(
     props.transaction || {
       amount: 0,
@@ -93,11 +93,6 @@ export default function CreateUpdateTransactionForm(
           onSelect={inputChange}
           value={formState.date}
         />
-      </div>
-      <div className="tForm__submit">
-        <Button centerText type="primary">
-          {formMode === "create" ? "Create transaction" : "Update transaction"}
-        </Button>
       </div>
     </div>
   );

@@ -12,6 +12,14 @@
   &--noText > p {
     display: none;
   }
+
+  svg {
+    fill: rgba($colorPrimary, 0.1);
+
+    * {
+      stroke: $colorPrimary;
+    }
+  }
 }
 
 @media (max-width: $sm) {

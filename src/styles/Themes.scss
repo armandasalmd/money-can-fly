@@ -14,6 +14,7 @@ $themeLightClass: ".theme--light";
   --bg-input: rgba(167, 164, 174, 0.09);
   --bg-input-hover: rgba(167, 164, 174, 0.13);
   --bg-input-error: #{mix($shade0, $colorError, 95%)};
+  --bg-mask: rgba(0, 0, 0, 0.3);
   --color-border: #dfdfdf;
   --color-error-outline: #{mix($shade0, $colorError, 25%)};
   --color-placeholder: #95939D;
@@ -55,6 +56,8 @@ $themeLightClass: ".theme--light";
   --bg-input: rgba(167, 164, 174, 0.12);
   --bg-input-hover: rgba(167, 164, 174, 0.07);
   --bg-input-error: #{mix($shade80, $colorError, 97%)};
+  --bg-mask: rgba(255, 255, 255, 0.2);
+
   --color-border: #454545;
   --color-error-outline: #{mix($shade0, $colorError, 40%)};
   --color-placeholder: #95939D;

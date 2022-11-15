@@ -1,25 +1,40 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue } from "recoil";
 import { FilePlus, TrashSimple } from "phosphor-react";
-import { Button } from "@atoms/index";
-import { TransactionFullList, TransactionSearchForm } from "@molecules/index";
-import { selectedTransactionsState, paginationLabelState } from "@recoil/transactions/atoms";
+
+import { Button, Drawer } from "@atoms/index";
+import {
+  TransactionFullList,
+  TransactionSearchForm,
+  CreateUpdateTransactionForm,
+} from "@molecules/index";
+import {
+  selectedTransactionsState,
+  paginationLabelState,
+} from "@recoil/transactions/atoms";
 
 export default function TransactionsBody() {
-  const [selectedTransactions, setSelectedTransactions] = useRecoilState(selectedTransactionsState);
+  const [addDrawerOpen, setAddDrawerOpen] = useState(false);
+  const [selectedTransactions, setSelectedTransactions] = useRecoilState(
+    selectedTransactionsState
+  );
   const paginationLabel = useRecoilValue(paginationLabelState);
 
   function onDelete() {
     console.log("Delete selected transactions", selectedTransactions);
   }
 
+  function onCreateUpdate() {
+    setAddDrawerOpen(false);
+  }
+
   function scrollListToTop() {
     const list = document.querySelector(".transactionsBody__transactions");
-    
-  if (list) {
-      list.scrollTo({ 
+
+    if (list) {
+      list.scrollTo({
         behavior: "smooth",
-        top: 0,  
+        top: 0,
       });
     }
   }
@@ -60,7 +75,7 @@ export default function TransactionsBody() {
                 {selectedCount + " selected"}
               </Button>
             )}
-            <Button type="easy" icon={FilePlus}>
+            <Button type="primary" icon={FilePlus} onClick={() => setAddDrawerOpen(true)}>
               Add
             </Button>
           </div>
@@ -71,6 +86,16 @@ export default function TransactionsBody() {
           setSelectedTransactions={setSelectedTransactions}
         />
       </div>
+      <Drawer
+        open={addDrawerOpen}
+        onClose={setAddDrawerOpen}
+        title="Create transaction"
+        subtitle="All fields are required"
+        extra={<Button type="primary">Save</Button>}
+        destroyOnClose
+      >
+        <CreateUpdateTransactionForm onSubmit={onCreateUpdate} />
+      </Drawer>
     </div>
   );
 }

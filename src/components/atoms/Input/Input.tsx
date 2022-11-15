@@ -23,6 +23,7 @@ export interface InputProps {
   title?: string;
   value?: string;
   fixedWidth?: boolean;
+  white?: boolean;
 }
 
 export default function Input(props: InputProps) {
@@ -34,6 +35,7 @@ export default function Input(props: InputProps) {
       "input--error": props.error,
       "input--required": props.required,
       "input--fixedWidth": props.fixedWidth,
+      "input--white": props.white,
     },
     props.className
   );

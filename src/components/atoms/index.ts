@@ -5,6 +5,7 @@ export { default as Checkbox } from "./Checkbox/Checkbox";
 export { default as DatePeriodSelect, getPeriodNow } from "./DatePeriodSelect/DatePeriodSelect";
 export { default as DatePicker } from "./DatePicker/DatePicker";
 export { default as DateRangePicker } from "./DateRangePicker/DateRangePicker";
+export { default as Drawer } from "./Drawer/Drawer";
 export { default as Empty } from "./Empty/Empty";
 export { default as Header, type HeaderProps } from "./Header/Header";
 export { default as Input, type InputProps } from "./Input/Input";
