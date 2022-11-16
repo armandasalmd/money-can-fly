@@ -11,6 +11,7 @@
     right: 0;
     bottom: 0;
     background-color: var(--bg-mask);
+    z-index: 1;
   }
 
   &__card {

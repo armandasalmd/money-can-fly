@@ -4,6 +4,7 @@ import { useRouter } from "next/router";
 
 import { Button, Input, Logo } from "@atoms/index";
 import { useTheme } from "@context/index";
+import { callIfFunction } from "@utils/Global";
 
 export interface FormItem {
   name: string;
@@ -29,6 +30,7 @@ interface AuthFormProps {
   actionButton: ActionButton;
   formItems: FormItem[];
   generalError?: string;
+  setGeneralError?(value: string | null): void;
   onSubmit(state: any): void;
   submitText: string;
   title: string;
@@ -67,7 +69,7 @@ export default function AuthPage(props: AuthFormProps) {
     });
   }
 
-  function getValue(name: string): string {
+  function getValue(name: string) {
     return formState[name].value || "";
   }
 
@@ -76,7 +78,22 @@ export default function AuthPage(props: AuthFormProps) {
   }
 
   function handleSubmit() {
-    props.onSubmit(formState);
+    callIfFunction(props.setGeneralError, null);
+
+    const newState: FormInputState = {};
+
+    for (const key of Object.keys(formState)) {
+      newState[key] = {
+        ...formState[key],
+        error: !formState[key].value ? "This field is required" : "",
+      };
+    }
+
+    if (Object.values(newState).every((item) => !item.error)) {
+      props.onSubmit(formState);
+    }
+    
+    setFormState(newState);
   }
 
   const inputs = props.formItems.map((item: FormItem) => {
@@ -138,7 +155,6 @@ export default function AuthPage(props: AuthFormProps) {
             </div>
           </div>
           <div className="auth__footer">
-            {/* Generate me copyright text */}
             <p className="auth__footerText">&copy; 2021 Armandas Barkauskas</p>
           </div>
         </div>

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 import { useAuth } from "@context/index";
@@ -12,6 +12,8 @@ import AuthPage, {
 export default function Register() {
   const { user, register } = useAuth();
   const router = useRouter();
+  const [error, setError] = useState<string | null>(null);
+  const pushPath = Constants.navbarLinks.dashboard.path || "/";
 
   const actionButton: ActionButton = {
     text: "Sign in",
@@ -41,17 +43,17 @@ export default function Register() {
   async function handleSubmit(state: FormInputState) {
     try {
       await register(state.email.value, state.password.value);
-      router.push(Constants.navbarLinks.dashboard.path);
+      router.push(pushPath);
     } catch (error) {
-      console.error(error);
+      setError("Check your details and try again");
     }
   }
 
   useEffect(() => {
     if (user) {
-      router.push("/dashboard");
+      router.push(pushPath);
     }
-  }, [router, user]);
+  }, [router, user, pushPath]);
 
   return (
     <AuthPage
@@ -60,6 +62,8 @@ export default function Register() {
       onSubmit={handleSubmit}
       submitText="Register"
       title="Create an account"
+      generalError={error}
+      setGeneralError={setError}
     />
   );
 }

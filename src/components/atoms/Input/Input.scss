@@ -36,10 +36,7 @@
   }
 
   &__error {
-    margin-left: 6px;
-    margin-top: 6px;
-    font-size: 0.95rem;
-    color: var(--color-error);
+    @extend %inputErrorText;
   }
 
   &__main--hasDropdown {

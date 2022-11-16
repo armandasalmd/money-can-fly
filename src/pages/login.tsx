@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/router";
 
 import { useAuth } from "@context/index";
@@ -13,6 +13,7 @@ export default function Login() {
   const { user, login } = useAuth();
   const router = useRouter();
   const pushPath = Constants.navbarLinks.dashboard.path || "/";
+  const [error, setError] = useState<string | null>(null);
 
   const actionButton: ActionButton = {
     text: "Create an account",
@@ -34,12 +35,11 @@ export default function Login() {
   ];
 
   async function handleSubmit(state: FormInputState) {
-    console.log(state);
     try {
       await login(state.email.value, state.password.value);
       router.push(pushPath);
     } catch (error) {
-      console.error(error);
+      setError("Invalid email or password");
     }
   }
 
@@ -56,6 +56,8 @@ export default function Login() {
       onSubmit={handleSubmit}
       submitText="Login"
       title="Welcome back!"
+      generalError={error}
+      setGeneralError={setError}
     />
   );
 }

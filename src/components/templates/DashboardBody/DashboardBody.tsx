@@ -13,10 +13,10 @@ export default function DashboardBody() {
       <div className="dashboardBody__cards">
         <div className="dashboardBody__column">
           <DashChartCard />
-          <DashCategorySpendingCard />
+          <DashQuickAddCard />
         </div>
         <div className="dashboardBody__column">
-          <DashQuickAddCard />
+          <DashCategorySpendingCard />
           <DashBorrowingsCard />
         </div>
       </div>

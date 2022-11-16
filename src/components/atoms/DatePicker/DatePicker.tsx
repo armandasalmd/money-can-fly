@@ -19,10 +19,11 @@ export interface DatePickerProps {
 
 export default function DatePicker(props: DatePickerProps) {
   const thisRef = useRef(null);
+  const buttonRef = useRef(null);
   const [show, setShow] = useState(false);
   const placeholder = props.placeholder || "Select a date";
 
-  useOutsideClick(thisRef, () => setShow(false));
+  useOutsideClick(thisRef, () => setShow(false), buttonRef);
 
   function onDayClick(day: Date) {
     if (!day && props.required) {
@@ -38,19 +39,22 @@ export default function DatePicker(props: DatePickerProps) {
       className={classNames("datePicker", {
         "datePicker--required": props.required,
       })}
+      ref={thisRef}
     >
       {props.title && <p className="datePicker__label">{props.title}</p>}
-      <Button icon={Calendar} onClick={() => setShow(!show)}>
-        {props.value ? format(props.value, "yyyy.MM.dd") : placeholder}
-      </Button>
-      {show && (
-        <DayPicker
-          className="datePicker__picker"
-          mode="single"
-          selected={props.value}
-          onSelect={onDayClick}
-        />
-      )}
+      <div ref={buttonRef}>
+        <Button icon={Calendar} onClick={() => setShow(!show)}>
+          {props.value ? format(props.value, "yyyy.MM.dd") : placeholder}
+        </Button>
+        {show && (
+          <DayPicker
+            className="datePicker__picker"
+            mode="single"
+            selected={props.value}
+            onSelect={onDayClick}
+          />
+        )}
+      </div>
     </div>
   );
 }

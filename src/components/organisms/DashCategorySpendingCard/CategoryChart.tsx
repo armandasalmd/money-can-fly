@@ -21,32 +21,41 @@ ChartJS.register(
 );
 
 export const options = {
+  indexAxis: "y" as const,
   responsive: true,
   plugins: {
     legend: {
       position: "top" as const,
     },
   },
+  elements: {
+    bar: {
+      borderWidth: 2,
+      borderRadius: 8,
+    }
+  },
 };
 
-const labels = ["January", "February", "March", "April", "May", "June", "July"];
+const labels = ["Food", "Entertainment", "Hobbies", "Bills", "Other", "Games", "Gifts", "Health", "Travel", "Clothing", "Transport"];
 
 export const data = {
   labels,
   datasets: [
     {
-      label: "Dataset 1",
-      data: labels.map(() => faker.datatype.number({ min: 0, max: 1000 })),
-      backgroundColor: "rgba(255, 99, 132, 0.5)",
+      label: "Result",
+      data: labels.map(() => -faker.datatype.number({ min: -380, max: -200 })),
+      backgroundColor: "rgba(54, 118, 191, 0.5)",
+      borderColor: "rgba(54, 118, 191, 1)",
     },
     {
-      label: "Dataset 2",
-      data: labels.map(() => faker.datatype.number({ min: 0, max: 1000 })),
-      backgroundColor: "rgba(53, 162, 235, 0.5)",
-    },
+      label: "Average",
+      data: labels.map(() => -faker.datatype.number({ min: -300, max: 0 })),
+      backgroundColor: "rgba(156, 150, 142, 0.5)",
+      borderColor: "rgba(156, 150, 142, 0.8)",
+    }
   ],
 };
 
 export default function CategoryChart() {
-  return <Bar className="invertColors" options={options} data={data} />;
+  return <Bar className="invertColors" height="256px" options={options} data={data} />;
 }
