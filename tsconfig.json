@@ -30,7 +30,8 @@
       "@recoil/*": ["recoil/*"],
       "@styles/*": ["styles/*"],
       "@templates/*": ["components/templates/*"],
-      "@utils/*": ["utils/*"]
+      "@utils/*": ["utils/*"],
+      "@server/*": ["server/*"]
     }
   },
   "include": [

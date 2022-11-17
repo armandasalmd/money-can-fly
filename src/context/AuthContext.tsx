@@ -31,7 +31,6 @@ export function AuthContextProvider({ children }) {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        console.log(user);
         setUser(user);
       } else {
         setUser(null);
@@ -43,16 +42,48 @@ export function AuthContextProvider({ children }) {
     return () => unsubscribe();
   }, []);
 
+  async function loginToApi(user: UserCredential): Promise<boolean> {
+    const token = await user.user.getIdToken(true);
+    const response = await fetch("/api/auth/login", {
+      method: "POST",
+      body: JSON.stringify({ userIdToken: token }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await response.json();
+
+    return data?.success === true;
+  }
+
   async function register(email: string, password: string) {
-    return await createUserWithEmailAndPassword(auth, email, password);
+    const user = await createUserWithEmailAndPassword(auth, email, password);
+
+    if (!await loginToApi(user)) {
+      await logout();
+    }
+
+    return user;
   }
 
   async function login(email: string, password: string) {
-    return await signInWithEmailAndPassword(auth, email, password);
+    const user = await signInWithEmailAndPassword(auth, email, password);
+
+    if (!await loginToApi(user)) {
+      await logout();
+    }
+
+    return user;
   }
 
   async function logout() {
-    setUser(null);
+    const response = await fetch("/api/auth/logout");
+    const data = await response.json();
+
+    if (data?.success === true) {
+      setUser(null);
+    }
+
     return await auth.signOut();
   }
 
