@@ -7,7 +7,7 @@ export async function middleware(request: NextRequest) {
   const session = await getIronSession(request, response, sessionOptions);
   const { user } = session;
 
-  if (user && user.email && user.id) {
+  if (user && user.email && user.userUID) {
     return response;
   } else {
     return NextResponse.rewrite(new URL("/api/errors/401", request.url));
@@ -16,7 +16,8 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
-    "/api/user",
+    "/api/currency/:function*",
     "/api/transactions/:function*",
+    "/api/user",
   ],
 };

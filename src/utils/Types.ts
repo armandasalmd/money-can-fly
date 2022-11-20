@@ -1,6 +1,10 @@
 import { ForwardRefExoticComponent, RefAttributes } from "react";
 import { IconProps } from "phosphor-react";
-import { DateRange } from "react-day-picker";
+
+export type DateRange = {
+  from: Date | undefined;
+  to?: Date | undefined;
+}
 
 export type IconComponentType = ForwardRefExoticComponent<
   IconProps & RefAttributes<SVGSVGElement>
@@ -9,6 +13,7 @@ export type IconComponentType = ForwardRefExoticComponent<
 export type ActionColor = "success" | "warning" | "error" | "info";
 export type CheckState = "checked" | "unchecked" | "indeterminate";
 export type ColorType = "primary" | "secondary";
+export type OtherAsset = "crypto" | "stocks";
 export type Size = "small" | "medium" | "large";
 
 export type Currency = "USD" | "EUR" | "GBP";

@@ -1,14 +1,14 @@
 import { verifyToken, withUser } from "@server/core";
 
-export default withUser(async (request, response) => {
-  if (request.method === "POST" && request.body && request.body.userIdToken) {
+export default withUser("POST", async (request, response) => {
+  if (request.body && request.body.userIdToken) {
     try {
       const payload: any = verifyToken(request.body.userIdToken);
   
       if (payload && payload.email && payload.user_id) {
         request.session.user = {
           email: payload.email,
-          id: payload.user_id
+          userUID: payload.user_id
         };
         
         await request.session.save();

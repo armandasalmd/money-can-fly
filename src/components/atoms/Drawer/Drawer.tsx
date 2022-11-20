@@ -61,13 +61,14 @@ export default function Drawer(props: DrawerProps) {
     if (previousOpen === true && animatingExit === null && props.open === false) {
       close();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [previousOpen, animatingExit, props.open]);
 
   useEffect(() => {
     if (previousOpen != props.open) {
       setPreviousOpen(props.open);
     }
-  }, [props.open]);
+  }, [props.open, previousOpen]);
 
   if (!animatingExit && !props.open && props.destroyOnClose) {
     return null;

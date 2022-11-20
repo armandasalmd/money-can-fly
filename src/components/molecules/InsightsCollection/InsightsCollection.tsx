@@ -2,12 +2,6 @@ import classNames from "classnames";
 
 import { useRouter } from "next/router";
 import { Button, Insight } from "@atoms/index";
-import {
-  CircleWavyCheck,
-  CircleWavyWarning,
-  TrendUp,
-  TrendDown,
-} from "phosphor-react";
 import { amountForDisplay } from "@utils/Currency";
 import Constants from "@utils/Constants";
 
@@ -23,7 +17,7 @@ export default function InsightsCollection(props: InsightsCollectionProps) {
 
   return (
     <div className={classNames("insightsCollection", props.className)}>
-      <Insight title="Your balance" color="warning">
+      <Insight title="Available balance" color="warning">
         <h1>{amountForDisplay(balance)}</h1>
         <label>$98.56 spent in last 7 days</label>
       </Insight>

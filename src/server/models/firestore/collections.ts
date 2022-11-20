@@ -1,0 +1,1 @@
+export type Collection = "borrowings" | "currencyRate" | "periodPrediction" | "transactions" | "userBalance" | "userPreferences";

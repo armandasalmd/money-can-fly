@@ -1,4 +1,4 @@
 export interface CookieUser {
-  id: string;
+  userUID: string;
   email: string;
 }
