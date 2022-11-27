@@ -5,7 +5,7 @@
   display: flex;
   align-items: center;
   gap: $unit;
-  padding: 0 $halfUnit;
+  padding: $unit * 0.33 $unit * 0.75;
 
   div {
     border-radius: $defaultBorderRadius / 2;
@@ -33,11 +33,11 @@
   }
 
   &--borderBottom {
-    border-bottom: 2px solid var(--color-border);
+    border-bottom: $defaultBorder;
   }
   
   &--borderTop {
-    border-top: 2px solid var(--color-border);
+    border-top: $defaultBorder;
   }
 
   &__main {

@@ -1,15 +1,15 @@
-import { withUser } from "@server/core";
+import { IsDateString } from "class-validator";
+
+import { validatedApiRoute } from "@server/core";
 import { CurrencyRateManager } from "@server/managers";
 
-export default withUser("GET", async (request, response) => {
-  const { date } = request.query;
-  
-  if (!Array.isArray(date) && date.match(/^\d{4}-\d{2}-\d{2}$/)) {
-    const manager = new CurrencyRateManager();
-    const result = await manager.getRate(new Date(date));
+class GetRateRequest {
+  @IsDateString()
+  date: string;
+}
 
-    return response.status(200).json(result);
-  }
+export default validatedApiRoute("GET", GetRateRequest, async (request, response) => {
+  const result = await CurrencyRateManager.getInstance().getRate(new Date(request.query.date as string));
 
-  return response.status(400).json({ success: false, message: "Bad Request" });
+  return response.status(200).json(result);
 });

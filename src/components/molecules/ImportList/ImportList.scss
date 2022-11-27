@@ -13,12 +13,39 @@
   }
   
   &__subtitle {
-    color: var(--shade20);
+    color: var(--shade30);
     font-size: 1rem;
     margin-top: $unit * 0.15;
   }
 
   &:hover {
     background-color: var(--shade10);
+  }
+
+  &__right {
+    display: flex;
+    align-items: center;
+    gap: $halfUnit;
+  }
+
+  &__icon {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+.iList {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  &__loadMore {
+    padding: $unit;
+  }
+
+  &--empty {
+    height: 100%;
+    display: flex;
+    justify-content: center;
   }
 }

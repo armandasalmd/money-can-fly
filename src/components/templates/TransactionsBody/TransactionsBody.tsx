@@ -12,6 +12,7 @@ import {
   selectedTransactionsState,
   paginationLabelState,
 } from "@recoil/transactions/atoms";
+import { publish } from "@utils/Events";
 
 export default function TransactionsBody() {
   const [addDrawerOpen, setAddDrawerOpen] = useState(false);
@@ -21,7 +22,20 @@ export default function TransactionsBody() {
   const paginationLabel = useRecoilValue(paginationLabelState);
 
   function onDelete() {
-    console.log("Delete selected transactions", selectedTransactions);
+    fetch("/api/transactions/deleteBulk", {
+      method: "DELETE",
+      body: JSON.stringify({
+        ids: selectedTransactions.map((t) => t._id),
+      }),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }).then((response) => response.json()).then(data => {
+      if (data.success) {
+        setSelectedTransactions([]);
+        publish("mutateTransactions", selectedTransactions);
+      }
+    });
   }
 
   function onCreateUpdate() {
@@ -59,7 +73,7 @@ export default function TransactionsBody() {
         </div>
         <div>
           <div className="transactionsBody__filterForm">
-            <TransactionSearchForm />
+            <TransactionSearchForm showImportFilter />
           </div>
         </div>
       </div>

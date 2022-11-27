@@ -4,7 +4,7 @@
   align-items: center;
   width: 100%;
   flex-flow: column;
-  padding: $unit 0;
+  padding: $unit * 2 0;
   user-select: none;
 
   &__text {

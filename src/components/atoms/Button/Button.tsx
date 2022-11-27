@@ -15,6 +15,7 @@ export interface ButtonProps extends PropsWithChildren {
   tall?: boolean;
   type?: ButtonType;
   wrapContent?: boolean;
+  tooltip?: string;
 }
 
 export default function Button(props: ButtonProps) {
@@ -27,6 +28,7 @@ export default function Button(props: ButtonProps) {
       "button--tall": props.tall,
       "button--wrapContent": props.wrapContent,
       "button--ellipsis": props.ellipsis,
+      "button--iconOnly": !props.children && props.icon,
     },
     props.className
   );
@@ -42,7 +44,7 @@ export default function Button(props: ButtonProps) {
   }
 
   return (
-    <div className={classes} style={props.style} onClick={props.disabled ? undefined : props.onClick}>
+    <div title={props.tooltip} className={classes} style={props.style} onClick={props.disabled ? undefined : props.onClick}>
       {props.icon &&
         createElement(props.icon, {
           weight: "bold",

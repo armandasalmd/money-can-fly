@@ -1,6 +1,6 @@
-import { withUser } from "@server/core";
+import { apiRoute } from "@server/core";
 
-export default withUser("GET", (request, response) => {
+export default apiRoute("GET", (request, response) => {
   request.session.destroy();
   response.status(200).json({ success: true });
 });

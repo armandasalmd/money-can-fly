@@ -5,7 +5,9 @@ export interface ImportFormState {
   ignoreDescriptionPattern: string;
   defaultCurrency: Currency,
   hasCurrencyColumn: boolean;
+  hasCategoryColumn: boolean;
   hasTransactionFeeColumn: boolean;
+  categoryColumn: string;
   transactionDateColumn: string;
   descriptionColumn: string;
   amountColumn: string;
@@ -24,8 +26,10 @@ const customImportPreset: ImportPreset = {
     bank: "cash",
     ignoreDescriptionPattern: "",
     defaultCurrency: "GBP",
+    categoryColumn: "",
     hasCurrencyColumn: false,
     hasTransactionFeeColumn: false,
+    hasCategoryColumn: false,
     transactionDateColumn: "",
     descriptionColumn: "",
     amountColumn: "",
@@ -40,8 +44,10 @@ const barclaysImportPreset: ImportPreset = {
     bank: "barclays",
     ignoreDescriptionPattern: "BARCLAYS",
     defaultCurrency: "GBP",
+    categoryColumn: "",
     hasCurrencyColumn: false,
     hasTransactionFeeColumn: false,
+    hasCategoryColumn: false,
     transactionDateColumn: "Date",
     descriptionColumn: "Memo",
     amountColumn: "Amount",
@@ -54,8 +60,10 @@ const revolutImportPreset: ImportPreset = {
     bank: "revolut",
     ignoreDescriptionPattern: "Cash at",
     defaultCurrency: "GBP",
+    categoryColumn: "",
     hasCurrencyColumn: true,
     hasTransactionFeeColumn: true,
+    hasCategoryColumn: false,
     transactionDateColumn: "Completed Date",
     descriptionColumn: "Description",
     amountColumn: "Amount",

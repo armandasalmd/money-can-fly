@@ -1,17 +1,5 @@
 import { SelectItem } from "@utils/SelectItems";
 
-type CsvCellValueType = "string" | "number" | "date" | "boolean" | "mixed";
-
-// interface CsvColumn {
-//   name: string;
-//   valueType: CsvCellValueType;
-//   values: string[];
-// }
-
-export interface CsvSelectItem extends SelectItem {
-  valueType: CsvCellValueType;
-}
-
 export class ImportCsvReader {
   public readRaw(file: File): Promise<string> {
     if (!ImportCsvReader.isCsvFile(file)) {
@@ -35,7 +23,7 @@ export class ImportCsvReader {
     });
   }
 
-  public async readHeaderSelectItems(file: File): Promise<CsvSelectItem[]> {
+  public async readHeaderSelectItems(file: File): Promise<SelectItem[]> {
     const csv = await this.readRaw(file);
     const lines = csv.split("\n");
 
@@ -44,7 +32,7 @@ export class ImportCsvReader {
     }
 
     const header = lines[0].split(",");
-    const result: CsvSelectItem[] = [];
+    const result: SelectItem[] = [];
 
     function isInResult(name: string): boolean {
       return result.some((item) => item.value === name);
@@ -52,7 +40,7 @@ export class ImportCsvReader {
 
     for (let i = 0; i < header.length; i++) {
       if (!isInResult(header[i])) {
-        result.push({ value: header[i], label: header[i], valueType: "mixed" });
+        result.push({ value: header[i], label: header[i] });
       }
     }
 

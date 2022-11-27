@@ -28,6 +28,7 @@ module.exports = {
       "@styles": path.resolve(__dirname, "../src/styles"),
       "@context": path.resolve(__dirname, "../src/context"),
       "@recoil": path.resolve(__dirname, "../src/recoil"),
+      "@endpoint": path.resolve(__dirname, "../src/pages/api"),
     };
     return config;
   },

@@ -1,7 +1,6 @@
 export * from "./auth/CookieUser";
 export * from "./auth/Jwt";
 export * from "./auth/session";
-export * from "./auth/withUser";
-export * from "./db/firestore";
+export * from "./logic/apiRoute";
 
-export { default as firestore } from "./db/firestore";
+export { default as dbConnect } from "./db/mongo";

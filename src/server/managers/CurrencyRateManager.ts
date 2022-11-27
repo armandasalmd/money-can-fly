@@ -1,6 +1,5 @@
 import { Currency } from "@utils/Types";
-import { CurrencyRate } from "@server/core";
-import { CurrencyRateModel } from "@server/models";
+import { ICurrencyRateModel, CurrencyRateModel } from "@server/models";
 
 interface ExternalCurrencyRate {
   meta: {
@@ -15,59 +14,71 @@ interface ExternalCurrencyRate {
 }
 
 export class CurrencyRateManager {
+  private constructor() {}
+  private static instance: CurrencyRateManager;
+
+  public static getInstance(): CurrencyRateManager {
+    if (!CurrencyRateManager.instance) {
+      CurrencyRateManager.instance = new CurrencyRateManager();
+    }
+
+    return CurrencyRateManager.instance;
+  }
+
   private readonly ENDPOINT = "https://api.currencyapi.com/v3/historical";
 
   private toRateDay(date: Date): string {
     return date.toISOString().slice(0, 10);
   }
 
-  private async tryGetCachedRate(date: Date): Promise<CurrencyRateModel | undefined> {
-    const snapshot = await CurrencyRate.where("rateDay", "==", this.toRateDay(date)).get();
+  private async tryGetCachedRate(date: Date): Promise<ICurrencyRateModel | undefined> {
+    const rate = await CurrencyRateModel.findOne({ rateDay: this.toRateDay(date) });
 
-    if (snapshot.empty) {
-      return undefined;
-    }
+    if (!rate) return undefined;
 
-    const result = snapshot.docs[0].data() as CurrencyRateModel;
-    
-    result.fromCache = true;
+    rate.fromCache = true;
 
-    return result;
+    return rate;
   }
 
-  private async saveToCache(rate: CurrencyRateModel): Promise<void> {
-    await CurrencyRate.add(rate);
+  private async saveToCache(rate: ICurrencyRateModel): Promise<void> {
+    await CurrencyRateModel.create(rate);
   }
 
-  public async getRate(date: Date): Promise<CurrencyRateModel> {
+  public async getRate(date: Date): Promise<ICurrencyRateModel> {
     const today = new Date();
 
     if (date >= new Date()) {
       date = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
     }
 
-    const cached: CurrencyRateModel | undefined = await this.tryGetCachedRate(date);
+    const cached = await this.tryGetCachedRate(date);
 
-    if (cached) {
-      return cached;
-    }
+    if (cached) return cached;
 
     const response = await fetch(
       `${this.ENDPOINT}?apikey=${process.env.CURRENCY_API_KEY}&currencies=EUR%2CGBP&date=${this.toRateDay(date)}`
     );
     const data: ExternalCurrencyRate = await response.json();
-    const result: CurrencyRateModel = {
-      baseCurrency: "USD",
-      data: data.data,
-      rateDay: this.toRateDay(date),
-      fromCache: !!cached,
-    };
+    
+    if (data.data) {
+      const result: ICurrencyRateModel = {
+        baseCurrency: "USD",
+        data: data.data,
+        rateDay: this.toRateDay(date),
+        fromCache: !!cached
+      };
+  
+      if (!cached) {
+        await this.saveToCache(result);
+      }
+  
+      return result;
+    } else {
+      const result = await CurrencyRateModel.findOne();
 
-    if (!cached) {
-      await this.saveToCache(result);
+      return result.toJSON<ICurrencyRateModel>();
     }
-
-    return result;
   }
 
   public async convert(

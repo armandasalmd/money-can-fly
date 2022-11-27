@@ -1,11 +1,18 @@
 import { useState } from "react";
 
-import { Message, UploadArea, Card, FileState } from "@atoms/index";
+import { Message, UploadArea, Card, FileState, MessageColor } from "@atoms/index";
 import { ImportConfigForm } from "@organisms/index";
 import { ImportFormState } from "@organisms/ImportConfigForm/ImportPresets";
+import { StartImportRequest } from "@endpoint/imports/start";
+import { ImportCsvReader } from "@utils/CsvReader";
 
-export default function ImportsBody() {
+interface ImportsBodyProps {
+  onImportStarted: (importId: string) => void;
+}
+
+export default function ImportsBody(props: ImportsBodyProps) {
   const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState<MessageColor>("info");
   const [file, setFile] = useState<File>(null);
 
   function onSubmitFile(filesState: FileState) {
@@ -16,21 +23,42 @@ export default function ImportsBody() {
     }
   }
 
-  function onStartImport(formState: ImportFormState) {
-    console.log("Import started", formState);
+  async function onStartImport(formState: ImportFormState) {
+    const reader = new ImportCsvReader();
+    const csvData = await reader.readRaw(file);
+    const request: StartImportRequest = {
+      csvData,
+      csvFileName: file.name,
+      ...formState,
+    };
 
-    // read csv string here
-    setFile(null);
-    
-    setTimeout(() => {
+    const response = await fetch("/api/imports/start", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(request),
+    });
+
+    const data = await response.json();
+
+    if (data?.success) {
+      setMessageType("info");
       setMessage("Import process successfully started. Check import history.");
-    }, 1000);
+
+      props.onImportStarted(data.import?._id);
+    } else {
+      setMessageType("error");
+      setMessage(`Error. ${data.message}}`);  
+    }
+
+    setFile(null);
   }
 
   return (
     <div className="importsBody">
       {message && (
-        <Message fadeIn colorType="success" messageStyle="card" onDismiss={() => setMessage("")}>
+        <Message fadeIn colorType={messageType} messageStyle="card" onDismiss={() => setMessage("")}>
           {message}
         </Message>
       )}
@@ -45,7 +73,7 @@ export default function ImportsBody() {
           multiple={false}
           accept=".csv"
           name="importFile"
-          maxFileSizeInMb={4}
+          maxFileSizeInMb={3}
           onSubmit={onSubmitFile}
           submitButtonText="Go to next step"
         />

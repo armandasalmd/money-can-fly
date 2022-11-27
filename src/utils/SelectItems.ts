@@ -1,4 +1,4 @@
-import { TransactionBank, Currency, TransactionStatusFilter } from "@utils/Types";
+import { TransactionBank, Currency, TransactionStatusFilter, AmountFilter } from "@utils/Types";
 import Categories from "@atoms/CategoryIcon/TransactionCategories";
 
 export type SelectItemsObject<T extends string> = { [key in T]: string };
@@ -30,14 +30,24 @@ const transactionStatusFilterSelect: SelectItemsObject<TransactionStatusFilter> 
   inactive: "Inactive",
 };
 
-const amountFilterSelect: SelectItemsObject<any> = {
+const amountFilterSelect: SelectItemsObject<AmountFilter> = {
   incomeOnly: "Income only",
-  moneyOutMoreThan10: ">10 spent",
-  moneyOutMoreThan25: ">25 spent",
-  moneyOutMoreThan50: ">50 spent",
-  moneyOutMoreThan100: ">100 spent",
-  moneyOutMoreThan250: ">250 spent",
-}
+  moreThan10Spent: ">10 spent",
+  moreThan25Spent: ">25 spent",
+  moreThan50Spent: ">50 spent",
+  moreThan100Spent: ">100 spent",
+  moreThan250Spent: ">250 spent",
+};
+
+const yearSelect: SelectItemsObject<string> = {
+  "2020": "Year 2020",
+  "2021": "Year 2021",
+  "2022": "Year 2022",
+  "2023": "Year 2023",
+  "2024": "Year 2024",
+  "2025": "Year 2025",
+  "2026": "Year 2026",
+};
 
 export const categotyPreset: SelectItem[] = Object.keys(Categories).map((
   key,
@@ -46,6 +56,7 @@ export const categotyPreset: SelectItem[] = Object.keys(Categories).map((
   value: key,
 }));
 
+export const yearsPreset = toSelectItems(yearSelect);
 export const amountFilterPreset = toSelectItems(amountFilterSelect);
 export const bankNamesPreset = toSelectItems(bankNamesSelect);
 export const currencyPreset = toSelectItems(currencySelect);

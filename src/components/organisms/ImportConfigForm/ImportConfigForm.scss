@@ -39,6 +39,13 @@
         gap: $unit;
         margin-bottom: $unit;
       }
+
+      #{$base}__options {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: $unit;
+        margin-bottom: $unit * 2;
+      }
     }
   }
 }

@@ -7,12 +7,25 @@ import {
   amountFilterPreset,
   categotyPreset,
   currencyPreset,
+  SelectItem,
   transactionStatusPreset,
 } from "@utils/SelectItems";
 import { filterFormState } from "@recoil/transactions/atoms";
+import useSWR from "swr";
+import { publish } from "@utils/Events";
 
-export default function TransactionSearchForm() {
+interface TransactionSearchFormProps {
+  showImportFilter?: boolean;
+}
+
+const fetcher = (url: string) => fetch(url).then((res) => res.json()).then((res) => res.items);
+
+export default function TransactionSearchForm(props: TransactionSearchFormProps) {
   const [form, setForm] = useRecoilState(filterFormState);
+  const { data: importSelectPreset } = useSWR<SelectItem[]>(
+    "/api/imports/selectItems",
+    props.showImportFilter ? fetcher : () => []
+  );
 
   function onInputChange(value: string | boolean, name: string) {
     setForm({ ...form, [name]: value });
@@ -23,10 +36,7 @@ export default function TransactionSearchForm() {
   }
 
   function onSubmit() {
-    // fetch new data
-    // change recoil state
-    // else will automatically re-render
-    console.log("Submit form", form);
+    publish("transactionSearchFormSubmit", form);
   }
 
   const pickerOptions: DayPickerRangeProps = {
@@ -70,11 +80,18 @@ export default function TransactionSearchForm() {
           name="amountFilter"
           onChange={onInputChange}
         />
-        <DateRangePicker
-          options={pickerOptions}
-          className="tSearchForm__spanFull"
-          title="Transaction date"
-        />
+        {props.showImportFilter && (
+          <Select
+            className="tSearchForm__spanFull"
+            placeholder="Not selected"
+            items={importSelectPreset || []}
+            title="Import filter"
+            value={form.importId}
+            name="importId"
+            onChange={onInputChange}
+          />
+        )}
+        <DateRangePicker options={pickerOptions} className="tSearchForm__spanFull" title="Transaction date" />
         <Input
           className="tSearchForm__spanFull"
           title="Filter description"
@@ -85,12 +102,7 @@ export default function TransactionSearchForm() {
           onSubmit={onSubmit}
         />
       </div>
-      <Button
-        className="tSearchForm__button"
-        centerText
-        type="easy"
-        onClick={onSubmit}
-      >
+      <Button className="tSearchForm__button" centerText type="easy" onClick={onSubmit}>
         Apply filters
       </Button>
     </div>

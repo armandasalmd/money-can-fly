@@ -1,18 +1,24 @@
-import { withUser } from "@server/core";
+import { IsIn, IsPositive, IsDateString } from "class-validator";
+
+import { validatedApiRoute } from "@server/core";
 import { CurrencyRateManager } from "@server/managers";
 import { Currency } from "@utils/Types";
+import constants from "@server/utils/Constants";
 
-interface ConvertRequest {
+class ConvertRequest {
+  @IsIn(constants.allowed.currencies)
   from: Currency;
+  @IsIn(constants.allowed.currencies)
   to: Currency;
+  @IsPositive()
   amount: number;
-  date: Date;
+  @IsDateString()
+  date: string;
 }
 
-export default withUser("POST", async (request, response) => {
-  const manager = new CurrencyRateManager();
+export default validatedApiRoute("POST", ConvertRequest, async (request, response) => {
   const body: ConvertRequest = request.body;
-  const result = await manager.convert(body.amount, body.from, body.to, new Date(body.date));
+  const result = await CurrencyRateManager.getInstance().convert(body.amount, body.from, body.to, new Date(body.date));
 
   return response.status(200).json(result);
 });

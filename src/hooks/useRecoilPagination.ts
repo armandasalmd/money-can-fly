@@ -12,12 +12,15 @@ export interface IRecoilPaginationState<T> {
 
 export interface IRecoilPaginationFetchResponse<T> {
   items: T[];
-  totalItems: number;
+  total: number;
+  success: boolean;
+  end: boolean;
 }
 
 type FetchFn<T> = (
   pageNumber: number,
-  pageSize: number
+  pageSize: number,
+  extra?: any
 ) => Promise<IRecoilPaginationFetchResponse<T>>;
 
 export default function useRecoilPagination<SingleItemType>(
@@ -30,17 +33,17 @@ export default function useRecoilPagination<SingleItemType>(
   let maxPage = Math.ceil(state.totalItems / state.itemsPerPage);
   if (maxPage < 1) maxPage = 1;
 
-  function executeFetch(pageNumber: number, pageSize: number) {
+  function executeFetch(pageNumber: number, pageSize: number, extra?: any) {
     setState((state) => ({
       ...state,
       loading: true,
     }));
 
-    fetchFn(pageNumber, pageSize).then(({ items, totalItems }) => {
+    fetchFn(pageNumber, pageSize, extra).then(({ items, total }) => {
       setState((state) => ({
         ...state,
         loading: false,
-        totalItems,
+        totalItems: total,
         displayedItems: items,
         currentPage: pageNumber,
       }));
@@ -63,8 +66,8 @@ export default function useRecoilPagination<SingleItemType>(
     jump(state.currentPage - 1);
   }
 
-  function init() {
-    executeFetch(1, state.itemsPerPage);
+  function init(extra?: any) {
+    executeFetch(1, state.itemsPerPage, extra);
   }
 
   useEffect(() => {
@@ -83,5 +86,6 @@ export default function useRecoilPagination<SingleItemType>(
     currentData: state.displayedItems,
     currentPage: state.currentPage,
     maxPage,
+    mutate: () => executeFetch(state.currentPage, state.itemsPerPage),
   };
 }

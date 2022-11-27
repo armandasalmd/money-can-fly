@@ -16,7 +16,7 @@ export default function CreateTransactionSidebar() {
     <div style={{ background: "var(--shade0)", height: "100%" }}>
       <div style={{ background: "var(--bg-card)" }}>
         <Message
-          colorType="success"
+          colorType="info"
           messageStyle="bordered"
           onDismiss={() => setSuccess("")}
           fadeIn

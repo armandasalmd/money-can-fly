@@ -14,6 +14,7 @@ export interface CurrencyInputProps extends MyInputProps {
   value: Required<Money>;
   onChange: (money: Money, name: string) => void;
   onlyPositive?: boolean;
+  disableCurrencyChange?: boolean;
 }
 
 export default function CurrencyInput(props: CurrencyInputProps) {
@@ -46,7 +47,7 @@ export default function CurrencyInput(props: CurrencyInputProps) {
   }
 
   const inputDropdown = (
-    <div className="currencyInput__dropdown" onClick={() => setOpen(!open)}>
+    <div className="currencyInput__dropdown" onClick={() => props.disableCurrencyChange === true ? null : setOpen(!open)}>
       {value.currency}
     </div>
   );
@@ -55,7 +56,7 @@ export default function CurrencyInput(props: CurrencyInputProps) {
     <div className={classes} ref={thisRef}>
       <Input
         {...rest}
-        placeholder="0.00"
+        placeholder={props.placeholder || "0.00"}
         value={text}
         onChange={valueChange}
         dropdownExtension={inputDropdown}

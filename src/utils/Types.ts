@@ -32,11 +32,12 @@ export type Category =
   | "salary"
   | "trendUp"
   | "trendDown";
-export type ImportState = "running" | "success" | "error";
+export type ImportState = "running" | "success" | "error" | "undo";
 export type TransactionBank = "barclays" | "revolut" | "cash";
 export type ImportPresetType = Exclude<TransactionBank, "cash"> | "custom";
 export type FormMode = "create" | "update";
 export type TransactionStatusFilter = "active" | "inactive";
+export type AmountFilter = "incomeOnly" | "moreThan10Spent" | "moreThan25Spent" | "moreThan50Spent" | "moreThan100Spent" | "moreThan250Spent";
 
 export interface Money {
   amount: number;
@@ -51,21 +52,21 @@ export interface Borrowing {
 }
 
 export interface Transaction extends Money {
-  id?: string;
+  _id?: string;
   date: Date;
   inserted: Date;
   category: Category;
   description: string;
   source: TransactionBank;
-  active: boolean;
+  isActive: boolean;
 }
 
 export interface Import {
-  id: string;
-  date: Date;
-  bank: TransactionBank;
-  state: ImportState;
+  _id: string;
+  date: string;
+  source: TransactionBank;
   message: string;
+  importState: ImportState;
 }
 
 export interface WeekPrediction {
@@ -76,8 +77,19 @@ export interface WeekPrediction {
 }
 
 export interface MonthPrediction {
+  id?: string;
   period: DateRange;
   currency: Currency;
   predictions: WeekPrediction[];
   totalChange?: number;
+}
+
+export interface TransactionForm {
+  amountFilter?: AmountFilter;
+  statusFilter?: TransactionStatusFilter;
+  category?: Category;
+  currency?: Currency;
+  dateRange?: DateRange;
+  searchTerm: string;
+  importId?: string;
 }

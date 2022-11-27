@@ -1,7 +1,5 @@
 import { InsightsCollection } from "@components/molecules";
 import {
-  DashBorrowingsCard,
-  DashCategorySpendingCard,
   DashChartCard,
   DashQuickAddCard,
 } from "@organisms/index";
@@ -13,11 +11,11 @@ export default function DashboardBody() {
       <div className="dashboardBody__cards">
         <div className="dashboardBody__column">
           <DashChartCard />
-          <DashQuickAddCard />
         </div>
         <div className="dashboardBody__column">
-          <DashCategorySpendingCard />
-          <DashBorrowingsCard />
+          <DashQuickAddCard />
+          {/* <DashCategorySpendingCard /> */}
+          {/* <DashBorrowingsCard /> */}
         </div>
       </div>
     </div>

@@ -7,7 +7,7 @@ import {
   Airplay,
 } from "phosphor-react";
 
-import { Button, CategoryIcon, Checkbox } from "@atoms/index";
+import { CategoryIcon, Checkbox } from "@atoms/index";
 import { Transaction } from "@utils/Types";
 import { capitalise, toDisplayDate, iconOptions } from "@utils/Global";
 import { amountForDisplay } from "@utils/Currency";
@@ -17,6 +17,7 @@ export interface TransactionFullListItemProps {
   transaction: Transaction;
   selected: boolean;
   onSelect: (transaction: Transaction) => void;
+  onToggleActive: (transaction: Transaction) => void;
 }
 
 export default function TransactionFullListItem(
@@ -58,8 +59,8 @@ export default function TransactionFullListItem(
         <div className="tFullListItem__action" onClick={() => props.onSelect(props.transaction)}>
           <Checkbox value={props.selected ? "checked" : "unchecked"} />
         </div>
-        <div className="tFullListItem__action">
-          {createElement(props.transaction?.active ? Eye : EyeClosed, iconOptions)}
+        <div className="tFullListItem__action" onClick={() => props.onToggleActive(props.transaction)}>
+          {createElement(props.transaction?.isActive ? Eye : EyeClosed, iconOptions)}
         </div>
         <div className="tFullListItem__action">
           {createElement(PencilSimple, iconOptions)}

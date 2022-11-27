@@ -1,19 +1,9 @@
 import { atom, selector } from "recoil";
-import { DateRange } from "react-day-picker/dist/index";
 
-import { Category, Currency, TransactionStatusFilter, Transaction } from "@utils/Types";
+import { Transaction, TransactionForm } from "@utils/Types";
 import { dateFromNow } from "@utils/Global";
 import { IRecoilPaginationState } from "@hooks/useRecoilPagination";
 import constants from "@utils/Constants";
-
-export interface TransactionForm {
-  amountFilter: string | undefined;
-  statusFilter: TransactionStatusFilter | undefined;
-  category: Category | undefined;
-  currency: Currency | undefined;
-  dateRange: DateRange | undefined;
-  searchTerm: string;
-}
 
 export const pagedTransactionsState = atom<IRecoilPaginationState<Transaction>>({
   key: "pagedTransactions",
@@ -39,10 +29,11 @@ export const filterFormState = atom<TransactionForm>({
     category: undefined,
     currency: undefined,
     dateRange: {
-      from: dateFromNow(-7),
+      from: dateFromNow(-365),
       to: dateFromNow(0),
     },
     searchTerm: "",
+    importId: undefined,
   }
 });
 
@@ -50,6 +41,8 @@ export const paginationLabelState = selector<string>({
   key: "paginationLabel",
   get: ({ get }) => {
     const state = get(pagedTransactionsState);
+    if (state.loading) return "Loading...";
+    if (state.totalItems === 0) return "No transactions found";
     const from = (state.currentPage - 1) * state.itemsPerPage + 1;
     const to = Math.min(from + state.itemsPerPage - 1, state.totalItems);
     return `Showing ${from}-${to} of ${state.totalItems}`;
