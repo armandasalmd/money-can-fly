@@ -6,13 +6,12 @@ import { Button, Card, CardHeaderAction, Input, Select } from "@atoms/index";
 import {
   CurrencyInput,
   TransactionList,
-  mockTransactions,
 } from "@molecules/index";
 import constants from "@utils/Constants";
 import { bankNamesPreset, categotyPreset } from "@utils/SelectItems";
 import { Category, Money, TransactionBank } from "@utils/Types";
 
-const recentQuicAdds = mockTransactions.slice(0, 3);
+const recentQuicAdds = [];
 
 interface QuickAddFormState extends Money {
   bank: TransactionBank;

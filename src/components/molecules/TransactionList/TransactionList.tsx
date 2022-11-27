@@ -10,14 +10,14 @@ export interface TransactionListProps {
 export default function TransactionList(props: TransactionListProps) {
   return (
     <div className="tList">
-      {props.transactions.map((transaction) => (
+      {props.transactions?.map((transaction) => (
         <TransactionItem
-          key={transaction.id}
+          key={transaction._id}
           transaction={transaction}
           onDelete={props.onDelete}
         />
       ))}
-      {props.transactions.length === 0 && <Empty />}
+      {!props.transactions || props.transactions.length === 0 && <Empty />}
     </div>
   );
 }

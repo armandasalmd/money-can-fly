@@ -75,6 +75,10 @@
     }
   }
 
+  &--iconOnly {
+    padding: 0 $unit * 0.8;
+  }
+
   &--primary {
     background: var(--color-primary);
     color: $shade0;

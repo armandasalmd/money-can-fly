@@ -24,17 +24,10 @@ export default function TransactionItem(props: TransactionItemProps) {
       <CategoryIcon category={t.category} size="small" />
       <div className="tItem__main">
         <h5 className="tItem__title">{t.description}</h5>
-        <p className="tItem__subtitle">
-          {formatISO(t.date, { representation: "date" })}
-        </p>
+        <p className="tItem__subtitle">{formatISO(t.date, { representation: "date" })}</p>
       </div>
       <h3 className="tItem__amount">{amountForDisplay(t)}</h3>
-      <Trash
-        className="tItem__delete"
-        size={24}
-        color="var(--shade40)"
-        onClick={() => props.onDelete?.(t.id)}
-      />
+      <Trash className="tItem__delete" size={24} color="var(--shade40)" onClick={() => props.onDelete?.(t._id)} />
     </div>
   );
 }

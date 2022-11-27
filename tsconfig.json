@@ -10,6 +10,7 @@
     "skipLibCheck": true,
     "strict": false,
     "forceConsistentCasingInFileNames": true,
+    "experimentalDecorators": true,
     "noEmit": true,
     "incremental": true,
     "esModuleInterop": true,
@@ -31,8 +32,12 @@
       "@styles/*": ["styles/*"],
       "@templates/*": ["components/templates/*"],
       "@utils/*": ["utils/*"],
-      "@server/*": ["server/*"]
-    }
+      "@server/*": ["server/*"],
+      "@endpoint/*" : ["pages/api/*"]
+    },
+    "types": [
+      "reflect-metadata"
+    ]
   },
   "include": [
     "next-env.d.ts",

@@ -6,37 +6,30 @@ import { Empty } from "@atoms/index";
 
 export interface PredictionPreviewListProps {
   predictions: MonthPrediction[];
-  onSelect: (prediction: MonthPrediction) => void;
+  onSelect: (prediction: MonthPrediction | null) => void;
+  selectedPrediction: MonthPrediction | null;
 }
 
 export default function PredictionPreviewList(
   props: PredictionPreviewListProps
 ) {
   const { predictions } = props;
-  const [selectedPred, setSelectedPred] =
-    useState<MonthPrediction | null>(null);
 
   function onSelect(prediction: MonthPrediction) {
-    if (prediction === selectedPred) {
-      setSelectedPred(null);
-      props.onSelect(null);
-    } else {
-      setSelectedPred(prediction);
-      props.onSelect(prediction);
-    }
+    props.onSelect(prediction);
   }
 
   return (
     <div className="predictionList">
-      {predictions.map((prediction) => (
+      {Array.isArray(predictions) && predictions.map((prediction) => (
         <PredictionPreviewListItem
           key={prediction.period.from.toISOString()}
           prediction={prediction}
-          isSelected={selectedPred === prediction}
+          isSelected={props.selectedPrediction === prediction}
           onClick={onSelect}
         />
       ))}
-      {predictions.length === 0 && <Empty text="No predictions set yet!" />}
+      {(predictions?.length ?? 0) === 0 && <Empty text="No predictions set yet!" />}
     </div>
   );
 }

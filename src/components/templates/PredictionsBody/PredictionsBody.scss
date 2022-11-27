@@ -13,4 +13,9 @@
   &__chart {
     grid-area: chart;
   }
+
+  &__yearSelect {
+    margin: -$halfUnit $unit $unit $unit;
+    width: 40%;
+  }
 }

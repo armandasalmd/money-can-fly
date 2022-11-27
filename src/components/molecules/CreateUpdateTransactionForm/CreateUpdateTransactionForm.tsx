@@ -25,7 +25,7 @@ export default function CreateUpdateTransactionForm(
       date: new Date(),
       description: "",
       source: "cash",
-      active: true,
+      isActive: true,
       inserted: new Date(),
     }
   );
@@ -88,7 +88,7 @@ export default function CreateUpdateTransactionForm(
         />
         <DatePicker
           required
-          title="Date"
+          title="Execution date"
           name="date"
           onSelect={inputChange}
           value={formState.date}

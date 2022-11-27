@@ -2,7 +2,7 @@ const constants = {
   appName: "MoneyCanFly",
   defaultTitle: "Money Can Fly",
   defaultErrorMessage: "Unexpected error",
-  defaultPageSize: 10,
+  defaultPageSize: 25,
   env: process.env.NODE_ENV,
   navbarLinks: {
     dashboard: {

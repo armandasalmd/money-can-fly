@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Bank, CurrencyGbp, CurrencyDollar, CurrencyEur, Coin, Article, Tag, BracketsAngle } from "phosphor-react";
+import { Bank, CurrencyGbp, CurrencyDollar, CurrencyEur, Coin, Article, Tag, BracketsAngle, ArchiveTray } from "phosphor-react";
 
 import { Button, Checkbox, Card, Message, Select, Input } from "@atoms/index";
 import importPresets, { ImportFormState, ImportPreset } from "./ImportPresets";
@@ -107,7 +107,7 @@ export default function ImportConfigForm(props: ImportConfigFormProps) {
           text: "Close",
           onClick: props.onClose,
           type: "transparent",
-        }
+        },
       ]}
     >
       <div className="importConfig__body">
@@ -154,7 +154,14 @@ export default function ImportConfigForm(props: ImportConfigFormProps) {
           </section>
           <section>
             <p className="importConfig__sectionTitle">Column mappings</p>
-            <div className="importConfig__sectionInputs">
+            <div className="importConfig__options">
+              <Checkbox
+                horizontal
+                name="hasCategoryColumn"
+                title="Has category column"
+                onChange={onInputChange}
+                value={toCheckState(formState.hasCategoryColumn)}
+              />
               <Checkbox
                 horizontal
                 name="hasCurrencyColumn"
@@ -172,6 +179,7 @@ export default function ImportConfigForm(props: ImportConfigFormProps) {
             </div>
             <div className="importConfig__sectionInputs">
               <Select
+                menuAbove
                 items={csvColumnsSelect}
                 name="transactionDateColumn"
                 icon={Bank}
@@ -181,6 +189,7 @@ export default function ImportConfigForm(props: ImportConfigFormProps) {
                 onChange={onInputChange}
               />
               <Select
+                menuAbove
                 items={csvColumnsSelect}
                 name="descriptionColumn"
                 icon={Article}
@@ -190,6 +199,7 @@ export default function ImportConfigForm(props: ImportConfigFormProps) {
                 onChange={onInputChange}
               />
               <Select
+                menuAbove
                 items={csvColumnsSelect}
                 name="amountColumn"
                 icon={Coin}
@@ -199,6 +209,7 @@ export default function ImportConfigForm(props: ImportConfigFormProps) {
                 onChange={onInputChange}
               />
               <Select
+                menuAbove
                 items={csvColumnsSelect}
                 name="currencyColumn"
                 disabled={!formState.hasCurrencyColumn}
@@ -209,6 +220,7 @@ export default function ImportConfigForm(props: ImportConfigFormProps) {
                 onChange={onInputChange}
               />
               <Select
+                menuAbove
                 items={csvColumnsSelect}
                 name="transactionFeeColumn"
                 disabled={!formState.hasTransactionFeeColumn}
@@ -216,6 +228,17 @@ export default function ImportConfigForm(props: ImportConfigFormProps) {
                 required={formState.hasTransactionFeeColumn}
                 title="Transaction fee column"
                 value={formState.transactionFeeColumn}
+                onChange={onInputChange}
+              />
+              <Select
+                menuAbove
+                items={csvColumnsSelect}
+                name="categoryColumn"
+                disabled={!formState.hasCategoryColumn}
+                icon={ArchiveTray}
+                required={formState.hasCategoryColumn}
+                title="Category column"
+                value={formState.categoryColumn}
                 onChange={onInputChange}
               />
             </div>

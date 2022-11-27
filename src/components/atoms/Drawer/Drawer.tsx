@@ -5,7 +5,7 @@ import { X } from "phosphor-react";
 import { useOutsideClick } from "@hooks/index";
 import { iconOptions } from "@utils/Global";
 
-type DrawerSize = "default" | "large";
+type DrawerSize = "default" | "large" | "small";
 
 export interface DrawerProps extends PropsWithChildren {
   className?: string;
@@ -24,6 +24,7 @@ export default function Drawer(props: DrawerProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const classes = classNames("drawer", props.className, {
     "drawer--large": props.size === "large",
+    "drawer--small": props.size === "small",
     "drawer--open": props.open,
     "drawer--animatingExit": animatingExit,
   });
@@ -61,13 +62,14 @@ export default function Drawer(props: DrawerProps) {
     if (previousOpen === true && animatingExit === null && props.open === false) {
       close();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [previousOpen, animatingExit, props.open]);
 
   useEffect(() => {
     if (previousOpen != props.open) {
       setPreviousOpen(props.open);
     }
-  }, [props.open]);
+  }, [props.open, previousOpen]);
 
   if (!animatingExit && !props.open && props.destroyOnClose) {
     return null;

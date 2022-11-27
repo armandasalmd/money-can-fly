@@ -1,9 +1,11 @@
+import { useState } from "react";
 import classNames from "classnames";
 import { useRouter } from "next/router";
-import { MoonStars, Sun, SignOut, User } from "phosphor-react";
+import { MoonStars, Sun, SignOut, User, Faders } from "phosphor-react";
 
 import { useAuth, useTheme } from "@context/index";
 import { Button, Logo } from "@atoms/index";
+import { PreferencesDrawer } from "@components/templates";
 import Constants from "@utils/Constants";
 
 function getNavigationButton(
@@ -32,6 +34,7 @@ interface NavbarProps {
 
 export default function Navbar(props: NavbarProps) {
   const { navbarLinks } = Constants;
+  const [preferencesOpen, setPreferencesOpen] = useState(false);
   const { user, logout } = useAuth();
   const { theme, setTheme } = useTheme();
   const router = useRouter();
@@ -52,24 +55,28 @@ export default function Navbar(props: NavbarProps) {
   );
 
   return (
-    <div className={classses}>
-      <div className="navbar__left">
-        <div className="navbar__logo">
-          <Logo />
+    <>
+      <div className={classses}>
+        <div className="navbar__left">
+          <div className="navbar__logo">
+            <Logo />
+          </div>
+          <div className="navbar__container">{navButtons}</div>
         </div>
-        <div className="navbar__container">{navButtons}</div>
+        <div className="navbar__right">
+          <Button
+            tall
+            icon={theme === "dark" ? Sun : MoonStars}
+            onClick={toggleTheme}
+          />
+          <Button tall icon={Faders} onClick={() => setPreferencesOpen(true)} />
+          <Button tall icon={User}>
+            {displayName}
+          </Button>
+          <Button tall icon={SignOut} onClick={handleLogout} />
+        </div>
       </div>
-      <div className="navbar__right">
-        <Button
-          tall
-          icon={theme === "dark" ? Sun : MoonStars}
-          onClick={toggleTheme}
-        />
-        <Button tall icon={User}>
-          {displayName}
-        </Button>
-        <Button tall icon={SignOut} onClick={handleLogout} />
-      </div>
-    </div>
+      <PreferencesDrawer open={preferencesOpen} onClose={setPreferencesOpen} />
+    </>
   );
 }

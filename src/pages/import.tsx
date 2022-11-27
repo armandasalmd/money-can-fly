@@ -1,20 +1,27 @@
-import { SidebarHeaderProps } from "@atoms/index";
 import { ImportSidebar } from "@organisms/index";
 import { AppLayout, ImportsBody } from "@templates/index";
+import { useState } from "react";
 
 export default function ImportPage() {
-  const header: SidebarHeaderProps = {
-    title: "Import history",
-    subtitle: "Last import 1 month ago • Total 22 imports",
-  };
+  const [subtitle, setSubtitle] = useState("Loading...");
+  const [runningImportId, setRunningImportId] = useState("");
 
   return (
-    <AppLayout header={header}>
+    <AppLayout
+      header={{
+        title: "Import history",
+        subtitle,
+      }}
+    >
       <AppLayout.Sidebar>
-        <ImportSidebar />
+        <ImportSidebar
+          setSubtitle={setSubtitle}
+          runningImportId={runningImportId}
+          setRunningImportId={setRunningImportId}
+        />
       </AppLayout.Sidebar>
       <AppLayout.Content>
-        <ImportsBody />
+        <ImportsBody onImportStarted={setRunningImportId} />
       </AppLayout.Content>
     </AppLayout>
   );

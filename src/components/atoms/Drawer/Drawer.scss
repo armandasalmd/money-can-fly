@@ -76,6 +76,12 @@
     }
   }
 
+  &--small {
+    #{$base}__card {
+      width: 384px;
+    }
+  }
+
   &--open {
     display: block;
 
