@@ -11,6 +11,7 @@ export default function CreateTransactionSidebar() {
   function onFormSubmit(transaction: Transaction) {
     console.log(transaction);
   }
+  // TODO: Delete this component. Looks like its not used.
 
   return (
     <div style={{ background: "var(--shade0)", height: "100%" }}>
@@ -24,10 +25,10 @@ export default function CreateTransactionSidebar() {
           {success}
         </Message>
       </div>
-      <CreateUpdateTransactionForm
-        transaction={editTransaction}
+      {/* <CreateUpdateTransactionForm
+
         onSubmit={onFormSubmit}
-      />
+      /> */}
     </div>
   );
 }

@@ -1,0 +1,14 @@
+.setPrediction {
+  background-color: var(--shade5);
+  height: 100%;
+
+  &__container {
+    background-color: var(--bg-card);
+  }
+
+  &__tools {
+    display: flex;
+    gap: $halfUnit;
+    margin: $unit * 0.75 $unit * 0.75 $halfUnit;
+  }
+}

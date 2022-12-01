@@ -3,6 +3,12 @@
 
   padding: $unit * 0.75;
 
+  &__actions {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: $unit;
+  }
+
   &__inputs {
     display: grid;
     gap: $halfUnit;

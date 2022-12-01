@@ -1,34 +1,23 @@
 import classNames from "classnames";
+import { RecoilState, useRecoilState } from "recoil";
 import { Article, Bank, Bookmark } from "phosphor-react";
-import { useState } from "react";
 
-import { FormMode, Money, Transaction } from "@utils/Types";
-import { Input, Select, DatePicker } from "@atoms/index";
+import { Input, Select, DatePicker, Message } from "@atoms/index";
 import { CurrencyInput } from "@molecules/index";
 import { bankNamesPreset, categotyPreset } from "@utils/SelectItems";
+import { Money, Transaction } from "@utils/Types";
 
 export interface CreateUpdateTransactionFormProps {
-  transaction?: Transaction;
-  onSubmit: (transaction: Transaction) => void;
+  atom: RecoilState<Transaction>;
 }
 
-export default function CreateUpdateTransactionForm(
-  props: CreateUpdateTransactionFormProps
-) {
+export default function CreateUpdateTransactionForm(props: CreateUpdateTransactionFormProps) {
   const classes = classNames("tForm", {});
-  
-  const [formState, setFormState] = useState<Transaction>(
-    props.transaction || {
-      amount: 0,
-      category: "other",
-      currency: "GBP",
-      date: new Date(),
-      description: "",
-      source: "cash",
-      isActive: true,
-      inserted: new Date(),
-    }
-  );
+  const [formState, setFormState] = useRecoilState(props.atom);
+
+  if (formState === null) {
+    return null;
+  }
 
   function inputChange(value: string | Money | Date, name: string) {
     if (name === "money") {
@@ -45,6 +34,12 @@ export default function CreateUpdateTransactionForm(
 
   return (
     <div className={classes}>
+      {!formState.isActive && (
+        <Message className="tForm__header" colorType="info" messageStyle="bordered" counterMargin>
+          Note. You are editing a disabled transaction
+        </Message>
+      )}
+
       <div className="tForm__item">
         <Input
           icon={Article}
@@ -86,13 +81,7 @@ export default function CreateUpdateTransactionForm(
           required
           onChange={inputChange}
         />
-        <DatePicker
-          required
-          title="Execution date"
-          name="date"
-          onSelect={inputChange}
-          value={formState.date}
-        />
+        <DatePicker required title="Execution date" name="date" onSelect={inputChange} value={formState.date} />
       </div>
     </div>
   );

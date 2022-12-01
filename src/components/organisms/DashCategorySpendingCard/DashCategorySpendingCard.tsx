@@ -2,7 +2,8 @@ import { useState } from "react";
 import { DateRange } from "react-day-picker/dist/index";
 
 import CategoryChart from "./CategoryChart";
-import { Card, DatePeriodSelect, getPeriodNow } from "@atoms/index";
+import { Card, DatePeriodSelect } from "@atoms/index";
+import { getPeriodNow } from "@utils/Global";
 
 export default function DashCategorySpendingCard() {
   const descriptionDate = "2022 October"; // TODO: replace

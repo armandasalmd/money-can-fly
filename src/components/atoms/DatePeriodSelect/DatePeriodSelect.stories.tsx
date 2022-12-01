@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 import { Story, Meta } from "@storybook/react";
-import { DateRange } from "react-day-picker/dist/index";
 
-import DatePeriodSelectRange, {
-  DatePeriodSelectProps,
-  getPeriodNow,
-} from "./DatePeriodSelect";
+import DatePeriodSelectRange, { DatePeriodSelectProps } from "./DatePeriodSelect";
+import { getPeriodNow } from "@utils/Global";
+import { DateRange } from "@utils/Types";
 
 export default {
   title: "Atoms/DatePeriodSelect",

@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { DayPickerRangeProps, DateRange } from "react-day-picker/dist/index";
 
-import { Card, DateRangePicker, getPeriodNow } from "@atoms/index";
+import { Card, DateRangePicker } from "@atoms/index";
 import { amountForDisplay, percentForDisplay } from "@utils/Currency";
 import { ActionColor } from "@utils/Types";
 import BalanceComparisonChart from "./BalanceComparisonChart";
+import { getPeriodNow } from "@utils/Global";
 
 export default function DashChartCard() {
   const amountAbove = { amount: 59.21, currency: "GBP" } as any;

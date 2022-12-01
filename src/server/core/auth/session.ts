@@ -1,5 +1,6 @@
 import type { IronSessionOptions } from "iron-session/edge";
 import type { CookieUser } from "@server/core";
+import constants from "@server/utils/Constants";
 
 export const sessionOptions: IronSessionOptions = {
   password: process.env.IRON_SESSION_SECRET as string,
@@ -8,6 +9,7 @@ export const sessionOptions: IronSessionOptions = {
     secure: process.env.NODE_ENV === "production",
     httpOnly: true,
     sameSite: true,
+    maxAge: constants.sessionMaxAge
   },
 };
 

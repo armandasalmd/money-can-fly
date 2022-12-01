@@ -1,4 +1,4 @@
-import { PropsWithChildren, createElement } from "react";
+import { PropsWithChildren } from "react";
 import classNames from "classnames";
 import { X } from "phosphor-react";
 
@@ -11,6 +11,7 @@ export interface MessageProps extends PropsWithChildren {
   colorType: MessageColor;
   onDismiss?(): void;
   fadeIn?: boolean;
+  counterMargin?: boolean;
 }
 
 export default function Message(props: MessageProps) {
@@ -19,10 +20,11 @@ export default function Message(props: MessageProps) {
 
   const classes = classNames(
     "message",
+    `message--${messageStyle}`,
+    `message--${colorType}`,
     {
-      [`message--${props.messageStyle}`]: messageStyle,
-      [`message--${props.colorType}`]: colorType,
       "message--fade": props.fadeIn,
+      "message--counterMargin": props.counterMargin,
     },
     props.className
   );
@@ -34,14 +36,7 @@ export default function Message(props: MessageProps) {
   return (
     <div className={classes}>
       <p className="message__text">{props.children}</p>
-      {props.onDismiss && (
-        <X
-          weight="bold"
-          size={20}
-          onClick={props.onDismiss}
-          className="message__dismiss"
-        />
-      )}
+      {props.onDismiss && <X weight="bold" size={20} onClick={props.onDismiss} className="message__dismiss" />}
     </div>
   );
 }
