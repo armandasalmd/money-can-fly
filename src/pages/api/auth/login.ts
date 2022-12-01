@@ -1,6 +1,7 @@
 import { IsJWT } from "class-validator";
 
 import { verifyToken, validatedApiRoute } from "@server/core";
+import constants from "@server/utils/Constants";
 
 export class LoginRequest {
   @IsJWT()
@@ -14,7 +15,8 @@ export default validatedApiRoute("POST", LoginRequest, async (request, response)
     if (payload && payload.email && payload.user_id) {
       request.session.user = {
         email: payload.email,
-        userUID: payload.user_id
+        userUID: payload.user_id,
+        exp: new Date(Date.now() + constants.sessionMaxAge).toISOString(),
       };
       
       await request.session.save();

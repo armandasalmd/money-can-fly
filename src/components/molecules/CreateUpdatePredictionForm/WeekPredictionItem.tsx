@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { WeekPrediction } from "@utils/Types";
 import { Input } from "@atoms/index";
 import { parseCurrency } from "@utils/Currency";
@@ -29,6 +29,13 @@ export default function WeekPredictionItem(props: WeekPredictionItemProps) {
       }
     }
   }
+
+  useEffect(() => {
+    if (props.week.moneyIn === 0 && props.week.moneyOut === 0) {
+      setInValue("");
+      setOutValue("");
+    }
+  }, [props.week]);
 
   return (
     <div className="predictionForm__week">

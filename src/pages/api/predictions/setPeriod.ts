@@ -28,9 +28,10 @@ export class SetPeriodRequest {
 
 export default validatedApiRoute("PUT", SetPeriodRequest, async (request, response, user) => {
   const periodPredictionManager = new PeriodPredictionManager();
-  const success = await periodPredictionManager.SetPeriod(request.body, user);
+  const dataObject = await periodPredictionManager.SetPeriod(request.body, user);
 
   return response.status(200).json({
-    success
+    success: !!dataObject,
+    data: dataObject,
   });
 });

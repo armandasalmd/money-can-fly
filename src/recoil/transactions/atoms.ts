@@ -37,6 +37,20 @@ export const filterFormState = atom<TransactionForm>({
   }
 });
 
+export const addEditTransactionState = atom<Transaction>({
+  key: "addEditTransaction",
+  default: {
+    amount: 0,
+    category: "other",
+    currency: "GBP",
+    date: new Date(),
+    description: "",
+    isActive: true,
+    source: "cash",
+    inserted: new Date(),
+  }
+});
+
 export const paginationLabelState = selector<string>({
   key: "paginationLabel",
   get: ({ get }) => {

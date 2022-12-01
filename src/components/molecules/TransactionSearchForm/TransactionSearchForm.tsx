@@ -1,4 +1,4 @@
-import { MagnifyingGlass } from "phosphor-react";
+import { TextAa, MagnifyingGlass } from "phosphor-react";
 import { DateRange, DayPickerRangeProps } from "react-day-picker/dist/index";
 import { useRecoilState } from "recoil";
 
@@ -96,13 +96,13 @@ export default function TransactionSearchForm(props: TransactionSearchFormProps)
           className="tSearchForm__spanFull"
           title="Filter description"
           value={form.searchTerm}
-          icon={MagnifyingGlass}
+          icon={TextAa}
           name="searchTerm"
           onChange={onInputChange}
           onSubmit={onSubmit}
         />
       </div>
-      <Button className="tSearchForm__button" centerText type="easy" onClick={onSubmit}>
+      <Button icon={MagnifyingGlass} className="tSearchForm__button" centerText type="easy" onClick={onSubmit}>
         Apply filters
       </Button>
     </div>

@@ -52,6 +52,7 @@ export default function DatePicker(props: DatePickerProps) {
             mode="single"
             selected={props.value}
             onSelect={onDayClick}
+            defaultMonth={props.value || new Date()}
           />
         )}
       </div>

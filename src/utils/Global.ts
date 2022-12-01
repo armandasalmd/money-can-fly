@@ -1,5 +1,7 @@
 import { IconProps } from "phosphor-react";
-import { CheckState } from "./Types";
+import addMonths from "date-fns/addMonths";
+import addDays from "date-fns/addDays";
+import { CheckState, DateRange } from "./Types";
 
 export function toCheckState(value: boolean | null): CheckState {
   if (value === null) return "indeterminate";
@@ -89,3 +91,16 @@ export const iconOptions: IconProps = {
   size: 20,
   color: "var(--shade40)",
 };
+
+export function getDateRange(periodStart: Date = new Date()): DateRange {
+  const periodStartRaw = new Date(periodStart.getFullYear(), periodStart.getMonth(), 1);
+
+  return {
+    from: periodStartRaw,
+    to: addDays(addMonths(periodStartRaw, 1), -1),
+  };
+}
+
+export function getPeriodNow(): DateRange {
+  return getDateRange();
+}

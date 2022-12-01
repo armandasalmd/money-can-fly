@@ -13,6 +13,7 @@ export interface PredictionPreviewListProps {
   selectedTransactions: Transaction[];
   setSelectedTransactions: (transactions: Transaction[]) => void;
   scrollToTop: () => void;
+  onEdit: (transaction: Transaction) => void;
 }
 
 export default function TransactionFullList(props: PredictionPreviewListProps) {
@@ -53,7 +54,7 @@ export default function TransactionFullList(props: PredictionPreviewListProps) {
     }).then((response) => response.json());
   }
 
-  function postPageChange(items: Transaction[]) {
+  function postPageChange() {
     setSelectedTransactions([]);
     props.scrollToTop();
   }
@@ -112,6 +113,7 @@ export default function TransactionFullList(props: PredictionPreviewListProps) {
       <div className="tFullList__items">
         {currentData?.map((t, index) => (
           <TransactionFullListItem
+            onEdit={props.onEdit}
             onToggleActive={toggleActive}
             onSelect={onSelect}
             selected={selectedTransactions.includes(t)}

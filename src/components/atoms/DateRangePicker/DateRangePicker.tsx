@@ -5,8 +5,8 @@ import { DayPicker, DateRange, DayPickerRangeProps } from "react-day-picker";
 import { useOutsideClick } from "@hooks/index";
 import "react-day-picker/dist/style.css";
 
-import { Button, DatePeriodSelect, getPeriodNow } from "@atoms/index";
-import { callIfFunction, dateString } from "@utils/Global";
+import { Button, DatePeriodSelect } from "@atoms/index";
+import { callIfFunction, dateString, getPeriodNow } from "@utils/Global";
 
 export interface DatePickerRangeProps {
   showIcon?: boolean;

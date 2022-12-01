@@ -1,11 +1,10 @@
 import { DateRange } from "react-day-picker";
 import { Select, SelectProps } from "@atoms/index";
 import { SelectItem } from "@utils/SelectItems";
-import { callIfFunction } from "@utils/Global";
+import { callIfFunction, getDateRange } from "@utils/Global";
 import format from "date-fns/format";
 import formatISO from "date-fns/formatISO";
 import addMonths from "date-fns/addMonths";
-import addDays from "date-fns/addDays";
 
 const TODAY_SUFFIX = " (now)";
 
@@ -15,16 +14,6 @@ export interface DatePeriodSelectProps
   monthsBehind?: number;
   onChange?: (value: DateRange, name: string) => void;
   value: DateRange | undefined;
-}
-
-export function getPeriodNow(): DateRange {
-  const now = new Date();
-  const periodNow = new Date(now.getFullYear(), now.getMonth(), 1);
-
-  return {
-    from: periodNow,
-    to: addDays(addMonths(periodNow, 1), -1),
-  };
 }
 
 function dateRangeToString(value: DateRange) {
@@ -65,10 +54,7 @@ function generateSelectItems(
   function getSelectItem(periodStart: Date, suffix?: string): SelectItem {
     return {
       label: format(periodStart, "yyyy MMMM") + (suffix || ""),
-      value: dateRangeToString({
-        from: periodStart,
-        to: addDays(addMonths(periodStart, 1), -1),
-      }),
+      value: dateRangeToString(getDateRange(periodStart)),
     };
   }
 }

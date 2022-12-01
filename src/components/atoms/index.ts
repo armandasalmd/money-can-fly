@@ -2,7 +2,7 @@ export { default as Button, type ButtonType } from "./Button/Button";
 export { default as Card, type CardHeaderAction } from "./Card/Card";
 export { default as CategoryIcon } from "./CategoryIcon/CategoryIcon";
 export { default as Checkbox } from "./Checkbox/Checkbox";
-export { default as DatePeriodSelect, getPeriodNow } from "./DatePeriodSelect/DatePeriodSelect";
+export { default as DatePeriodSelect } from "./DatePeriodSelect/DatePeriodSelect";
 export { default as DatePicker } from "./DatePicker/DatePicker";
 export { default as DateRangePicker } from "./DateRangePicker/DateRangePicker";
 export { default as Drawer, type DrawerProps } from "./Drawer/Drawer";

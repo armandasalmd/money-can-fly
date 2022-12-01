@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useRecoilValue, useRecoilState } from "recoil";
 import format from "date-fns/format";
+import useSWR from "swr";
 
 import { Card, CardHeaderAction, Empty, HeaderProps, Select } from "@atoms/index";
 import { PredictionPreviewList } from "@components/molecules";
@@ -7,13 +9,26 @@ import { MonthPrediction } from "@utils/Types";
 import WeeklyPredictionsChart from "./WeeklyPredictionsChart";
 import { amountForDisplay } from "@utils/Currency";
 import { yearsPreset } from "@utils/SelectItems";
-import useSWR, { mutate } from "swr";
+import {
+  editorChartToolState,
+  chartToolState,
+  monthPredictionFormState,
+  getDefaultWeekPredictions,
+} from "@recoil/predictions/atoms";
+import { subscribe, unsubscribe } from "@utils/Events";
+import { getDateRange } from "@utils/Global";
 
-function getCardHeader(p: MonthPrediction): HeaderProps {
+function getCardHeader(p: MonthPrediction, editorChartOverride: boolean): HeaderProps {
+  if (editorChartOverride) {
+    return {
+      title: "Interactive chart",
+      description: "Edit form on the right to update chart",
+    };
+  }
+
   if (!p) {
     return {
       title: "Please select monthly prediction",
-      color: "info",
     };
   }
 
@@ -23,7 +38,6 @@ function getCardHeader(p: MonthPrediction): HeaderProps {
       currency: p.currency,
       amount: p.totalChange || 0,
     })}`,
-    color: "info",
   };
 }
 
@@ -40,20 +54,34 @@ const fetcher = (url: string) =>
   });
 
 export default function PredictionsBody() {
-  const [selectedPred, setSelectedPred] = useState<MonthPrediction | null>(null);
-  const [selectedYear, setSelectedYear] = useState(yearsPreset.find((o) => true).value);
+  const yearNowString = new Date().getFullYear().toString();
+  const [selectedYear, setSelectedYear] = useState(yearsPreset.find((o) => o.value === yearNowString).value);
   const { data: predictions, mutate } = useSWR(`/api/predictions/read?year=${selectedYear}`, fetcher);
 
+  const editorChartTool = useRecoilValue(editorChartToolState);
+  const [chartTool, setChartTool] = useRecoilState(chartToolState);
+  const [_, setFormState] = useRecoilState(monthPredictionFormState);
+  const displayEditorChart = editorChartTool !== null;
+
   const editAction: CardHeaderAction = {
-    text: "Change",
-    onClick: () => console.log("Change"),
+    text: "Update",
+    onClick: () => {
+      const d = getDefaultWeekPredictions();
+      const weekPredCopy = chartTool.predictions.map((o, index) => ({ ...o, label: d[index].label }));
+
+      setFormState({
+        ...chartTool,
+        predictions: weekPredCopy,
+        period: getDateRange(chartTool.period.from),
+      });
+    },
     type: "default",
   };
 
   const deleteAction: CardHeaderAction = {
-    text: "Reset",
+    text: "Delete",
     onClick: () => {
-      const id = selectedPred?.id;
+      const id = chartTool?.id;
 
       fetch("/api/predictions/resetPeriod", {
         method: "DELETE",
@@ -61,30 +89,44 @@ export default function PredictionsBody() {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ predictionId: id }),
-      }).then((res) => {
-        return res.json();
-      }).then((data) => {
-        if (data.success) {
-          setSelectedPred(null);
-          mutate();
-        }
-      });
+      })
+        .then((res) => {
+          return res.json();
+        })
+        .then((data) => {
+          if (data.success) {
+            setChartTool(null);
+            mutate();
+          }
+        });
     },
     type: "danger",
   };
 
   function onYearChange(year: string) {
     setSelectedYear(year);
-    setSelectedPred(null);
+    setChartTool(null);
   }
 
   function onSelect(prediction: MonthPrediction) {
-    if (prediction === selectedPred) {
-      setSelectedPred(null);
+    if (prediction === chartTool) {
+      setChartTool(null);
     } else {
-      setSelectedPred(prediction);
+      setChartTool(prediction);
     }
   }
+
+  useEffect(() => {
+    function onPredictionUpdated(/*{detail: newPrediction}*/) {
+      mutate();
+    }
+
+    subscribe("predictionsUpdated", onPredictionUpdated);
+
+    return () => {
+      unsubscribe("predictionsUpdated", onPredictionUpdated);
+    }
+  }, [mutate]);
 
   return (
     <div className="predictionsBody">
@@ -93,32 +135,40 @@ export default function PredictionsBody() {
           noDivider
           header={{
             title: "Preview predictions",
-            description: "Select monthly period to preview",
-            color: "info",
+            description: displayEditorChart
+              ? "Disable chart tool to preview existing"
+              : "Select monthly period to preview",
+            color: displayEditorChart ? "warning" : "primary",
           }}
           noContentPaddingX
           noContentPaddingY
         >
-          <div className="predictionsBody__yearSelect">
-            <Select
-              required
-              items={yearsPreset}
-              placeholder="Filter by year"
-              value={selectedYear}
-              onChange={onYearChange}
-            />
-          </div>
-          <PredictionPreviewList selectedPrediction={selectedPred} onSelect={onSelect} predictions={predictions} />
+          {!displayEditorChart && (
+            <div className="predictionsBody__yearSelect">
+              <Select
+                required
+                items={yearsPreset}
+                placeholder="Filter by year"
+                value={selectedYear}
+                onChange={onYearChange}
+              />
+            </div>
+          )}
+          {!displayEditorChart && (
+            <PredictionPreviewList selectedPrediction={chartTool} onSelect={onSelect} predictions={predictions} />
+          )}
         </Card>
       </div>
       <div className="predictionsBody__chart">
         <Card
           noDivider
-          header={getCardHeader(selectedPred)}
-          headerActions={selectedPred ? [deleteAction, editAction] : undefined}
+          header={getCardHeader(chartTool, displayEditorChart)}
+          headerActions={chartTool && !displayEditorChart ? [deleteAction, editAction] : undefined}
         >
-          {selectedPred && <WeeklyPredictionsChart prediction={selectedPred} />}
-          {!selectedPred && <Empty />}
+          {(chartTool || displayEditorChart) && (
+            <WeeklyPredictionsChart prediction={displayEditorChart ? editorChartTool : chartTool} />
+          )}
+          {!chartTool && !displayEditorChart && <Empty />}
         </Card>
       </div>
     </div>

@@ -1,4 +1,4 @@
-export { default as CreatePredictionSidebar } from "./CreatePredictionSidebar/CreatePredictionSidebar";
+export { default as SetPredictionSidebar } from "./SetPredictionSidebar/SetPredictionSidebar";
 export { default as CreateTransactionSidebar } from "./CreateTransactionSidebar/CreateTransactionSidebar";
 export { default as DashBorrowingsCard } from "./DashBorrowingsCard/DashBorrowingsCard";
 export { default as DashCategorySpendingCard } from "./DashCategorySpendingCard/DashCategorySpendingCard";

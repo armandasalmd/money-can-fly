@@ -21,14 +21,13 @@ export default function CurrencyInput(props: CurrencyInputProps) {
   const { onlyPositive, value, onChange, ...rest } = props;
   const thisRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
-  const [text, setText] = useState("");
+  const [text, setText] = useState(props.value.amount.toString());
   const classes = classNames("currencyInput", {
     "currencyInput--fixedWidth": props.fixedWidth,
   });
 
   function valueChange(v: string, name: string) {
     const amount = parseCurrency(v, onlyPositive);
-
     if (!isNaN(amount)) {
       setText(v);
       onChange(

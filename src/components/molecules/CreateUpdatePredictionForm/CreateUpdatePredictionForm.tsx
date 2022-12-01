@@ -1,48 +1,19 @@
 import { useState, useEffect } from "react";
-import { DateRange } from "react-day-picker";
 
-import { WeekPrediction, MonthPrediction } from "@utils/Types";
-import { Button, DatePeriodSelect, Select, getPeriodNow } from "@atoms/index";
+import { WeekPrediction, MonthPrediction, DateRange } from "@utils/Types";
+import { Button, DatePeriodSelect, Select } from "@atoms/index";
 import { currencyPreset } from "@utils/SelectItems";
 import WeekPredictionItem from "./WeekPredictionItem";
+import { monthPredictionFormState } from "@recoil/predictions/atoms";
+import { useRecoilState } from "recoil";
 
 export interface CreateUpdatePredictionFormProps {
-  prediction?: MonthPrediction;
-  onSubmit: (prediction: MonthPrediction) => void;
+  onSubmit: (prediction: MonthPrediction, isEmpty: boolean) => void;
+  loading: boolean;
 }
 
-function getDefaultWeekPrediction(): WeekPrediction[] {
-  const weeks: WeekPrediction[] = [];
-
-  for (let i = 1; i <= 4; i++) {
-    weeks.push({
-      label: `Day ${(i - 1) * 7 + 1} - ${i * 7}`,
-      week: i,
-      moneyIn: 0,
-      moneyOut: 0,
-    });
-  }
-
-  weeks.push({
-    label: "Day 29 - End",
-    week: 5,
-    moneyIn: 0,
-    moneyOut: 0,
-  });
-
-  return weeks;
-}
-
-export default function CreateUpdatePredictionForm(
-  props: CreateUpdatePredictionFormProps
-) {
-  const [formState, setFormState] = useState<MonthPrediction>(
-    props.prediction || {
-      period: getPeriodNow(),
-      currency: "GBP",
-      predictions: getDefaultWeekPrediction(),
-    }
-  );
+export default function CreateUpdatePredictionForm(props: CreateUpdatePredictionFormProps) {
+  const [formState, setFormState] = useRecoilState(monthPredictionFormState);
   const [totalPrediction, setTotalPrediction] = useState<WeekPrediction | null>(null);
 
   function inputChange(value: string | DateRange, name: string) {
@@ -50,9 +21,7 @@ export default function CreateUpdatePredictionForm(
   }
 
   function weekPredictionChange(week: WeekPrediction) {
-    const predictions = formState.predictions.map((w) =>
-      w.week === week.week ? week : w
-    );
+    const predictions = formState.predictions.map((w) => (w.week === week.week ? week : w));
     setFormState({ ...formState, predictions });
   }
 
@@ -60,14 +29,8 @@ export default function CreateUpdatePredictionForm(
     setTotalPrediction({
       week: -1,
       label: "Total",
-      moneyIn: formState.predictions.reduce(
-        (acc, o) => acc + o.moneyIn,
-        0
-      ),
-      moneyOut: formState.predictions.reduce(
-        (acc, o) => acc + o.moneyOut,
-        0
-      ),
+      moneyIn: formState.predictions.reduce((acc, o) => acc + o.moneyIn, 0),
+      moneyOut: formState.predictions.reduce((acc, o) => acc + o.moneyOut, 0),
     });
   }, [formState]);
 
@@ -96,30 +59,23 @@ export default function CreateUpdatePredictionForm(
         />
       </div>
       <div className="predictionForm__divider" />
-      <p className="predictionForm__tip">
-        Enter the amount you predict to spend each week below
-      </p>
+      <p className="predictionForm__tip">Enter the amount you predict to spend each week below</p>
       <div className="predictionForm__item">
         {formState.predictions.map((week) => (
-          <WeekPredictionItem
-            key={week.week}
-            week={week}
-            onChange={weekPredictionChange}
-          />
+          <WeekPredictionItem key={week.week} week={week} onChange={weekPredictionChange} />
         ))}
-        {totalPrediction && <WeekPredictionItem
-          key={totalPrediction.week}
-          week={totalPrediction}
-          onChange={() => {}}
-        />}
+        {totalPrediction && (
+          <WeekPredictionItem key={totalPrediction.week} week={totalPrediction} onChange={() => {}} />
+        )}
       </div>
       <Button
+        disabled={props.loading}
         centerText
         className="predictionForm__item"
-        onClick={() => props.onSubmit(formState)}
+        onClick={() => props.onSubmit(formState, totalPrediction.moneyIn === 0 && totalPrediction.moneyOut === 0)}
         type="primary"
       >
-        Save
+        {props.loading ? "Saving..." : "Save"}
       </Button>
     </div>
   );

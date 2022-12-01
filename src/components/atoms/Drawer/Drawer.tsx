@@ -4,6 +4,7 @@ import { X } from "phosphor-react";
 
 import { useOutsideClick } from "@hooks/index";
 import { iconOptions } from "@utils/Global";
+import { Message } from "@atoms/index";
 
 type DrawerSize = "default" | "large" | "small";
 
@@ -16,6 +17,7 @@ export interface DrawerProps extends PropsWithChildren {
   size?: DrawerSize;
   title: string;
   subtitle?: string;
+  error?: string;
 }
 
 export default function Drawer(props: DrawerProps) {
@@ -85,12 +87,15 @@ export default function Drawer(props: DrawerProps) {
           </div>
           <div className="drawer__headerText">
             <h2 className="drawer__title">{props.title}</h2>
-            {props.subtitle && (
-              <p className="drawer__subtitle">{props.subtitle}</p>
-            )}
+            {props.subtitle && <p className="drawer__subtitle">{props.subtitle}</p>}
           </div>
           {props.extra && <div className="drawer__extra">{props.extra}</div>}
         </div>
+        {props.error && (
+          <Message colorType="error" messageStyle="bordered" className="drawer__message" fadeIn>
+            {props.error}
+          </Message>
+        )}
         <div className="drawer__body">{props.children}</div>
       </div>
     </div>
