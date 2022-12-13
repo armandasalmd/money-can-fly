@@ -2,7 +2,7 @@
   $base: &;
 
   &__form {
-    padding: 0 $unit $halfUnit;
+    padding: 0 $unit $unit;
 
     #{$base}__rowOne {
       display: grid;
@@ -20,16 +20,5 @@
         flex: 1;
       }
     }
-  }
-
-  &__label {
-    margin: $unit * 0.5 0 $halfUnit $unit;
-    color: var(--shade50);
-  }
-
-  &__list {
-    overflow-y: hidden;
-    border-bottom-left-radius: $defaultBorderRadius;
-    border-bottom-right-radius: $defaultBorderRadius;
   }
 }

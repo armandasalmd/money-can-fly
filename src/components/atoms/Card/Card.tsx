@@ -65,7 +65,7 @@ export default function Card(props: CardProps) {
         )}
       </div>
       {props.error && (
-        <Message className="card__error" colorType="error" fadeIn>
+        <Message className="card__error" colorType="error" fadeIn messageStyle="bordered">
           {props.error}
         </Message>
       )}

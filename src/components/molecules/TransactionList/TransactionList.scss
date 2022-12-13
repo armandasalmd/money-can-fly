@@ -1,4 +1,10 @@
-// .tList {}
+.tList {
+  &__loadMore {
+    display: flex;
+    justify-content: center;
+    padding: $unit $unit * 0.75;
+  }
+}
 
 .tItem {
   $base: &;
