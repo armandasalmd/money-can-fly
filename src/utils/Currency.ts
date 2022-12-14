@@ -23,7 +23,7 @@ export function percentForDisplay(percent: number): string {
 export function parseCurrency(text: string, onlyPositive: boolean): number {
   if (!text || text === "") {
       return 0;
-  } else if (text === "-") {
+  } else if (text.startsWith("-")) {
       return onlyPositive ? NaN : 0;
   } else if (text.match(/(\d|\.|\,)$/)) {
       text = text.replace(",", ".");
