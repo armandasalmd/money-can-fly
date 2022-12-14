@@ -1,15 +1,12 @@
 import { atom } from "recoil";
-import { Currency, OtherAsset } from "@utils/Types";
+import { Currency, Money } from "@utils/Types";
 
 export interface PreferencesForm {
   defaultCurrency: Currency;
   monthlyBudget: number;
   monthlyBudgetStartDay: number;
   balances: {
-    [key in Currency]: number;
-  };
-  otherAssets: {
-    [key in OtherAsset]: number;
+    [key in Currency]: Money;
   };
 }
 
@@ -20,13 +17,18 @@ export const preferencesState = atom<PreferencesForm>({
     monthlyBudget: 0,
     monthlyBudgetStartDay: 1,
     balances: {
-      GBP: 0,
-      EUR: 0,
-      USD: 0,
-    },
-    otherAssets: {
-      crypto: 0,
-      stocks: 0,
+      GBP: {
+        amount: 0,
+        currency: "GBP",
+      },
+      EUR: {
+        amount: 0,
+        currency: "EUR",
+      },
+      USD: {
+        amount: 0,
+        currency: "USD",
+      },
     }
   }
 });

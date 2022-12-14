@@ -1,11 +1,11 @@
 import { useRecoilState, useResetRecoilState } from "recoil";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
-import { Drawer, Select, DatePicker, Button } from "@atoms/index";
+import { Drawer, Select, DatePicker, Button, Message } from "@atoms/index";
 import { CurrencyInput } from "@molecules/index";
-import { preferencesState } from "@recoil/preferences/atoms";
+import { PreferencesForm, preferencesState } from "@recoil/preferences/atoms";
 import { currencyPreset } from "@utils/SelectItems";
-import { Currency, Money } from "@utils/Types";
+import { Money } from "@utils/Types";
 import { amountForDisplay } from "@utils/Currency";
 
 interface PreferencesDrawerProps {
@@ -17,9 +17,28 @@ export default function PreferencesDrawer(props: PreferencesDrawerProps) {
   const [changed, setChanged] = useState(false);
   const [state, setState] = useRecoilState(preferencesState);
   const resetState = useResetRecoilState(preferencesState);
+  const [message, setMessage] = useState("");
+  const [messageType, setMessageType] = useState<"success" | "error">("success");
 
   function onSave() {
-    console.log("Save", state);
+    fetch("/api/preferences/update", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(state),
+    })
+      .then((res) => res.json())
+      .then((res) => {
+        setState(res);
+        setChanged(false);
+        setMessageType("success");
+        setMessage("Preferences saved");
+      })
+      .catch((err) => {
+        setMessageType("error");
+        setMessage("Error saving preferences");
+      });
   }
 
   function onInputChange(value: string | number, name: string) {
@@ -42,8 +61,8 @@ export default function PreferencesDrawer(props: PreferencesDrawerProps) {
       ...state,
       balances: {
         ...state.balances,
-        [value.currency]: value.amount,
-      }
+        [value.currency]: value,
+      },
     });
   }
 
@@ -55,53 +74,47 @@ export default function PreferencesDrawer(props: PreferencesDrawerProps) {
   }
 
   const saveButton = (
-    <Button
-      type={changed ? "primary" : "default"}
-      disabled={!changed}
-      onClick={onSave}
-    >
+    <Button type={changed ? "primary" : "default"} disabled={!changed} onClick={onSave}>
       Save
     </Button>
   );
 
   const now = new Date();
-  const monthlyBudgetStartDay = new Date(
-    now.getFullYear(),
-    now.getMonth(),
-    state.monthlyBudgetStartDay
-  );
+  const monthlyBudgetStartDay = new Date(now.getFullYear(), now.getMonth(), state.monthlyBudgetStartDay);
 
-  const currencyBalanceInputs = Object.entries(state.balances)?.map(([key, value]) => {
-    const money: Money = {
-      amount: value as number,
-      currency: key as Currency
-    };
-
+  const currencyBalanceInputs = Object.values(state.balances)?.map((value: Money) => {
     return (
       <CurrencyInput
         disableCurrencyChange
         required
-        key={key}
-        value={money}
-        placeholder={amountForDisplay(money)}
-        title={`Adjust ${money.currency} balance`}
+        key={value.currency}
+        value={value}
+        placeholder={amountForDisplay(value)}
+        title={`Override ${value.currency} balance`}
         onlyPositive
         onChange={onBalanceChange}
       />
     );
   });
 
+  useEffect(() => {
+    async function fetchPreferences(): Promise<PreferencesForm> {
+      return fetch("/api/preferences/read").then((res) => res.json());
+    }
+
+    if (props.open) {
+      fetchPreferences().then((res) => {
+        setState(res);
+      });
+    }
+  }, [props.open]);
+
   return (
-    <Drawer
-      open={props.open}
-      onClose={handleClose}
-      title="Settings"
-      size="small"
-      extra={saveButton}
-    >
-      <div
-        style={{ display: "flex", flexFlow: "column", gap: 16 }}
-      >
+    <Drawer open={props.open} onClose={handleClose} title="Settings" size="small" extra={saveButton}>
+      <div style={{ display: "flex", flexFlow: "column", gap: 16 }}>
+        <Message colorType={messageType} counterMargin fadeIn messageStyle="bordered" onDismiss={() => setMessage("")}>
+          {message}
+        </Message>
         <h3>Preferences</h3>
         <Select
           placeholder="All"
@@ -131,7 +144,7 @@ export default function PreferencesDrawer(props: PreferencesDrawerProps) {
           onSelect={(date, name) => onInputChange(date.getDate(), name)}
           value={monthlyBudgetStartDay}
         />
-        <h3>Account balance</h3>
+        <h3>Cash balance</h3>
         {currencyBalanceInputs}
       </div>
     </Drawer>

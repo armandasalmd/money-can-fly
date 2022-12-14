@@ -13,7 +13,6 @@ export type IconComponentType = ForwardRefExoticComponent<
 export type ActionColor = "success" | "warning" | "error" | "info";
 export type CheckState = "checked" | "unchecked" | "indeterminate";
 export type ColorType = "primary" | "secondary";
-export type OtherAsset = "crypto" | "stocks";
 export type Size = "small" | "medium" | "large";
 
 export type Currency = "USD" | "EUR" | "GBP";

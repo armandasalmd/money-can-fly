@@ -12,10 +12,6 @@ export class BalanceManager {
           existing.balances = model.balances;
         }
 
-        if (model.otherAssets) {
-          existing.otherAssets = model.otherAssets;
-        }
-
         result = await existing.save();
       }
     } else {
@@ -27,8 +23,7 @@ export class BalanceManager {
 
   public async GetBalances(user: CookieUser): Promise<IUserBalanceModel> {
     return (
-      (await UserBalanceModel.findOne({ userUID: user.userUID }))?.toJSON<IUserBalanceModel>() ||
-      ({} as IUserBalanceModel)
+      (await UserBalanceModel.findOne({ userUID: user.userUID }))?.toJSON<IUserBalanceModel>() || null
     );
   }
 }
