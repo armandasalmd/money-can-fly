@@ -1,15 +1,18 @@
 import { useState } from "react";
+import { useRecoilValue } from "recoil";
 
 import { SidebarHeaderProps } from "@atoms/index";
 import { TransactionSidebar } from "@organisms/index";
 import { AppLayout, DashboardBody } from "@templates/index";
+import { transactionsCount } from "@recoil/dashboard/atoms";
 
 export default function DashboardPage() {
   const [searchFormOpen, setSearchFormOpen] = useState(true);
+  const count = useRecoilValue(transactionsCount);
 
   const header: SidebarHeaderProps = {
     title: "Transactions",
-    subtitle: "132 results",
+    subtitle: `${count} results in total`,
     actionButton: {
       children: "Filter",
       type: searchFormOpen ? "easy" : "default",

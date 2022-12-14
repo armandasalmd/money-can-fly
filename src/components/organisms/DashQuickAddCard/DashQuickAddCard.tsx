@@ -1,17 +1,25 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import { Article, Bank, Bookmark } from "phosphor-react";
+import { useRecoilValue } from "recoil";
 
 import { Button, Card, CardHeaderAction, Input, Select } from "@atoms/index";
 import {
-  CurrencyInput,
-  TransactionList,
+  CurrencyInput
 } from "@molecules/index";
 import constants from "@utils/Constants";
 import { bankNamesPreset, categotyPreset } from "@utils/SelectItems";
-import { Category, Money, TransactionBank } from "@utils/Types";
+import { Category, Money, Transaction, TransactionBank } from "@utils/Types";
+import { publish } from "@utils/Events";
+import { filterFormState } from "@recoil/dashboard/atoms";
 
-const recentQuicAdds = [];
+const DEFAULT_STATE: QuickAddFormState = {
+  amount: 0,
+  bank: "cash",
+  category: "other",
+  currency: "GBP",
+  description: "",
+};
 
 interface QuickAddFormState extends Money {
   bank: TransactionBank;
@@ -23,12 +31,9 @@ export default function DashQuickAddCard() {
   const router = useRouter();
   const [error, setError] = useState("");
   const [state, setState] = useState<QuickAddFormState>({
-    amount: 0,
-    bank: "cash",
-    category: "other",
-    currency: "GBP",
-    description: "",
+    ...DEFAULT_STATE
   });
+  const filterForm = useRecoilValue(filterFormState);
 
   const headerActions: CardHeaderAction[] = [
     {
@@ -42,14 +47,59 @@ export default function DashQuickAddCard() {
     setState({ ...state, [name]: value });
   }
 
-  function currencyInputChange(money: Money, name: string) {
+  function currencyInputChange(money: Money) {
     setState({ ...state, currency: money.currency, amount: money.amount });
   }
 
   function onSubmit() {
-    Object.values(state).some((value) => !value)
-      ? setError("All fields are required. Please fill them in.")
-      : setError("");
+    const emptyFields: string[] = [];
+    
+    Object.entries(state).forEach(([key, value]) => {
+      if (!value) {
+        emptyFields.push(key);
+      }
+    });
+
+    if (emptyFields.length > 0) {
+      setError(`Please provide ${emptyFields.join(", ")}`);
+      return;
+    } else {
+      setError("");
+    }
+
+    apiCreate({
+      amount: state.amount,
+      source: state.bank,
+      category: state.category,
+      currency: state.currency,
+      description: state.description,
+      date: new Date(),
+      inserted: new Date(),
+      isActive: true,
+    }).then((success) => {
+      if (success) {
+        setState({ ...DEFAULT_STATE });
+
+        publish("transactionSearchFormSubmit", filterForm);
+      }
+    })
+  }
+
+  async function apiCreate(transaction: Transaction): Promise<boolean> {
+    const response = await fetch("/api/transactions/create", {
+      method: "POST",
+      body: JSON.stringify(transaction),
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const data = await response.json();
+    
+    if (data.message) {
+      setError(data.message);
+    }
+    
+    return !!data._id;
   }
 
   return (
@@ -105,10 +155,6 @@ export default function DashQuickAddCard() {
             Add transaction
           </Button>
         </div>
-      </div>
-      <p className="dashQuickAdd__label">Recent quick adds</p>
-      <div className="dashQuickAdd__list">
-        <TransactionList transactions={recentQuicAdds} />
       </div>
     </Card>
   );

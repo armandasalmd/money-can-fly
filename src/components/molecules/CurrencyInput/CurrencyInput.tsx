@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import classNames from "classnames";
 import { Money, Currency } from "@utils/Types";
 import { Input, InputProps, SelectMenu } from "@atoms/index";
@@ -21,7 +21,7 @@ export default function CurrencyInput(props: CurrencyInputProps) {
   const { onlyPositive, value, onChange, ...rest } = props;
   const thisRef = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
-  const [text, setText] = useState(props.value.amount.toString());
+  const [text, setText] = useState("");
   const classes = classNames("currencyInput", {
     "currencyInput--fixedWidth": props.fixedWidth,
   });
@@ -50,6 +50,13 @@ export default function CurrencyInput(props: CurrencyInputProps) {
       {value.currency}
     </div>
   );
+
+  useEffect(() => {
+    if (props?.value?.amount && parseCurrency(text, onlyPositive) !== props.value.amount) {
+      setText(props.value.amount.toString());
+    }
+
+  }, [props.value]);
 
   return (
     <div className={classes} ref={thisRef}>

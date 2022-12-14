@@ -22,11 +22,6 @@ const UserBalanceSchema = new Schema<IUserBalanceModel>({
     type: Map,
     of: MoneySchema,
     required: true,
-  },
-  otherAssets: {
-    type: Map,
-    of: MoneySchema,
-    required: true,
   }
 });
 
