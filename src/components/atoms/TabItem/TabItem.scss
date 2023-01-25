@@ -1,0 +1,28 @@
+.tabItem {
+  $root: &;
+
+  color: $shade50;
+  font-size: 1rem;
+  user-select: none;
+  cursor: pointer;
+  position: relative;
+  padding: 0 $unit * 0.25;
+  border-radius: $defaultBorderRadius;
+
+  &--active {
+    color: $shade0;
+    background-color: var(--color-primary-90);
+  }
+
+  &__text {
+    padding: $unit * 0.5 $unit * 0.33;
+  }
+
+  &:hover:not(#{$root}--active) {
+    background: var(--color-primary-20);
+
+    #{$root}__text {
+      color: var(--color-text);
+    }
+  }
+}

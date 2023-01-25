@@ -1,0 +1,41 @@
+.addEvent {
+  $base: &;
+
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  &__values {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+
+    :last-child {
+      margin-bottom: $unit * 0.5;
+    }
+  }
+
+  &__footer {
+    #{$base}__info {
+      display: flex;
+      align-items: center;
+      gap: $halfUnit;
+      margin-bottom: $unit;
+
+      .icon {
+        min-width: 20px;
+      }
+
+      span {
+        font-size: 0.9rem;
+        color: var(--shade40);
+      }
+    }
+  }
+}
+
+.addEventForm {
+  display: flex;
+  flex-direction: column;
+  gap: $unit;
+  flex-grow: 1;
+}

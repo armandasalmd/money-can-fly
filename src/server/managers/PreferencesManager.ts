@@ -1,5 +1,6 @@
 import { UserPreferencesModel, IUserPreferencesModel } from "@server/models";
 import { CookieUser } from "@server/core";
+import { Currency } from "@utils/Types";
 
 export class PreferencesManager {
   public async UpdatePreferences(model: IUserPreferencesModel, user: CookieUser): Promise<IUserPreferencesModel> {
@@ -26,5 +27,16 @@ export class PreferencesManager {
       (await UserPreferencesModel.findOne({ userUID: user.userUID }))?.toJSON<IUserPreferencesModel>() ||
       ({} as IUserPreferencesModel)
     );
+  }
+
+  public async GetDefaultCurrency(user: CookieUser): Promise<Currency> {
+    const preferences = await UserPreferencesModel.findOne(
+      { userUID: user.userUID },
+      {
+        defaultCurrency: 1,
+      }
+    );
+
+    return preferences?.defaultCurrency || "USD";
   }
 }

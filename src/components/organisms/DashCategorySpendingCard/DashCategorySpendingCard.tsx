@@ -16,7 +16,7 @@ export default function DashCategorySpendingCard() {
       className="dashCategories"
       header={{
         color: "info",
-        title: "Actual spending by Category",
+        title: "Spending by Category",
         description: `Statistics for ${descriptionDate}`,
       }}
       noDivider

@@ -1,0 +1,28 @@
+.tabs {
+  $base: &;
+  $paddingX: $unit;
+
+  display: flex;
+  flex-flow: column;
+  height: 100%;
+
+  &__heading {
+    padding: $unit * 0.4 $paddingX;
+    display: flex;
+    gap: $unit * 0.5;
+    background-color: var(--shade0);
+    border-bottom: $defaultBorder;
+  }
+
+  &__content {
+    padding: $unit $paddingX;
+    height: 100%;
+    overflow: auto;
+  }
+
+  &--spaceEvenly {
+    #{$base}__heading {
+      justify-content: space-evenly;
+    }
+  }
+}

@@ -26,11 +26,12 @@ export default function DashChartCard() {
       className="dashChart"
       header={{
         color: color,
-        title: "Actual Vs Expected",
+        title: "Balance analysis & predictions",
         description: `${amountForDisplay(amountAbove)} (${percentForDisplay(
           percentAbove
         )}) above expected`,
       }}
+      noHeaderSpacing
       noDivider
     >
       <div className="dashChart__content">

@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 import classNames from "classnames";
 
 import { callIfFunction } from "@utils/Global";
@@ -46,6 +46,18 @@ export default function SelectMenu(props: SelectMenuProps) {
   const thisRef = useRef<HTMLDivElement>(null);
 
   useOutsideClick(thisRef, () => props.close(false), props.baseRef);
+
+  useEffect(() => {
+    const selectedElement = thisRef.current?.querySelector(
+      ".selectMenuItem--selected"
+    );
+    
+    if (selectedElement) {
+      selectedElement.scrollIntoView({
+        block: "center"
+      });
+    }
+  }, [props.selectedValue])
 
   return (
     <div

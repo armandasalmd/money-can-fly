@@ -14,6 +14,7 @@ export type ActionColor = "success" | "warning" | "error" | "info";
 export type CheckState = "checked" | "unchecked" | "indeterminate";
 export type ColorType = "primary" | "secondary";
 export type Size = "small" | "medium" | "large";
+export type Sort = "asc" | "desc";
 
 export type Currency = "USD" | "EUR" | "GBP";
 export type Category =
@@ -36,6 +37,7 @@ export type TransactionBank = "barclays" | "revolut" | "cash";
 export type ImportPresetType = Exclude<TransactionBank, "cash"> | "custom";
 export type TransactionStatusFilter = "active" | "inactive";
 export type AmountFilter = "incomeOnly" | "moreThan10Spent" | "moreThan25Spent" | "moreThan50Spent" | "moreThan100Spent" | "moreThan250Spent";
+export type InvestmentEventType = "deposit" | "adjustment" | "withdrawal" | "created";
 
 export interface Money {
   amount: number;
@@ -90,4 +92,29 @@ export interface TransactionForm {
   dateRange?: DateRange;
   searchTerm: string;
   importId?: string;
+}
+
+export interface InvestmentEvent {
+  _id?: string;
+  eventDate: Date;
+  type: InvestmentEventType;
+  valueChange: Money;
+  total?: Money;
+  title: string;
+}
+
+export interface CreateInvestmentEvent {
+  eventDate: Date | string;
+  type: InvestmentEventType;
+  valueChange: Money;
+  subtractFromBalance?: boolean;
+}
+
+export interface Investment {
+  id?: string;
+  title: string;
+  currentValue: Money;
+  dateModified: Date;
+  dateCreated: Date;
+  timelineEvents: InvestmentEvent[];
 }

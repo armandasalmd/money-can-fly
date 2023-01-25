@@ -22,6 +22,7 @@ export interface SelectProps {
   tall?: boolean;
   title?: string;
   fixedWidth?: boolean;
+  fixedWidthSmall?: boolean;
 }
 
 export default function Select(props: SelectProps) {
@@ -37,6 +38,7 @@ export default function Select(props: SelectProps) {
       "select--disabled": props.disabled,
       "select--tall": props.tall,
       "select--fixedWidth": props.fixedWidth,
+      "select--fixedWidthSmall": props.fixedWidthSmall,
       "select--open": isOpen,
       "select--required": props.required,
     },

@@ -52,7 +52,9 @@ export default function CurrencyInput(props: CurrencyInputProps) {
   );
 
   useEffect(() => {
-    if (props?.value?.amount && parseCurrency(text, onlyPositive) !== props.value.amount) {
+    const defined = props?.value?.amount !== undefined || props.value.amount !== null;
+
+    if (defined && parseCurrency(text, onlyPositive) !== props.value.amount) {
       setText(props.value.amount.toString());
     }
 

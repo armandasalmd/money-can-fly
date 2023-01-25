@@ -18,6 +18,10 @@
       display: flex;
       flex-direction: column;
       gap: $gap;
+
+      &--double {
+        grid-column: span 2;
+      }
     }
   }
 }

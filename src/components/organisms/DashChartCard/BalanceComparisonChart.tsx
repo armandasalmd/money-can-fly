@@ -25,7 +25,7 @@ ChartJS.register(
   BarController
 );
 
-const labels = ["January", "February", "March", "April", "May", "June", "July"];
+const labels = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October"];
 const actualData = labels.map(() => faker.datatype.number({ min: 2000, max: 5000 }));
 actualData[actualData.length - 1] = NaN;
 
@@ -76,14 +76,14 @@ const options = {
   },
   scales: {
     y: {
-      min: 0
-    }
+      min: 0,
+    },
   },
   interaction: {
     intersect: true,
-  }
+  },
 };
 
 export default function BalanceComparisonChart() {
-  return <Chart height="170px" className="invertColors" type="bar" data={data as any} options={options} />;
+  return <Chart height="90px" className="invertColors" type="bar" data={data as any} options={options} />;
 }

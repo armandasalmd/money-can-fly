@@ -10,6 +10,7 @@ export { default as Empty } from "./Empty/Empty";
 export { default as Header, type HeaderProps } from "./Header/Header";
 export { default as Input, type InputProps } from "./Input/Input";
 export { default as Insight } from "./Insight/Insight";
+export { default as KeyValue } from "./KeyValue/KeyValue";
 export { default as Loader } from "./Loader/Loader";
 export { default as Logo } from "./Logo/Logo";
 export { default as Message, type MessageColor } from "./Message/Message";
@@ -18,4 +19,4 @@ export { default as SelectMenu } from "./Select/SelectMenu";
 export { default as SidebarHeader, type SidebarHeaderProps } from "./SidebarHeader/SidebarHeader";
 export { default as SkeletonItem } from "./SkeletonItem/SkeletonItem";
 export { default as UploadArea, type FileState } from "./UploadArea/UploadArea";
-
+export { default as TabItem, type TabItemProps } from "./TabItem/TabItem";

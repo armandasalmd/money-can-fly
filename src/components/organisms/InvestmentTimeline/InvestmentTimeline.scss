@@ -1,0 +1,79 @@
+.investmentTimeline {
+  margin-left: -$halfUnit;
+  margin-right: -$halfUnit;
+  display: flex;
+  flex-direction: column;
+  gap: $halfUnit;
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-left: $unit * 0.5;
+  }
+}
+
+.timelineItem {
+  $base: &;
+
+  border-radius: $defaultBorderRadius;
+  padding: $unit * 0.5;
+  display: flex;
+  gap: $unit * 0.5;
+  position: relative;
+
+  &__date {
+    color: var(--shade30);
+  }
+
+  &__desc {
+    color: var(--shade50);
+  }
+
+  &__title {
+    font-size: 1.2rem;
+  }
+
+  &__delete {
+    border-radius: $defaultBorderRadius * 0.5;
+    position: absolute;
+    right: $unit * 0.66;
+    top: calc(50% - 16px);
+    cursor: pointer;
+    padding: $unit * 0.33;
+    user-select: none;
+    visibility: hidden;
+
+    &:hover {
+      background-color: var(--shade0);
+    }
+  }
+
+  &__number {
+    padding: $unit * 0.5;
+    background-color: var(--shade10);
+    width: $unit * 2;
+    height: $unit * 2;
+    border-radius: $defaultBorderRadius * 0.5;
+    user-select: none;
+  }
+
+  &__main {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: $unit * 0.25;
+  }
+
+  &:hover {
+    background-color: var(--shade5);
+
+    #{$base}__number {
+      background-color: var(--shade20);
+    }
+
+    #{$base}__delete {
+      visibility: visible;
+    }
+  }
+}

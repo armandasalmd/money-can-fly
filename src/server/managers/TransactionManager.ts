@@ -4,7 +4,7 @@ import { CreateTransactionRequest } from "@endpoint/transactions/create";
 import { UpdateTransactionRequest } from "@endpoint/transactions/update";
 import { CookieUser } from "@server/core";
 import { TransactionModel, ITransactionModel, TransactionDocument } from "@server/models";
-import { CurrencyRateManager } from "./CurrencyRateManager";
+import { BalanceManager, CurrencyRateManager } from "@server/managers";
 import { SearchRequest, SearchResponse } from "@endpoint/transactions/search";
 import { escapeRegExp } from "@server/utils/Global";
 
@@ -12,6 +12,12 @@ export class TransactionManager {
   public async CreateTransaction(request: CreateTransactionRequest, user: CookieUser): Promise<ITransactionModel> {
     const date = new Date(request.date);
     const commonValue = await CurrencyRateManager.getInstance().convert(request.amount, request.currency, "USD", date);
+
+    const balanceManager = new BalanceManager();
+    await balanceManager.CommitMoney(user, {
+      amount: request.amount,
+      currency: request.currency,
+    });
 
     const model: ITransactionModel = {
       amount: request.amount,
