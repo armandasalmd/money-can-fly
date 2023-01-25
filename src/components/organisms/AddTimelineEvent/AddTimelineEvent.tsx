@@ -40,6 +40,7 @@ export default function AddTimelineEvent(props: AddTimelineEventProps) {
         valueChange: { currency: props.currentInvestmentValue.currency, amount: 0 },
       });
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.eventType]);
 
   return (

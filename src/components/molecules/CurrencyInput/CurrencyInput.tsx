@@ -58,7 +58,8 @@ export default function CurrencyInput(props: CurrencyInputProps) {
       setText(props.value.amount.toString());
     }
 
-  }, [props.value]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.value, onlyPositive]);
 
   return (
     <div className={classes} ref={thisRef}>

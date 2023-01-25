@@ -63,6 +63,7 @@ export default function InvestmentsCard() {
       const selectedInvestment = data.find((item) => item.id === selected?.id);
       setSelected(selectedInvestment ? selectedInvestment : null);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   return (
