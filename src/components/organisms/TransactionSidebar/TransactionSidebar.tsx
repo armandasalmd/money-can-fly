@@ -35,7 +35,7 @@ const fetcher = (url: string, filters: TransactionForm, setTotal: (n: number) =>
         return [];
       }
     });
-}
+};
 const PAGE_SIZE = 25;
 
 export interface TransactionSidebarProps {
@@ -88,12 +88,18 @@ export default function TransactionSidebar(props: TransactionSidebarProps) {
     return () => {
       unsubscribe("transactionSearchFormSubmit", onFilter);
     };
-  }, []);
+  }, [mutate]);
 
   return (
     <div className={classes} ref={thisRef}>
       {props.searchFormOpen && <TransactionSearchForm />}
-      <TransactionList showLoadMore={!isEnd} showSkeletons={isLoading} transactions={t} onLoadMore={onLoadMore} onDelete={apiDeleteTransaction} />
+      <TransactionList
+        showLoadMore={!isEnd}
+        showSkeletons={isLoading}
+        transactions={t}
+        onLoadMore={onLoadMore}
+        onDelete={apiDeleteTransaction}
+      />
     </div>
   );
 }

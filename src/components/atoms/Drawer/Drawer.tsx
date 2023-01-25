@@ -13,11 +13,13 @@ export interface DrawerProps extends PropsWithChildren {
   destroyOnClose?: boolean;
   open: boolean;
   extra?: ReactNode;
+  fullHeight?: boolean;
   onClose: (open: boolean) => void;
   size?: DrawerSize;
   title: string;
   subtitle?: string;
   error?: string;
+  noPadding?: boolean;
 }
 
 export default function Drawer(props: DrawerProps) {
@@ -29,6 +31,8 @@ export default function Drawer(props: DrawerProps) {
     "drawer--small": props.size === "small",
     "drawer--open": props.open,
     "drawer--animatingExit": animatingExit,
+    "drawer--fullHeight": props.fullHeight,
+    "drawer--noPadding": props.noPadding,
   });
 
   function close() {

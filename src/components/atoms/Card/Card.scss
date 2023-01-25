@@ -7,7 +7,7 @@
   position: relative;
 
   &__header {
-    padding: $paddingX $paddingY;
+    padding: $paddingY $paddingX;
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
@@ -73,6 +73,12 @@
   &--noDivider {
     #{$base}__header {
       border-bottom: none;
+    }
+  }
+
+  &--noHeaderSpacing {
+    #{$base}__header {
+      padding-bottom: 0;
     }
   }
 }

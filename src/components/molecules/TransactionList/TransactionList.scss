@@ -50,7 +50,7 @@
     transform: translateX($unit * 1.5);
   }
 
-  #{$base}__delete {
+  &__delete {
     cursor: pointer;
     user-select: none;
     opacity: 0;

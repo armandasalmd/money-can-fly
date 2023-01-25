@@ -28,7 +28,8 @@ const constants = {
       "moreThan50Spent",
       "moreThan100Spent",
       "moreThan250Spent",
-    ]
+    ],
+    investmentEventTypes: ["deposit", "adjustment", "withdrawal", "created"],
   },
   objectIdRegex: /^[a-f\d]{24}$/i,
   sessionMaxAge: 24 * 60 * 60000 * 3, // 3 days

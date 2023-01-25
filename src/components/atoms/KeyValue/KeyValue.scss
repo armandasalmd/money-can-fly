@@ -1,0 +1,11 @@
+.keyValue {
+  &__title {
+    font-size: 0.95rem;
+    margin-bottom: $unit * 0.25;
+  }
+
+  &__value {
+    font-size: 1.55rem;
+    font-weight: 600;
+  }
+}

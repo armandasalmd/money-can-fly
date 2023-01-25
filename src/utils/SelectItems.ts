@@ -1,4 +1,4 @@
-import { TransactionBank, Currency, TransactionStatusFilter, AmountFilter } from "@utils/Types";
+import { TransactionBank, Currency, TransactionStatusFilter, AmountFilter, Sort } from "@utils/Types";
 import Categories from "@atoms/CategoryIcon/TransactionCategories";
 
 export type SelectItemsObject<T extends string> = { [key in T]: string };
@@ -28,6 +28,11 @@ const currencySelect: SelectItemsObject<Currency> = {
 const transactionStatusFilterSelect: SelectItemsObject<TransactionStatusFilter> = {
   active: "Active",
   inactive: "Inactive",
+};
+
+const sortSelect: SelectItemsObject<Sort> = {
+  asc: "Ascending",
+  desc: "Descending",
 };
 
 const amountFilterSelect: SelectItemsObject<AmountFilter> = {
@@ -60,4 +65,5 @@ export const yearsPreset = toSelectItems(yearSelect);
 export const amountFilterPreset = toSelectItems(amountFilterSelect);
 export const bankNamesPreset = toSelectItems(bankNamesSelect);
 export const currencyPreset = toSelectItems(currencySelect);
+export const sortPreset = toSelectItems(sortSelect);
 export const transactionStatusPreset = toSelectItems(transactionStatusFilterSelect);

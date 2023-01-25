@@ -69,6 +69,11 @@
     }
   }
 
+  &--noPadding {
+    #{$base}__body {
+      padding: 0;
+    }
+  }
 
   &--large {
     #{$base}__card {
@@ -104,6 +109,12 @@
 
     #{$base}__card {
       animation: slideOutToRight $exitTime $exitFunction forwards;
+    }
+  }
+
+  &--fullHeight {
+    #{$base}__body {
+      height: calc(100% - 57px);
     }
   }
 }

@@ -23,6 +23,7 @@ export interface CardProps extends PropsWithChildren {
   padded?: boolean;
   noContentPaddingX?: boolean;
   noContentPaddingY?: boolean;
+  noHeaderSpacing?: boolean;
   noDivider?: boolean;
   style?: CSSProperties;
   wrap?: boolean;
@@ -38,6 +39,7 @@ export default function Card(props: CardProps) {
       "card--wrap": props.wrap,
       "card--loading": props.loading,
       "card--noDivider": props.noDivider,
+      "card--noHeaderSpacing": props.noHeaderSpacing,
     },
     props.className
   );

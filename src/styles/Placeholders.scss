@@ -48,7 +48,7 @@
 }
 
 %listItemSubtitle {
-  font-size: 0.9rem;
+  font-size: 1rem;
   font-weight: 500;
   color: var(--shade40);
 }
@@ -56,7 +56,7 @@
 %listItemAmount {
   font-size: 1.25rem;
   font-weight: 500;
-  color: var(--shade60);
+  color: var(--shade80);
   transition-property: transform;
   transition-duration: 0.3s;
 }

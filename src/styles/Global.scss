@@ -67,3 +67,9 @@ div {
     background-color: $shade20;
   }
 }
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

@@ -1,5 +1,6 @@
 import { Currency } from "@utils/Types";
 import { ICurrencyRateModel, CurrencyRateModel } from "@server/models";
+import { round } from "@server/utils/Global";
 
 interface ExternalCurrencyRate {
   meta: {
@@ -94,13 +95,13 @@ export class CurrencyRateManager {
     }
 
     if (from === rates.baseCurrency) {
-      return amount * rates.data[to].value;
+      return round(amount * rates.data[to].value);
     }
 
     if (to === rates.baseCurrency) {
-      return amount / rates.data[from].value;
+      return round(amount / rates.data[from].value);
     }
 
-    return (amount * rates.data[to].value) / rates.data[from].value;
+    return round((amount * rates.data[to].value) / rates.data[from].value);
   }
 }

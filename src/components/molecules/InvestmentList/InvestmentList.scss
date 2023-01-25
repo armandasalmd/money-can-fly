@@ -1,0 +1,70 @@
+
+
+.investmentList {
+  display: flex;
+  flex-direction: column;
+  margin: $halfUnit 0;
+
+  &Item {
+    $itemBase: &;
+
+    padding: $halfUnit $unit;
+    cursor: pointer;
+    user-select: none;
+    display: flex;
+    justify-content: space-between;
+    border-top: $defaultBorder;
+
+    &:hover {
+      background-color: var(--shade5);
+  
+      #{$itemBase}__amount,
+      #{$itemBase}__action {
+        transform: translateX(0);
+      }
+  
+      #{$itemBase}__action {
+        animation: fadeIn 0.3s ease-in-out;
+        opacity: 1;
+      }
+
+      #{$itemBase}__right {
+        gap: $halfUnit;
+      }
+    }
+
+    &__title {
+      @extend %listItemTitle;
+    }
+
+    &__subtitle {
+      @extend %listItemSubtitle;
+    }
+
+    &__amount {
+      @extend %listItemAmount;
+      transition-property: transform;
+      transition-duration: 0.3s;
+    }
+  
+    &__amount,
+    &__action {
+      transform: translateX($unit * 1.5);
+    }
+  
+    &__action {
+      opacity: 0;
+      background-color: var(--shade15);
+      border-radius: 50%;
+      height: $unit * 2;
+      width: $unit * 2;
+      padding: $unit * 0.25;
+    }
+
+
+    &__right {
+      display: flex;
+      align-items: center;
+    }
+  }
+}
