@@ -17,29 +17,29 @@ export default function InsightsCollection(props: InsightsCollectionProps) {
   const router = useRouter();
   let { data } = useDashboardData<InsightsModel>(DisplaySections.Insights);
   
-  if (!data) data = {} as any;
-
+  const loading = data === null;
   const profitable = data?.lastMonthProfit?.amount > 0;
-  const loaded = Object.keys(data).length > 0;
+  
+  if (!data) data = {} as any;
 
   return (
     <div className={classNames("insightsCollection", props.className)}>
-      <Insight title="Total worth" subtitle="/ Cash balance" color="info">
+      <Insight loading={loading} title="Total worth" subtitle="/ Cash balance" color="info">
         <h1>{amountForDisplay(data.totalWorth)}<span>/ {amountForDisplay(data.availableBalance)}</span></h1>
         <label>{amountForDisplay(data.spentInLastWeek)} spent in last 7 days</label>
       </Insight>
-      <Insight title="Last month profit" color="warning">
+      <Insight loading={loading} title="Last month profit" color="warning">
         <h1>{amountForDisplay(data.lastMonthProfit)}</h1>
         <label>{data.lastMonth} was {!profitable && "not"} profitable</label>
       </Insight>
-      <Insight title="Budget remaining" color="success">
+      <Insight loading={loading} title="Budget remaining" color="success">
         <h1>
           {amountForDisplay(data.budgetRemaining)}
-          {loaded && <span>left until {format(data.budgetResetDate, "LLL do")}</span>}
+          {!loading && <span>left until {format(data.budgetResetDate, "LLL do")}</span>}
         </h1>
-        {loaded && <label>Spend up to {amountForDisplay(data.budgetRecommendedPerDay)} per day. {data.budgetRecommendedDaysLeft} days left</label>}
+        {!loading && <label>Spend up to {amountForDisplay(data.budgetRecommendedPerDay)} per day. {data.budgetRecommendedDaysLeft} days left</label>}
       </Insight>
-      <Insight title="Last import" color="error">
+      <Insight loading={loading} title="Last import" color="error">
         <p className="hint">{data.lastImportMessage}</p>
         <div className="insightsCollection__alignEnd">
           <Button

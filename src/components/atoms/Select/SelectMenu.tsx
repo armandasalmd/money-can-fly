@@ -57,6 +57,7 @@ export default function SelectMenu(props: SelectMenuProps) {
     if (selectedElement && l) {
       const relativeTop = selectedElement.getBoundingClientRect().y - thisRef.current.getBoundingClientRect().y;
 
+      // eslint-disable-next-line react-hooks/exhaustive-deps
       l = false;
       thisRef.current.scrollTo({
         top: Math.max(0, relativeTop - 8),

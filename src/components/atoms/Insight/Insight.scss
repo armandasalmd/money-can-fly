@@ -1,14 +1,11 @@
 .insight {
   @extend %cardBase;
 
+  $base: &;
+
   --color-shader: rgba(255, 188, 87, 0.3);
 
-  background: linear-gradient(
-    45deg,
-    var(--bg-card) 0%,
-    var(--bg-card),
-    var(--color-shader) 100%
-  );
+  background: linear-gradient(45deg, var(--bg-card) 0%, var(--bg-card), var(--color-shader) 100%);
 
   padding: $unit * 0.75 $unit;
   display: flex;
@@ -78,6 +75,29 @@
   &--info {
     color: var(--color-information);
     --color-shader: #{rgba($colorInformation, 0.3)};
+  }
+
+  &--loading {
+    min-height: $unit * 8.375;
+
+    #{$base}__skeleton {
+      background-color: var(--bg-mask);
+      border-radius: $unit * 0.25;
+      height: $unit * 1.5;
+      width: 80%;
+      animation: fadePulse 1.5s infinite ease-in-out;
+
+      &--tall {
+        height: $unit * 1.8;
+        width: 50%;
+      }
+
+      &--colored {
+        height: $unit * 1.3;
+        width: 65%;
+        background-color: var(--color-shader);
+      }
+    }
   }
 }
 

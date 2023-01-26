@@ -1,8 +1,8 @@
+import { useEffect, useCallback } from "react";
 import { useRecoilState } from "recoil";
 
 import { dashboardData } from "@recoil/dashboard/atoms";
 import { DisplaySections, InvestmentEvent } from "@utils/Types";
-import { useEffect } from "react";
 import { DisplayModelResponse } from "@endpoint/dashboard/displayModel";
 
 function transformDates(data: Partial<DisplayModelResponse>) {
@@ -16,7 +16,7 @@ function transformDates(data: Partial<DisplayModelResponse>) {
       item.dateModified = new Date(item.dateModified);
       item.timelineEvents.forEach((event: InvestmentEvent) => {
         event.eventDate = new Date(event.eventDate);
-      })
+      });
     });
   }
 
@@ -32,31 +32,34 @@ let initialized = false;
 export default function useDashboardData<T>(section: DisplaySections) {
   const [data, setData] = useRecoilState(dashboardData);
 
-  async function fetchSections(sections: DisplaySections[] = [], body: object = {}) {
-    try {
-      const response = await fetch("/api/dashboard/displayModel", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...body,
-          sections: [...sections, section],
-        }),
-      });
-  
-      const result: Partial<DisplayModelResponse> = await response.json();
-      
-      transformDates(result);
+  const fetchSections = useCallback(
+    async (sections: DisplaySections[] = [], body: object = {}) => {
+      try {
+        const response = await fetch("/api/dashboard/displayModel", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            ...body,
+            sections: [...sections, section],
+          }),
+        });
 
-      setData({
-        ...data,
-        ...result
-      });
-    } catch (e) {
-      console.error(e);
-    }
-  }
+        const result: Partial<DisplayModelResponse> = await response.json();
+
+        transformDates(result);
+
+        setData({
+          ...data,
+          ...result,
+        });
+      } catch (e) {
+        console.error(e);
+      }
+    },
+    [section, data, setData]
+  );
 
   useEffect(() => {
     if (!initialized && data === null) {
@@ -66,7 +69,7 @@ export default function useDashboardData<T>(section: DisplaySections) {
       // Initial fetch of all sections
       fetchSections(Object.values(DisplaySections));
     }
-  }, []);
+  }, [data, fetchSections]);
 
   return {
     data: (data?.[section] ?? null) as T,
