@@ -2,15 +2,14 @@ import { useState } from "react";
 import { DayPickerRangeProps, DateRange } from "react-day-picker/dist/index";
 
 import { Card, DateRangePicker } from "@atoms/index";
-import { amountForDisplay, percentForDisplay } from "@utils/Currency";
-import { ActionColor } from "@utils/Types";
 import BalanceComparisonChart from "./BalanceComparisonChart";
+import { useDashboardData } from "@hooks/index";
+import { BalanceAnalysisModel } from "@server/models";
 import { getPeriodNow } from "@utils/Global";
+import { DisplaySections } from "@utils/Types";
 
 export default function DashChartCard() {
-  const amountAbove = { amount: 59.21, currency: "GBP" } as any;
-  const percentAbove = 0.192;
-  const color: ActionColor = percentAbove > 0 ? "success" : "error";
+  const { data, mutate } = useDashboardData<BalanceAnalysisModel>(DisplaySections.BalanceAnalysis);
   const [dateRange, setDateRange] = useState<DateRange | undefined>(
     getPeriodNow()
   );
@@ -18,25 +17,32 @@ export default function DashChartCard() {
   const pickerOptions: DayPickerRangeProps = {
     mode: "range",
     selected: dateRange,
-    onSelect: setDateRange,
+    onSelect: onChange,
   };
+
+  function onChange(range: DateRange) {
+    setDateRange(range);
+    
+    mutate([], {
+      balanceAnalysisDateRange: range
+    });
+  }
 
   return (
     <Card
+      loading={data === null}
       className="dashChart"
       header={{
-        color: color,
+        color: "info",
         title: "Balance analysis & predictions",
-        description: `${amountForDisplay(amountAbove)} (${percentForDisplay(
-          percentAbove
-        )}) above expected`,
+        description: data?.cardDescription ?? "Loading...",
       }}
       noHeaderSpacing
       noDivider
     >
       <div className="dashChart__content">
         <div className="dashChart__chart">
-          <BalanceComparisonChart />
+          <BalanceComparisonChart apiModel={data} />
         </div>
         <div className="dashChart__filters">
           <DateRangePicker

@@ -47,15 +47,20 @@ export default function SelectMenu(props: SelectMenuProps) {
 
   useOutsideClick(thisRef, () => props.close(false), props.baseRef);
 
+  let l = true;
+
   useEffect(() => {
     const selectedElement = thisRef.current?.querySelector(
       ".selectMenuItem--selected"
     );
     
-    if (selectedElement) {
-      selectedElement.scrollIntoView({
-        block: "center"
-      });
+    if (selectedElement && l) {
+      const relativeTop = selectedElement.getBoundingClientRect().y - thisRef.current.getBoundingClientRect().y;
+
+      l = false;
+      thisRef.current.scrollTo({
+        top: Math.max(0, relativeTop - 8),
+      })
     }
   }, [props.selectedValue])
 

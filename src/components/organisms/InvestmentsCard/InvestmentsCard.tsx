@@ -25,13 +25,13 @@ export default function InvestmentsCard() {
     setCreateDrawerOpen(false);
 
     if (refresh) {
-      mutate([DisplaySections.Insights]);
+      mutate([DisplaySections.Insights, DisplaySections.BalanceAnalysis]);
     }
   }
 
   useEffect(() => {
     function onInvestmentsMutated() {
-      mutate([DisplaySections.Insights]);
+      mutate([DisplaySections.Insights, DisplaySections.BalanceAnalysis]);
     }
 
     subscribe("investmentsMutated", onInvestmentsMutated);
@@ -52,8 +52,9 @@ export default function InvestmentsCard() {
 
   return (
     <Card
+      loading={!data}
       header={{
-        color: "warning",
+        color: "info",
         title: "Investments",
         description: `Total worth is ${amountForDisplay(total)}`,
       }}

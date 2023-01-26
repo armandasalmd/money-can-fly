@@ -1,5 +1,18 @@
 const constants = {
   positiveCategories: ["deposits", "trendUp", "salary"],
+  negativeCategories: [
+    "food",
+    "shopping",
+    "transport",
+    "health",
+    "entertainment",
+    "education",
+    "home",
+    "bills",
+    "gifts",
+    "other",
+    "trendDown",
+  ],
   allowed: {
     sources: ["barclays", "revolut", "cash"],
     currencies: ["USD", "EUR", "GBP"],

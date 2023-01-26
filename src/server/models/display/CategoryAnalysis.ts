@@ -1,4 +1,7 @@
-
 export interface CategoryAnalysisModel {
-  summaryLabel: string;
+  errorMessage?: string;
+  cardDescription: string;
+  chartLabels: string[];
+  categorySpendingDataset: number[];
+  averageSpendingDataset: number[];
 }

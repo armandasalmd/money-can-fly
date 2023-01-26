@@ -15,8 +15,10 @@ export interface InsightsCollectionProps {
 
 export default function InsightsCollection(props: InsightsCollectionProps) {
   const router = useRouter();
-  const { data } = useDashboardData<InsightsModel>(DisplaySections.Insights);
+  let { data } = useDashboardData<InsightsModel>(DisplaySections.Insights);
   
+  if (!data) data = {} as any;
+
   const profitable = data?.lastMonthProfit?.amount > 0;
   const loaded = Object.keys(data).length > 0;
 

@@ -32,7 +32,7 @@ let initialized = false;
 export default function useDashboardData<T>(section: DisplaySections) {
   const [data, setData] = useRecoilState(dashboardData);
 
-  async function fetchSections(sections: DisplaySections[]) {
+  async function fetchSections(sections: DisplaySections[] = [], body: object = {}) {
     try {
       const response = await fetch("/api/dashboard/displayModel", {
         method: "POST",
@@ -40,7 +40,8 @@ export default function useDashboardData<T>(section: DisplaySections) {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          sections,
+          ...body,
+          sections: [...sections, section],
         }),
       });
   
@@ -57,10 +58,6 @@ export default function useDashboardData<T>(section: DisplaySections) {
     }
   }
 
-  function mutate(additionalSections: DisplaySections[] = []) {
-    fetchSections([...additionalSections, section]);
-  }
-
   useEffect(() => {
     if (!initialized && data === null) {
       // eslint-disable-next-line
@@ -72,7 +69,7 @@ export default function useDashboardData<T>(section: DisplaySections) {
   }, []);
 
   return {
-    data: (data?.[section] ?? {}) as T,
-    mutate,
+    data: (data?.[section] ?? null) as T,
+    mutate: fetchSections,
   };
 }
