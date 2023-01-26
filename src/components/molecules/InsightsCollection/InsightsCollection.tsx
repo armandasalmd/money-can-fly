@@ -1,9 +1,13 @@
 import classNames from "classnames";
+import { format } from "date-fns";
 
 import { useRouter } from "next/router";
 import { Button, Insight } from "@atoms/index";
 import { amountForDisplay } from "@utils/Currency";
 import Constants from "@utils/Constants";
+import { useDashboardData } from "@hooks/index";
+import { InsightsModel } from "@server/models";
+import { DisplaySections } from "@utils/Types";
 
 export interface InsightsCollectionProps {
   className?: string;
@@ -11,35 +15,35 @@ export interface InsightsCollectionProps {
 
 export default function InsightsCollection(props: InsightsCollectionProps) {
   const router = useRouter();
-  const balance = { amount: 2310.96, currency: "GBP" } as any;
-  const monthlyChange = { amount: 1203.24, currency: "GBP" } as any;
-  const budgeLeft = { amount: 201.57, currency: "GBP" } as any;
+  const { data } = useDashboardData<InsightsModel>(DisplaySections.Insights);
+  
+  const profitable = data?.lastMonthProfit?.amount > 0;
+  const loaded = Object.keys(data).length > 0;
 
   return (
     <div className={classNames("insightsCollection", props.className)}>
-      <Insight title="Available balance" color="warning">
-        <h1>{amountForDisplay(balance)}</h1>
-        <label>$98.56 spent in last 7 days</label>
+      <Insight title="Total worth" subtitle="/ Cash balance" color="info">
+        <h1>{amountForDisplay(data.totalWorth)}<span>/ {amountForDisplay(data.availableBalance)}</span></h1>
+        <label>{amountForDisplay(data.spentInLastWeek)} spent in last 7 days</label>
       </Insight>
-      <Insight title="Last month profit" color="success">
-        <h1>{amountForDisplay(monthlyChange)}</h1>
-        <label>2022 January was profitable</label>
+      <Insight title="Last month profit" color="warning">
+        <h1>{amountForDisplay(data.lastMonthProfit)}</h1>
+        <label>{data.lastMonth} was {!profitable && "not"} profitable</label>
       </Insight>
-      <Insight title="Budget remaining" color="info">
+      <Insight title="Budget remaining" color="success">
         <h1>
-          {amountForDisplay(budgeLeft)}
-          <span>left until 14 Oct</span>
+          {amountForDisplay(data.budgetRemaining)}
+          {loaded && <span>left until {format(data.budgetResetDate, "LLL do")}</span>}
         </h1>
-        <label>Spend up to £15.57 per day. 13 days left</label>
+        {loaded && <label>Spend up to {amountForDisplay(data.budgetRecommendedPerDay)} per day. {data.budgetRecommendedDaysLeft} days left</label>}
       </Insight>
       <Insight title="Last import" color="error">
-        <p className="hint">115 Revolut transactions 5 days ago</p>
+        <p className="hint">{data.lastImportMessage}</p>
         <div className="insightsCollection__alignEnd">
           <Button
             type="danger"
             wrapContent
-            onClick={() => router.push(Constants.navbarLinks.imports.path)}
-          >
+            onClick={() => router.push(Constants.navbarLinks.imports.path)}>
             Import now
           </Button>
         </div>

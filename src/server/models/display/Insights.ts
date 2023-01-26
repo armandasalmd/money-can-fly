@@ -10,4 +10,5 @@ export interface InsightsModel {
   budgetRecommendedPerDay: Money;
   budgetRecommendedDaysLeft: number;
   totalWorth: Money;
+  lastImportMessage: string;
 }

@@ -7,15 +7,8 @@ import {
   CategoryAnalysisManager,
 } from "@server/managers";
 import { BalanceAnalysisModel, CategoryAnalysisModel, InsightsModel, InvestmentsModel } from "@server/models";
-import { DateRange } from "@utils/Types";
+import { DateRange, DisplaySections } from "@utils/Types";
 import { IsArray, IsIn, IsNotEmptyObject, IsOptional } from "class-validator";
-
-enum DisplaySections {
-  BalanceAnalysis = "balanceAnalysis",
-  CategoryAnalysis = "categoryAnalysis",
-  Insights = "insights",
-  Investments = "investments",
-}
 
 export class DisplayModelRequest {
   @IsArray()
@@ -48,13 +41,17 @@ export default validatedApiRoute("POST", DisplayModelRequest, async (request, re
   const result: Partial<DisplayModelResponse> = {};
 
   const preferencesManager = new PreferencesManager();
-  const defaultCurrency = await preferencesManager.GetDefaultCurrency(user);
+  const allPreferences = await preferencesManager.GetPreferences(user);
+  const defaultCurrency = allPreferences.defaultCurrency;
 
   if (sections.includes(DisplaySections.Investments) || sections.includes(DisplaySections.Insights)) {
     const investmentsManager = new InvestmentsManager();
     const investments = await investmentsManager.GetInvestments(user);
     const investmentsValue = await investmentsManager.GetTotalMoneyValue(user, investments);
-
+    
+    /**
+     * Investments section
+     */
     if (sections.includes(DisplaySections.Investments)) {
       result.investments = {
         totalValue: investmentsValue,
@@ -62,13 +59,19 @@ export default validatedApiRoute("POST", DisplayModelRequest, async (request, re
       };
     }
 
-    const insightsManager = new InsightsManager(defaultCurrency);
-
+    /**
+     * Insights section
+    */
     if (sections.includes(DisplaySections.Insights)) {
-      result.insights = await insightsManager.GetInsights(user, investmentsValue);
+      const insightsManager = new InsightsManager();
+
+      result.insights = await insightsManager.GetInsights(user, investmentsValue, allPreferences);
     }
   }
 
+  /**
+   * BalanceAnalysis section
+   */
   if (sections.includes(DisplaySections.BalanceAnalysis)) {
     const balanceAnalysisManager = new BalanceAnalysisManager(defaultCurrency);
 
@@ -78,6 +81,9 @@ export default validatedApiRoute("POST", DisplayModelRequest, async (request, re
     );
   }
 
+  /**
+   * CategoryAnalysis section
+   */
   if (sections.includes(DisplaySections.CategoryAnalysis)) {
     const categoryAnalysisManager = new CategoryAnalysisManager(defaultCurrency);
 
