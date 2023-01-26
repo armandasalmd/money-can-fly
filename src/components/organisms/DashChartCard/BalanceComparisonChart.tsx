@@ -11,7 +11,8 @@ import {
   BarController,
 } from "chart.js";
 import { Chart } from "react-chartjs-2";
-import { faker } from "@faker-js/faker";
+import { BalanceAnalysisModel } from "@server/models";
+import { Empty } from "@atoms/index";
 
 ChartJS.register(
   LinearScale,
@@ -25,49 +26,6 @@ ChartJS.register(
   BarController
 );
 
-const labels = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October"];
-const actualData = labels.map(() => faker.datatype.number({ min: 2000, max: 5000 }));
-actualData[actualData.length - 1] = NaN;
-
-const projectionData = labels.map(() => NaN);
-projectionData[actualData.length - 1] = faker.datatype.number({ min: 2000, max: 5000 });
-projectionData[actualData.length - 2] = actualData[actualData.length - 2];
-
-export const data = {
-  labels,
-  datasets: [
-    {
-      type: "line" as const,
-      label: "Actual",
-      borderColor: "rgb(55, 111, 179)",
-      borderWidth: 2,
-      fill: "origin",
-      cubicInterpolationMode: "monotone",
-      data: actualData,
-    },
-    {
-      type: "line" as const,
-      label: "Projection",
-      borderColor: "rgb(55, 111, 179)",
-      borderWidth: 2,
-      fill: false,
-      cubicInterpolationMode: "monotone",
-      data: projectionData,
-      borderDash: [6, 6],
-    },
-    {
-      type: "line" as const,
-      label: "Expected",
-      fill: true,
-      borderWidth: 2,
-      borderColor: "rgb(119, 189, 189)",
-      cubicInterpolationMode: "monotone",
-      data: labels.map(() => faker.datatype.number({ min: 0, max: 5645 })),
-      borderDash: [6, 6],
-    },
-  ],
-};
-
 const options = {
   plugins: {
     filler: {
@@ -78,12 +36,57 @@ const options = {
     y: {
       min: 0,
     },
-  },
-  interaction: {
-    intersect: true,
-  },
+  }
 };
 
-export default function BalanceComparisonChart() {
+interface BalanceComparisonChartProps {
+  apiModel: BalanceAnalysisModel;
+}
+
+export default function BalanceComparisonChart(props: BalanceComparisonChartProps) {
+  if (!props.apiModel || props.apiModel.errorMessage) {
+    return <Empty text={props?.apiModel?.errorMessage} />;
+  }
+
+  const data = {
+    labels: props.apiModel.chartLabels,
+    datasets: [
+      {
+        type: "line" as const,
+        label: "Total worth",
+        borderColor: "rgb(214, 162, 17)",
+        borderWidth: 2,
+        cubicInterpolationMode: "monotone",
+        data: props.apiModel.totalWorthDataset,
+      },
+      {
+        type: "line" as const,
+        label: "Projection",
+        borderColor: "rgb(214, 162, 17)",
+        borderWidth: 2,
+        cubicInterpolationMode: "monotone",
+        data: props.apiModel.projectionDataset,
+        borderDash: [10, 8],
+      },
+      {
+        type: "line" as const,
+        label: "Expected worth",
+        borderWidth: 2,
+        borderColor: "rgb(121, 181, 148)",
+        cubicInterpolationMode: "monotone",
+        data: props.apiModel.expectedWorthDataset,
+        borderDash: [10, 8],
+      },
+      {
+        type: "bar" as const,
+        label: "Investments",
+        backgroundColor: "rgba(54, 118, 191, 0.5)",
+        borderColor: "rgb(19, 121, 168)",
+        borderWidth: 1,
+        barThickness: 36,
+        data: props.apiModel.investmentsDataset,
+      },
+    ],
+  };
   return <Chart height="90px" className="invertColors" type="bar" data={data as any} options={options} />;
 }

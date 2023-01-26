@@ -7,6 +7,8 @@ const currencyLocales: { [key in Currency]: string } = {
 };
 
 export function amountForDisplay(money: Money | Transaction): string {
+  if (!money) return "0.00";
+
   return new Intl.NumberFormat(currencyLocales[money.currency], {
     style: "currency",
     currency: money.currency,

@@ -1,3 +1,4 @@
+export { default as useDashboardData } from "./useDashboardData";
 export { default as useDebounce } from "./useDebounce";
 export { default as useOutsideClick } from "./useOutsideClick";
 export { default as useRecoilPagination, type IRecoilPaginationState, type IRecoilPaginationFetchResponse } from "./useRecoilPagination";

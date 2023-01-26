@@ -40,7 +40,7 @@
     justify-content: center;
     align-items: center;
     border-radius: $containerBorderRadius;
-    background-color: rgba($shade50, 0.2);
+    background-color: rgba(var(--shade70), 0.3);
     backdrop-filter: blur(4px);
 
     p {

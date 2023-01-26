@@ -1,34 +1,45 @@
 import { useState } from "react";
-import { DateRange } from "react-day-picker/dist/index";
 
 import CategoryChart from "./CategoryChart";
 import { Card, DatePeriodSelect } from "@atoms/index";
 import { getPeriodNow } from "@utils/Global";
+import { DateRange, DisplaySections } from "@utils/Types";
+import { useDashboardData } from "@hooks/index";
+import { CategoryAnalysisModel } from "@server/models";
 
 export default function DashCategorySpendingCard() {
-  const descriptionDate = "2022 October"; // TODO: replace
+  const { data, mutate } = useDashboardData<CategoryAnalysisModel>(DisplaySections.CategoryAnalysis);
   const [dateRange, setDateRange] = useState<DateRange | undefined>(
     getPeriodNow()
   );
 
+  function onChange(range: DateRange) {
+    setDateRange(range);
+    
+    mutate([], {
+      categoryAnalysisDateRange: range
+    });
+  }
+
   return (
     <Card
+      loading={data === null}
       className="dashCategories"
       header={{
         color: "info",
         title: "Spending by Category",
-        description: `Statistics for ${descriptionDate}`,
+        description: data?.cardDescription ?? "Loading...",
       }}
       noDivider
     >
       <div className="dashCategories__chart">
-        <CategoryChart />
+        <CategoryChart apiModel={data} />
       </div>
       <div className="dashCategories__filters">
         <DatePeriodSelect
-          monthsAhead={12}
+          monthsAhead={0}
           monthsBehind={12}
-          onChange={setDateRange}
+          onChange={onChange}
           value={dateRange}
           menuAbove
         />

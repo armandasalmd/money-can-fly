@@ -1,6 +1,13 @@
 import { ForwardRefExoticComponent, RefAttributes } from "react";
 import { IconProps } from "phosphor-react";
 
+export enum DisplaySections {
+  BalanceAnalysis = "balanceAnalysis",
+  CategoryAnalysis = "categoryAnalysis",
+  Insights = "insights",
+  Investments = "investments",
+}
+
 export type DateRange = {
   from: Date | undefined;
   to?: Date | undefined;

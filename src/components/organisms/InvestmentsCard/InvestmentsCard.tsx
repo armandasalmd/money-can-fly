@@ -1,53 +1,37 @@
 import { useState, useEffect } from "react";
-import useSWR from "swr"
 import { useRecoilState } from "recoil";
 
+import { useDashboardData } from "@hooks/index";
 import { Card } from "@atoms/index";
 import { CreateInvestmentDrawer, InvestmentList } from "@molecules/index";
-import { Investment, InvestmentEvent, Money } from "@utils/Types";
+import { DisplaySections, Money } from "@utils/Types";
 import { selectedInvestment } from "@recoil/dashboard/atoms";
 import { amountForDisplay } from "@utils/Currency";
 import { InvestmentDetailsDrawer } from "@components/templates";
-import { publish, subscribe, unsubscribe } from "@utils/Events";
-
-const fetcher = (url: string, setTotal: any) =>
-  fetch(url).then(async (res) => {
-    const data = await res.json();
-    if (Array.isArray(data?.investments)) {
-      data.investments.forEach((item) => {
-        item.dateCreated = new Date(item.dateCreated);
-        item.dateModified = new Date(item.dateModified);
-        item.timelineEvents.forEach((event: InvestmentEvent) => {
-          event.eventDate = new Date(event.eventDate);
-        })
-      });
-    }
-
-    setTotal(data.totalValue);
-
-    return data.investments;
-  });
+import { subscribe, unsubscribe } from "@utils/Events";
+import { InvestmentsModel } from "@server/models";
 
 export default function InvestmentsCard() {
   const [createDrawerOpen, setCreateDrawerOpen] = useState(false);
-  const [total, setTotal] = useState<Money>({
+  const [selected, setSelected] = useRecoilState(selectedInvestment);
+  const { data, mutate } = useDashboardData<InvestmentsModel>(DisplaySections.Investments);
+  
+  const total: Money = data?.totalValue || {
     amount: 0,
     currency: "GBP",
-  });
-  const [selected, setSelected] = useRecoilState(selectedInvestment);
-  const { data, mutate } = useSWR<Investment[]>("/api/investments/read", (url) => fetcher(url, setTotal))
+  };
 
   function onCloseCreate(refresh: boolean) {
     setCreateDrawerOpen(false);
 
     if (refresh) {
-      mutate();
+      mutate([DisplaySections.Insights, DisplaySections.BalanceAnalysis]);
     }
   }
 
   useEffect(() => {
     function onInvestmentsMutated() {
-      mutate();
+      mutate([DisplaySections.Insights, DisplaySections.BalanceAnalysis]);
     }
 
     subscribe("investmentsMutated", onInvestmentsMutated);
@@ -59,8 +43,8 @@ export default function InvestmentsCard() {
 
   useEffect(() => {
     // Update selected investment if it has not need deleted
-    if (Array.isArray(data)) {
-      const selectedInvestment = data.find((item) => item.id === selected?.id);
+    if (Array.isArray(data?.investments)) {
+      const selectedInvestment = data.investments.find((item) => item.id === selected?.id);
       setSelected(selectedInvestment ? selectedInvestment : null);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -68,8 +52,9 @@ export default function InvestmentsCard() {
 
   return (
     <Card
+      loading={!data}
       header={{
-        color: "warning",
+        color: "info",
         title: "Investments",
         description: `Total worth is ${amountForDisplay(total)}`,
       }}
@@ -85,7 +70,7 @@ export default function InvestmentsCard() {
         }
       ]}
     >
-      <InvestmentList investments={data || []} onClick={setSelected} />
+      <InvestmentList investments={data?.investments || []} onClick={setSelected} />
       <CreateInvestmentDrawer open={createDrawerOpen} onClose={onCloseCreate} />
       <InvestmentDetailsDrawer open={selected !== null} onClose={() => setSelected(null)} />
     </Card>

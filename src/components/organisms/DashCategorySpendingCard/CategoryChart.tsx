@@ -9,7 +9,6 @@ import {
   Legend,
 } from "chart.js";
 import { Bar } from "react-chartjs-2";
-import { faker } from "@faker-js/faker";
 
 ChartJS.register(
   CategoryScale,
@@ -20,42 +19,47 @@ ChartJS.register(
   Legend
 );
 
-export const options = {
+import { Empty } from "@atoms/index";
+import { CategoryAnalysisModel } from "@server/models";
+
+const options = {
   indexAxis: "y" as const,
   responsive: true,
   plugins: {
     legend: {
       position: "top" as const,
     },
-  },
-  elements: {
-    bar: {
-      borderWidth: 2,
-      borderRadius: 8,
-    }
-  },
+  }
 };
 
-const labels = ["Food", "Entertainment", "Hobbies", "Bills", "Other", "Games", "Gifts", "Health", "Travel", "Clothing", "Transport"];
+interface CategoryChartProps {
+  apiModel: CategoryAnalysisModel;
+}
 
-export const data = {
-  labels,
-  datasets: [
-    {
-      label: "Result",
-      data: labels.map(() => -faker.datatype.number({ min: -380, max: -200 })),
-      backgroundColor: "rgba(54, 118, 191, 0.5)",
-      borderColor: "rgba(54, 118, 191, 1)",
-    },
-    {
-      label: "Average",
-      data: labels.map(() => -faker.datatype.number({ min: -300, max: 0 })),
-      backgroundColor: "rgba(156, 150, 142, 0.5)",
-      borderColor: "rgba(156, 150, 142, 0.8)",
-    }
-  ],
-};
+export default function CategoryChart(props: CategoryChartProps) {
+  if (!props.apiModel || props.apiModel.errorMessage) {
+    return <Empty text={props?.apiModel?.errorMessage} />;
+  }
 
-export default function CategoryChart() {
-  return <Bar className="invertColors" height="256px" options={options} data={data} />;
+  const data = {
+    labels: props.apiModel.chartLabels,
+    datasets: [
+      {
+        label: "Money spent",
+        data: props.apiModel.categorySpendingDataset,
+        backgroundColor: "rgba(54, 118, 191, 0.5)",
+        borderColor: "rgb(19, 121, 168)",
+        borderWidth: 2,
+        borderRadius: 2
+      },
+      {
+        label: "Last 3 months average",
+        data: props.apiModel.averageSpendingDataset,
+        backgroundColor: "rgba(200, 200, 200, 0.7)",
+        borderWidth: 0
+      }
+    ],
+  };
+
+  return <Bar className="invertColors" height="286px" options={options} data={data} />;
 }
