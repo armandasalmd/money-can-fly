@@ -7,10 +7,16 @@ import { TransactionModel, ITransactionModel, TransactionDocument } from "@serve
 import { BalanceManager, CurrencyRateManager } from "@server/managers";
 import { SearchRequest, SearchResponse } from "@endpoint/transactions/search";
 import { escapeRegExp } from "@server/utils/Global";
+import constants from "@server/utils/Constants";
 
 export class TransactionManager {
   public async CreateTransaction(request: CreateTransactionRequest, user: CookieUser): Promise<ITransactionModel> {
     const date = new Date(request.date);
+
+    if (constants.negativeCategories.includes(request.category) && request.amount > 0) {
+      request.amount = -request.amount;
+    }
+
     const commonValue = await CurrencyRateManager.getInstance().convert(request.amount, request.currency, "USD", date);
 
     const balanceManager = new BalanceManager();
@@ -46,7 +52,10 @@ export class TransactionManager {
     const document = await TransactionModel.findById(request.id);
 
     if (document && document.userUID === user.userUID) {
-      document.amount = request.amount;
+      document.amount =
+        constants.negativeCategories.includes(request.category) && request.amount > 0
+          ? -request.amount
+          : request.amount;
       document.category = request.category;
       document.currency = request.currency;
       document.date = date;
@@ -63,7 +72,7 @@ export class TransactionManager {
 
   public async BulkDeleteTransactions(ids: string[], user: CookieUser): Promise<string[]> {
     const deletedIds: string[] = [];
-    
+
     for (const id of ids) {
       const result = await TransactionModel.deleteOne({
         _id: id,
@@ -170,18 +179,23 @@ export class TransactionManager {
   }
 
   public async ImportSearch(user: CookieUser, importName: string, firstN: number): Promise<ITransactionModel[]> {
-    const results = await TransactionModel.find({
-      userUID: user.userUID,
-      isDeleted: false,
-      isImported: true,
-      source: importName,
-    }, {
-      date: 1,
-      description: 1,
-      amount: 1,
-    }).sort({
-      date: -1,
-    }).limit(firstN);
+    const results = await TransactionModel.find(
+      {
+        userUID: user.userUID,
+        isDeleted: false,
+        isImported: true,
+        source: importName,
+      },
+      {
+        date: 1,
+        description: 1,
+        amount: 1,
+      }
+    )
+      .sort({
+        date: -1,
+      })
+      .limit(firstN);
 
     return results || [];
   }
@@ -196,7 +210,7 @@ export class TransactionManager {
     const result = await TransactionModel.deleteMany({
       userUID: user.userUID,
       isImported: true,
-      importId
+      importId,
     });
 
     return result.deletedCount;

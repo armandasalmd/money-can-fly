@@ -13,6 +13,7 @@ import {
 } from "@recoil/transactions/atoms";
 import { publish } from "@utils/Events";
 import { Transaction } from "@utils/Types";
+import constants from "@server/utils/Constants";
 
 export default function TransactionsBody() {
   const [addDrawerOpen, setAddDrawerOpen] = useState(false);
@@ -49,6 +50,7 @@ export default function TransactionsBody() {
     setTransactionInEdit({
       ...transaction,
       date: new Date(transaction.date),
+      amount: Math.abs(transaction.amount)
     });
     setAddDrawerOpen(true);
   }
@@ -82,7 +84,8 @@ export default function TransactionsBody() {
       const newItems = [...displayState.displayedItems];
 
       newItems[itemIdx] = {
-        ...transaction
+        ...transaction,
+        amount: constants.negativeCategories.includes(transaction.category) ? -transaction.amount : transaction.amount,
       };
 
       setDisplayState({
