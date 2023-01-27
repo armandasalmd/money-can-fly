@@ -14,7 +14,7 @@ interface InvestmentTimelineProps {
 }
 
 export default function InvestmentTimeline(props: InvestmentTimelineProps) {
-  const [sort, setSort] = useState<string>("asc" as Sort);
+  const [sort, setSort] = useState<string>("desc" as Sort);
   const [investment, setInvestment] = useRecoilState(selectedInvestment);
 
   function onDelete(investmentEvent: InvestmentEvent) {

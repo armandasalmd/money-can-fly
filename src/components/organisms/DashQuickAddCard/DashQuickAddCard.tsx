@@ -105,6 +105,7 @@ export default function DashQuickAddCard() {
   return (
     <Card
       className="dashQuickAdd"
+      closeError={() => setError("")}
       error={error}
       noContentPaddingX
       noContentPaddingY
@@ -135,6 +136,7 @@ export default function DashQuickAddCard() {
           />
           <CurrencyInput
             onChange={currencyInputChange}
+            onlyPositive
             title="Amount"
             value={{
               amount: state.amount,

@@ -15,6 +15,7 @@ export interface CardHeaderAction {
 
 export interface CardProps extends PropsWithChildren {
   className?: string;
+  closeError?(): void;
   error?: string;
   header?: HeaderProps;
   headerActions?: CardHeaderAction[];
@@ -67,7 +68,7 @@ export default function Card(props: CardProps) {
         )}
       </div>
       {props.error && (
-        <Message className="card__error" colorType="error" fadeIn messageStyle="bordered">
+        <Message className="card__error" colorType="error" fadeIn messageStyle="bordered" onDismiss={props.closeError}>
           {props.error}
         </Message>
       )}

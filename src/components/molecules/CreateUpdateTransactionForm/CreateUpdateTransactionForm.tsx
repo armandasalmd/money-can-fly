@@ -53,6 +53,7 @@ export default function CreateUpdateTransactionForm(props: CreateUpdateTransacti
       <div className="tForm__item tForm__item--double">
         <CurrencyInput
           name="money"
+          onlyPositive
           onChange={inputChange}
           required
           title="Amount"
