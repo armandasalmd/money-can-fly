@@ -1,3 +1,4 @@
+import test from "node:test";
 import { Currency, Money, Transaction } from "./Types";
 
 const currencyLocales: { [key in Currency]: string } = {
@@ -23,23 +24,22 @@ export function percentForDisplay(percent: number): string {
 }
 
 export function parseCurrency(text: string, onlyPositive: boolean): number {
-  if (!text || text === "") {
-      return 0;
-  } else if (text.startsWith("-")) {
-      return onlyPositive ? NaN : 0;
-  } else if (text.match(/(\d|\.|\,)$/)) {
-      text = text.replace(",", ".");
+  text = text || "";
 
-      let commaCount = text.match(/\./g);
+  if (onlyPositive && text.startsWith("-")) {
+    return NaN;
+  } else if (text === "" || text === "-") {
+    return 0;
+  } else if (text.length <= 10 && text.match(/^-?\d+(\.|,)?\d{0,2}$/)) {
+    text = text.replace(",", ".");
 
-      if (commaCount && commaCount.length > 1) {
-          return NaN;
-      }
-      
-      const parsed = parseFloat(text);
-      const rounded = Math.floor(parsed * 100) / 100;
+    if (text.lastIndexOf("-") > 0) {
+      const isNegative = text[0] === "-";
 
-      return rounded === parsed ? parsed : NaN;
+      text = (isNegative ? "-" : "") + text.replace("-", "");
+    }
+
+    return parseFloat(text.replace(",", ".")) || NaN;
   }
 
   return NaN;

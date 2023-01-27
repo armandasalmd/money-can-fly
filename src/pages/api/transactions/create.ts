@@ -1,4 +1,4 @@
-import { IsIn, IsDateString, IsString, MinLength, IsNumber, IsPositive } from "class-validator";
+import { IsIn, IsDateString, IsString, MinLength, IsNumber, IsPositive, IsDefined } from "class-validator";
 import { Currency, Category, TransactionBank, Money } from "@utils/Types";
 import { validatedApiRoute } from "@server/core";
 import constants from "@server/utils/Constants";
@@ -6,7 +6,9 @@ import { TransactionManager } from "@server/managers";
 
 export class CreateTransactionRequest implements Money {
   @IsNumber()
-  @IsPositive()
+  @IsPositive({
+    message: "Enter a positive amount",
+  })
   amount: number;
   @IsIn(constants.allowed.currencies)
   currency: Currency;
@@ -15,7 +17,9 @@ export class CreateTransactionRequest implements Money {
   @IsDateString()
   date: string;
   @IsString()
-  @MinLength(1)
+  @MinLength(1, {
+    message: "Enter description",
+  })
   description: string;
   @IsIn(constants.allowed.sources)
   source: TransactionBank;
