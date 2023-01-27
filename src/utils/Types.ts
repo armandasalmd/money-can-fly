@@ -125,3 +125,7 @@ export interface Investment {
   dateCreated: Date;
   timelineEvents: InvestmentEvent[];
 }
+
+export type FieldErrors<T> = Partial<{
+  [key in keyof T]: string;
+}>

@@ -12,7 +12,7 @@ import {
   pagedTransactionsState,
 } from "@recoil/transactions/atoms";
 import { publish } from "@utils/Events";
-import { Transaction } from "@utils/Types";
+import { FieldErrors, Transaction } from "@utils/Types";
 import constants from "@server/utils/Constants";
 
 export default function TransactionsBody() {
@@ -21,7 +21,7 @@ export default function TransactionsBody() {
   const resetFilters = useResetRecoilState(filterFormState);
   const paginationLabel = useRecoilValue(paginationLabelState);
   const [saving, setSaving] = useState(false);
-  const [saveError, setSaveError] = useState("");
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors<Transaction>>({});
 
   const [transactionInEdit, setTransactionInEdit] = useRecoilState(addEditTransactionState);
   const resetTransactionInEdit = useResetRecoilState(addEditTransactionState);
@@ -105,8 +105,8 @@ export default function TransactionsBody() {
     });
     const data = await response.json();
     
-    if (data.message) {
-      setSaveError(data.message);
+    if (data.fieldErrors) {
+      setFieldErrors(data.fieldErrors);
     }
     
     return !!data._id;
@@ -125,8 +125,8 @@ export default function TransactionsBody() {
     });
     const data = await response.json();
 
-    if (data.message) {
-      setSaveError(data.message);
+    if (data.fieldErrors) {
+      setFieldErrors(data.fieldErrors);
     }
 
     return !!data._id;
@@ -155,7 +155,7 @@ export default function TransactionsBody() {
   useEffect(() => {
     if (addDrawerOpen === false) {
       resetTransactionInEdit();
-      setSaveError("");
+      setFieldErrors({});
     }
   }, [addDrawerOpen, resetTransactionInEdit]);
 
@@ -208,7 +208,6 @@ export default function TransactionsBody() {
         onClose={setAddDrawerOpen}
         title={transactionInEdit?._id ? "Edit transaction" : "Create transaction"}
         subtitle={transactionInEdit?._id ? `ID : ${transactionInEdit?._id}` : "All fields are required"}
-        error={saveError}
         extra={
           <Button disabled={saving} type="primary" icon={FloppyDiskBack} onClick={() => onSubmitSave(transactionInEdit)}>
             {saving ? "Saving..." : "Save"}
@@ -216,7 +215,7 @@ export default function TransactionsBody() {
         }
         destroyOnClose
       >
-        <CreateUpdateTransactionForm atom={addEditTransactionState} />
+        <CreateUpdateTransactionForm atom={addEditTransactionState} fieldErrors={fieldErrors} />
       </Drawer>
     </div>
   );

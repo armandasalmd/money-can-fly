@@ -5,10 +5,11 @@ import { Article, Bank, Bookmark } from "phosphor-react";
 import { Input, Select, DatePicker, Message } from "@atoms/index";
 import { CurrencyInput } from "@molecules/index";
 import { bankNamesPreset, categotyPreset } from "@utils/SelectItems";
-import { Money, Transaction } from "@utils/Types";
+import { FieldErrors, Money, Transaction } from "@utils/Types";
 
 export interface CreateUpdateTransactionFormProps {
   atom: RecoilState<Transaction>;
+  fieldErrors: FieldErrors<Transaction>;
 }
 
 export default function CreateUpdateTransactionForm(props: CreateUpdateTransactionFormProps) {
@@ -43,6 +44,7 @@ export default function CreateUpdateTransactionForm(props: CreateUpdateTransacti
       <div className="tForm__item">
         <Input
           icon={Article}
+          error={props.fieldErrors.description}
           name="description"
           onChange={inputChange}
           required
@@ -54,6 +56,7 @@ export default function CreateUpdateTransactionForm(props: CreateUpdateTransacti
         <CurrencyInput
           name="money"
           onlyPositive
+          error={props.fieldErrors.amount}
           onChange={inputChange}
           required
           title="Amount"
