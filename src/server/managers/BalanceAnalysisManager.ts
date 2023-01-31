@@ -1,18 +1,282 @@
 import { CookieUser } from "@server/core";
-import { BalanceAnalysisModel } from "@server/models";
-import { Currency, DateRange } from "@utils/Types";
+import {
+  BalanceAnalysisModel,
+  IPeriodPredictionModel,
+  IUserPreferencesModel,
+  PeriodPredictionModel,
+  TransactionModel,
+} from "@server/models";
+import { DateRange, Investment, Money } from "@utils/Types";
+import { round, splitDateIntoEqualIntervals } from "@server/utils/Global";
+import { format, differenceInDays, min, max } from "date-fns";
+import { CurrencyRateManager } from "./CurrencyRateManager";
+import { amountForDisplay } from "@utils/Currency";
+
+interface IPredictionPoint {
+  date: Date;
+  amountChange: number; // in default currency
+  pivotedTotal?: number; // in default currency
+}
+
+interface ITransactionBucket {
+  _id: Date | "sumAfterEndDate";
+  useValueChange: number;
+}
 
 export class BalanceAnalysisManager {
-  constructor(private defaultCurrency: Currency) {}
+  private dateBreakpoints: Date[];
+  private daysCovered: number;
+  private rateManager: CurrencyRateManager;
+  private predictionPoints: IPredictionPoint[];
+  private totalWorthToday: Money;
 
-  public async GetBalanceAnalysis(user: CookieUser, dateRange: DateRange): Promise<BalanceAnalysisModel> {
-    return {
-      cardDescription: "£59.21 (19.2%) above expected",
-      chartLabels: ["Oct 1", "Oct 2", "Oct 3", "Oct 4", "Oct 5", "Oct 6", "Oct 7", "Oct 8", "Oct 9", "Oct 10", "Oct 11", "Oct 12"],
-      expectedWorthDataset: [500, 100, 200, 300, 400, 500, 600, 700, 800, 850, 658, 1000],
-      investmentsDataset: [0, 200, 300, 312, 296, 264, 301, 312, 285, 386, 400, 285],
-      projectionDataset: [NaN, NaN, NaN, NaN, NaN, NaN, NaN, NaN, 1200, 1250, 1300, 1400],
-      totalWorthDataset: [400, 500, 600, 700, 800, 900, 1000, 1250, 1200, NaN, NaN, NaN],
+  constructor(private prefs: IUserPreferencesModel, private cashBalance: Money, private investmentsValue: Money) {
+    this.rateManager = CurrencyRateManager.getInstance();
+    this.totalWorthToday = {
+      amount: this.cashBalance.amount + this.investmentsValue.amount,
+      currency: this.cashBalance.currency,
     };
+  }
+
+  public async GetBalanceAnalysis(
+    user: CookieUser,
+    dateRange: DateRange,
+    investments: Investment[]
+  ): Promise<BalanceAnalysisModel> {
+    dateRange.from = new Date(dateRange.from);
+    dateRange.to = new Date(dateRange.to);
+
+    this.daysCovered = differenceInDays(dateRange.to, dateRange.from);
+    this.dateBreakpoints = splitDateIntoEqualIntervals(
+      dateRange.from,
+      dateRange.to,
+      this.prefs.balanceChartBreakpoints
+    );
+
+    const labels = this.MakeLabels();
+
+    const [invDataset, totalWorthDataset] = await Promise.all([
+      this.CalculateInvestmentsDataset(investments),
+      this.CalculateTotalWorthDataset(user, dateRange),
+      this.PopulatePredictionPoints(user, dateRange),
+    ]);
+
+    const description = this.CreateDescription();
+    const expectedWorthDataset = this.dateBreakpoints.map((o) => this.GetPredictionAmountForDate(o));
+
+    return {
+      cardDescription: description,
+      chartLabels: labels,
+      expectedWorthDataset,
+      investmentsDataset: invDataset,
+      projectionDataset: this.MakeProjectionDataset(expectedWorthDataset, totalWorthDataset),
+      totalWorthDataset
+    };
+  }
+
+  private MakeProjectionDataset(expectedWorthDataset: number[], totalWorthDataset: number[]): number[] {
+    const firstNaN = totalWorthDataset.findIndex((o) => isNaN(o));
+
+    if (firstNaN <= 0) return Array(this.dateBreakpoints.length).fill(NaN);
+
+    const projectionDataset: number[] = Array(firstNaN - 1).fill(NaN);
+    const predDelta = expectedWorthDataset[firstNaN - 1] - totalWorthDataset[firstNaN - 1];
+    projectionDataset.push(totalWorthDataset[firstNaN - 1]);
+
+    for (let i = firstNaN; i < this.dateBreakpoints.length; i++) {
+      projectionDataset.push(expectedWorthDataset[i] - predDelta * 0.9);
+    }
+
+    return projectionDataset;
+  }
+
+  private async CalculateTotalWorthDataset(user: CookieUser, range: DateRange): Promise<number[]> {
+    const now = new Date();
+
+    // Scenario 1: range is in the future
+    if (now <= range.from) return Array(this.dateBreakpoints.length).fill(NaN);
+
+    // Scenario 2: range is in the past, or intersects with now
+    const [result, usdWorthToday] = await Promise.all([
+      TransactionModel.aggregate([
+        {
+          $match: {
+            userUID: user.userUID,
+            isActive: true,
+            isDeleted: false,
+            date: { $gte: range.from, $lte: now },
+          },
+        },
+        {
+          $bucket: {
+            groupBy: "$date",
+            boundaries: this.dateBreakpoints,
+            default: "gapSumToNow",
+            output: {
+              useValueChange: { $sum: "$usdValueWhenExecuted" },
+            },
+          },
+        },
+      ]),
+      this.rateManager.convert(this.totalWorthToday.amount, this.totalWorthToday.currency, "USD"),
+    ]);
+
+    const sumAfterEndDate = result.find((o: ITransactionBucket) => o._id === "sumAfterEndDate")?.useValueChange ?? 0;
+
+    let backwardsSum = usdWorthToday - sumAfterEndDate;
+    let worthDataset: number[] = [];
+
+    for (let i = result.length - 1; i >= 0; i--) {
+      const bucket: ITransactionBucket = result[i];
+
+      if (bucket._id === "sumAfterEndDate") continue;
+
+      backwardsSum = backwardsSum - bucket.useValueChange;
+      worthDataset.push(backwardsSum);
+    }
+
+    worthDataset = worthDataset.reverse();
+
+    for (let i = worthDataset.length; i < this.dateBreakpoints.length; i++) {
+      // This fills empty points until NOW with last known value, and after NOW with NaN
+      worthDataset.push(this.dateBreakpoints[i] > now ? NaN : worthDataset[worthDataset.length - 1]);
+    }
+
+    // Map all values to default currency
+    return await Promise.all(worthDataset.map((o) => this.rateManager.convert(o, "USD", this.prefs.defaultCurrency)));
+  }
+
+  private CreateDescription(): string {
+    const predictionAmountForNow = this.GetPredictionAmountForDate(new Date());
+    const delta: Money = {
+      amount: this.totalWorthToday.amount - predictionAmountForNow,
+      currency: this.prefs.defaultCurrency,
+    };
+
+    const percent = predictionAmountForNow === 0 ? 0 : Math.round((delta.amount / predictionAmountForNow) * 1000) / 10;
+
+    return `Currenctly ${amountForDisplay(delta)} (${percent > 0 ? "+" : ""}${percent}%) ${
+      delta.amount > 0 ? "above" : "below"
+    } expected`;
+  }
+
+  private async PopulatePredictionPoints(user: CookieUser, dateRange: DateRange): Promise<void> {
+    const requiredDates = [new Date(dateRange.from), new Date(dateRange.to), new Date(), this.prefs.forecastPivotDate];
+
+    const from = min(requiredDates);
+    const to = max(requiredDates);
+
+    from.setHours(0, 0, 0, 0);
+    from.setDate(1);
+    to.setHours(0, 0, 0, 0);
+    to.setDate(1);
+
+    const periodPredictions: IPeriodPredictionModel[] = await PeriodPredictionModel.find({
+      userUID: user.userUID,
+      monthDate: { $gte: from, $lte: to },
+    }).sort({ monthDate: 1 });
+
+    this.predictionPoints = periodPredictions.flatMap((o) =>
+      o.predictions.map(
+        (m) =>
+          ({
+            date: this.GetWeeksDate(m.week, o.monthDate),
+            amountChange: m.moneyIn - m.moneyOut,
+          } as IPredictionPoint)
+      )
+    );
+
+    this.CalculatePivotedTotal();
+  }
+
+  private CalculatePivotedTotal() {
+    let pivotIndex = this.predictionPoints.findIndex((o) => o.date >= this.prefs.forecastPivotDate) - 1;
+
+    if (pivotIndex > 0) {
+      let daysDiff = differenceInDays(this.prefs.forecastPivotDate, this.predictionPoints[pivotIndex].date);
+      daysDiff = daysDiff > 7 ? 7 : daysDiff;
+
+      this.predictionPoints[pivotIndex].pivotedTotal =
+        this.prefs.forecastPivotValue - this.predictionPoints[pivotIndex].amountChange * (daysDiff / 7);
+
+      for (let i = pivotIndex - 1; i >= 0; i--) {
+        this.predictionPoints[i].pivotedTotal =
+          this.predictionPoints[i + 1].pivotedTotal - this.predictionPoints[i].amountChange;
+      }
+    } else if (this.predictionPoints.length > 0) {
+      this.predictionPoints[0].pivotedTotal = this.prefs.forecastPivotValue;
+      pivotIndex = 0;
+    }
+
+    for (let i = pivotIndex + 1; i < this.predictionPoints.length; i++) {
+      this.predictionPoints[i].pivotedTotal =
+        this.predictionPoints[i - 1].pivotedTotal + this.predictionPoints[i - 1].amountChange;
+    }
+  }
+
+  private GetPredictionAmountForDate(date: Date): number {
+    let edgeIndex = -1;
+
+    for (let i = this.predictionPoints.length - 1; i >= 0; i--) {
+      if (this.predictionPoints[i].date < date) {
+        edgeIndex = i;
+        break;
+      }
+    }
+
+    if (edgeIndex === -1) {
+      return this.predictionPoints.length > 0 ? this.predictionPoints[0].pivotedTotal : 0;
+    }
+
+    let predictionPoint = this.predictionPoints[edgeIndex];
+    let daysDiff = differenceInDays(date, predictionPoint.date);
+    daysDiff = daysDiff > 7 ? 7 : daysDiff;
+
+    return round(predictionPoint.pivotedTotal + predictionPoint.amountChange * (daysDiff / 7));
+  }
+
+  private GetWeeksDate(week: number, monthDate: Date): Date {
+    const date = new Date(monthDate);
+    date.setDate(1);
+    date.setDate(date.getDate() + (week - 1) * 7);
+    return date;
+  }
+
+  private MakeLabels(): string[] {
+    const template = this.daysCovered < 14 ? "MMM d HH:mm" : "MMM d";
+    return this.dateBreakpoints.map((date) => format(date, template));
+  }
+
+  private async ToDefaultMoney(money: Money, date?: Date): Promise<Money> {
+    return await this.rateManager.convertMoney(money, this.prefs.defaultCurrency, date);
+  }
+
+  private async CalculateInvestmentsDataset(source: Investment[]): Promise<number[]> {
+    const eventsSorted = source
+      .flatMap((o) => o.timelineEvents)
+      .sort((a, b) => a.eventDate.getTime() - b.eventDate.getTime());
+
+    let sumInDefaultCurrency = 0;
+    const dataset: number[] = [];
+    const now = new Date();
+
+    for (const breakpoint of this.dateBreakpoints) {
+      if (breakpoint > now) {
+        dataset.push(NaN);
+        break;
+      }
+
+      while (eventsSorted.length > 0 && eventsSorted[0].eventDate.getTime() <= breakpoint.getTime()) {
+        const event = eventsSorted.shift();
+
+        // TODO: This should convert currency at event date, not at current date
+        // For now to improve performance, we convert all events to default currency at once
+        sumInDefaultCurrency += (await this.ToDefaultMoney(event.valueChange)).amount;
+      }
+
+      dataset.push(sumInDefaultCurrency === 0 ? NaN : sumInDefaultCurrency);
+    }
+
+    return dataset;
   }
 }

@@ -47,27 +47,30 @@ export class TransactionManager {
 
   public async UpdateTransaction(request: UpdateTransactionRequest, user: CookieUser): Promise<ITransactionModel> {
     const date = new Date(request.date);
-    const commonValue = await CurrencyRateManager.getInstance().convert(request.amount, request.currency, "USD", date);
 
     const document = await TransactionModel.findById(request.id);
-
-    if (document && document.userUID === user.userUID) {
-      document.amount =
-        constants.negativeCategories.includes(request.category) && request.amount > 0
-          ? -request.amount
-          : request.amount;
-      document.category = request.category;
-      document.currency = request.currency;
-      document.date = date;
-      document.description = request.description;
-      document.source = request.source;
-      document.usdValueWhenExecuted = commonValue;
-
-      await document.save();
-      return document.toJSON<ITransactionModel>() as ITransactionModel;
+    
+    if (!document || document.userUID !== user.userUID) {
+      return null;
     }
 
-    return null;
+    if (constants.negativeCategories.includes(document.category) && request.amount > 0) {
+      request.amount = -request.amount;
+    }
+
+    document.amount =
+      constants.negativeCategories.includes(request.category) && request.amount > 0
+        ? -request.amount
+        : request.amount;
+    document.category = request.category;
+    document.currency = request.currency;
+    document.date = date;
+    document.description = request.description;
+    document.source = request.source;
+    document.usdValueWhenExecuted = await CurrencyRateManager.getInstance().convert(request.amount, request.currency, "USD", date);
+
+    await document.save();
+    return document.toJSON<ITransactionModel>() as ITransactionModel;
   }
 
   public async BulkDeleteTransactions(ids: string[], user: CookieUser): Promise<string[]> {
@@ -76,6 +79,7 @@ export class TransactionManager {
     for (const id of ids) {
       const result = await TransactionModel.deleteOne({
         _id: id,
+        userUID: user.userUID,
       });
 
       if (result.deletedCount > 0) {

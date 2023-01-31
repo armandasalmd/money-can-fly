@@ -1,7 +1,7 @@
 import { useRecoilState, useResetRecoilState } from "recoil";
 import { useState, useEffect } from "react";
 
-import { Drawer, Select, DatePicker, Button, Message } from "@atoms/index";
+import { Drawer, Select, DatePicker, Button, Message, Input } from "@atoms/index";
 import { CurrencyInput } from "@molecules/index";
 import { PreferencesForm, preferencesState } from "@recoil/preferences/atoms";
 import { currencyPreset } from "@utils/SelectItems";
@@ -19,6 +19,7 @@ export default function PreferencesDrawer(props: PreferencesDrawerProps) {
   const resetState = useResetRecoilState(preferencesState);
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState<"success" | "error">("success");
+  const [breakpointCountError, setBreakpointCountError] = useState("");
 
   function onSave() {
     fetch("/api/preferences/update", {
@@ -30,18 +31,36 @@ export default function PreferencesDrawer(props: PreferencesDrawerProps) {
     })
       .then((res) => res.json())
       .then((res) => {
-        setState(res);
-        setChanged(false);
-        setMessageType("success");
-        setMessage("Preferences saved");
+        const errorMessage = res.message
+        
+        if (!errorMessage) {
+          res.forecastPivotDate = new Date(res.forecastPivotDate);
+
+          setState(res);
+          setChanged(false);
+          setMessageType("success");
+          setMessage("Preferences saved");
+          setBreakpointCountError("");
+        } else if (res.fieldErrors.balanceChartBreakpoints) {
+          setBreakpointCountError(res.fieldErrors.balanceChartBreakpoints);
+        } else {
+          setMessageType("error");
+          setMessage(errorMessage);
+        }
       })
-      .catch((err) => {
+      .catch((_) => {
         setMessageType("error");
         setMessage("Error saving preferences");
       });
   }
 
-  function onInputChange(value: string | number, name: string) {
+  function onBreakpointCountChange(value: string) {
+    const breakpointCount = parseInt(value);
+
+    onInputChange(isNaN(breakpointCount) ? 0 : breakpointCount, "balanceChartBreakpoints");
+  }
+
+  function onInputChange(value: string | number | Date, name: string) {
     if (changed === false) {
       setChanged(true);
     }
@@ -104,13 +123,15 @@ export default function PreferencesDrawer(props: PreferencesDrawerProps) {
 
     if (props.open) {
       fetchPreferences().then((res) => {
+        res.forecastPivotDate = new Date(res.forecastPivotDate);
+
         setState(res);
       });
     }
   }, [props.open, setState]);
 
   return (
-    <Drawer open={props.open} onClose={handleClose} title="Settings" size="small" extra={saveButton}>
+    <Drawer open={props.open} scrollable onClose={handleClose} title="Settings" size="small" extra={saveButton}>
       <div style={{ display: "flex", flexFlow: "column", gap: 16 }}>
         <Message colorType={messageType} counterMargin fadeIn messageStyle="bordered" onDismiss={() => setMessage("")}>
           {message}
@@ -146,6 +167,34 @@ export default function PreferencesDrawer(props: PreferencesDrawerProps) {
         />
         <h3>Cash balance</h3>
         {currencyBalanceInputs}
+        <h3>Balance analysis chart</h3>
+        <DatePicker
+          required
+          title="Forecast pivot date"
+          name="forecastPivotDate"
+          onSelect={onInputChange}
+          value={state.forecastPivotDate}
+        />
+        <CurrencyInput
+          disableCurrencyChange
+          title="Forecast pivot value"
+          required
+          name="forecastPivotValue"
+          onChange={(money, name) => onInputChange(money.amount, name)}
+          value={{
+            amount: state.forecastPivotValue,
+            currency: state.defaultCurrency,
+          }}
+          onlyPositive
+        />
+        <Input
+          required
+          error={breakpointCountError}
+          title="Date breakpoint count"
+          placeholder="Value between 6 and 16"
+          value={state.balanceChartBreakpoints.toString()}
+          setValue={onBreakpointCountChange}
+        />
       </div>
     </Drawer>
   );

@@ -13,7 +13,7 @@ export class PeriodPredictionManager {
 
       result = await PeriodPredictionModel.find({ userUID: user.userUID, monthDate: { $gte: from, $lte: to } });
     } else {
-      result = await PeriodPredictionModel.find({ userUID: user.userUID }).sort({ "period.from": -1 });
+      result = await PeriodPredictionModel.find({ userUID: user.userUID });
     }
 
     return result.map((x) => {

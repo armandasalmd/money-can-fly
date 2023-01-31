@@ -25,6 +25,7 @@ export default function DashCategorySpendingCard() {
     <Card
       loading={data === null}
       className="dashCategories"
+      error={data?.errorMessage}
       header={{
         color: "info",
         title: "Spending by Category",

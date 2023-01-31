@@ -117,4 +117,11 @@
       height: calc(100% - 57px);
     }
   }
+  
+  &--scrollable {
+    #{$base}__body {
+      height: calc(100% - 57px);
+      overflow-y: auto;
+    }
+  }
 }

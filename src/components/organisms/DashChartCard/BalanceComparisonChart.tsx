@@ -1,7 +1,6 @@
 import {
   Chart as ChartJS,
   LinearScale,
-  CategoryScale,
   BarElement,
   PointElement,
   LineElement,
@@ -16,7 +15,6 @@ import { Empty } from "@atoms/index";
 
 ChartJS.register(
   LinearScale,
-  CategoryScale,
   BarElement,
   PointElement,
   LineElement,
@@ -26,26 +24,13 @@ ChartJS.register(
   BarController
 );
 
-const options = {
-  plugins: {
-    filler: {
-      propagate: false,
-    },
-  },
-  scales: {
-    y: {
-      min: 0,
-    },
-  }
-};
-
 interface BalanceComparisonChartProps {
   apiModel: BalanceAnalysisModel;
 }
 
 export default function BalanceComparisonChart(props: BalanceComparisonChartProps) {
   if (!props.apiModel || props.apiModel.errorMessage) {
-    return <Empty text={props?.apiModel?.errorMessage} />;
+    return <Empty />;
   }
 
   const data = {
@@ -78,7 +63,7 @@ export default function BalanceComparisonChart(props: BalanceComparisonChartProp
         borderDash: [10, 8],
       },
       {
-        type: "bar" as const,
+        type: "line" as const,
         label: "Investments",
         backgroundColor: "rgba(54, 118, 191, 0.5)",
         borderColor: "rgb(19, 121, 168)",
@@ -88,5 +73,5 @@ export default function BalanceComparisonChart(props: BalanceComparisonChartProp
       },
     ],
   };
-  return <Chart height="90px" className="invertColors" type="bar" data={data as any} options={options} />;
+  return <Chart height="100px" className="invertColors" type="bar" data={data as any} />;
 }

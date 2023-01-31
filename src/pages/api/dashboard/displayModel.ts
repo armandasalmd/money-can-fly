@@ -5,6 +5,7 @@ import {
   InsightsManager,
   BalanceAnalysisManager,
   CategoryAnalysisManager,
+  BalanceManager,
 } from "@server/managers";
 import { BalanceAnalysisModel, CategoryAnalysisModel, InsightsModel, InvestmentsModel } from "@server/models";
 import { DateRange, DisplaySections } from "@utils/Types";
@@ -39,45 +40,52 @@ export default validatedApiRoute("POST", DisplayModelRequest, async (request, re
   const body = request.body as DisplayModelRequest;
   const sections = body.sections;
   const result: Partial<DisplayModelResponse> = {};
+  const investmentsManager = new InvestmentsManager();
 
-  const preferencesManager = new PreferencesManager();
-  const allPreferences = await preferencesManager.GetPreferences(user);
-  const defaultCurrency = allPreferences.defaultCurrency;
+  const loadInvestments =
+    sections.includes(DisplaySections.Investments) ||
+    sections.includes(DisplaySections.Insights) ||
+    sections.includes(DisplaySections.BalanceAnalysis);
+  const loadCashValue =
+    sections.includes(DisplaySections.Insights) || sections.includes(DisplaySections.BalanceAnalysis);
+  const loadInvestmentValue = loadInvestments;
 
-  if (sections.includes(DisplaySections.Investments) || sections.includes(DisplaySections.Insights)) {
-    const investmentsManager = new InvestmentsManager();
-    const investments = await investmentsManager.GetInvestments(user);
-    const investmentsValue = await investmentsManager.GetTotalMoneyValue(user, investments);
-    
-    /**
-     * Investments section
-     */
-    if (sections.includes(DisplaySections.Investments)) {
-      result.investments = {
-        totalValue: investmentsValue,
-        investments,
-      };
-    }
+  const [prefs, investments] = await Promise.all([
+    new PreferencesManager().GetPreferences(user),
+    loadInvestments ? investmentsManager.GetInvestments(user) : null,
+  ]);
 
-    /**
-     * Insights section
-    */
-    if (sections.includes(DisplaySections.Insights)) {
-      const insightsManager = new InsightsManager();
+  // Requires default currency, thus loaded separately
+  const [investmentsValue, cashValue] = await Promise.all([
+    loadInvestmentValue ? investmentsManager.GetTotalMoneyValue(prefs.defaultCurrency, investments) : null,
+    loadCashValue ? new BalanceManager().GetBalanceSummary(user, prefs.defaultCurrency) : null,
+  ]);
 
-      result.insights = await insightsManager.GetInsights(user, investmentsValue, allPreferences);
-    }
+  /**
+   * Investments section
+   */
+  if (sections.includes(DisplaySections.Investments)) {
+    result.investments = {
+      totalValue: investmentsValue,
+      investments,
+    };
+  }
+
+  /**
+   * Insights section
+   */
+  if (sections.includes(DisplaySections.Insights)) {
+    result.insights = await new InsightsManager(cashValue).GetInsights(user, investmentsValue, prefs);
   }
 
   /**
    * BalanceAnalysis section
    */
   if (sections.includes(DisplaySections.BalanceAnalysis)) {
-    const balanceAnalysisManager = new BalanceAnalysisManager(defaultCurrency);
-
-    result.balanceAnalysis = await balanceAnalysisManager.GetBalanceAnalysis(
+    result.balanceAnalysis = await new BalanceAnalysisManager(prefs, cashValue, investmentsValue).GetBalanceAnalysis(
       user,
-      body.balanceAnalysisDateRange
+      body.balanceAnalysisDateRange,
+      investments
     );
   }
 
@@ -85,9 +93,7 @@ export default validatedApiRoute("POST", DisplayModelRequest, async (request, re
    * CategoryAnalysis section
    */
   if (sections.includes(DisplaySections.CategoryAnalysis)) {
-    const categoryAnalysisManager = new CategoryAnalysisManager(defaultCurrency);
-
-    result.categoryAnalysis = await categoryAnalysisManager.GetCategoryAnalysis(
+    result.categoryAnalysis = await new CategoryAnalysisManager(prefs.defaultCurrency).GetCategoryAnalysis(
       user,
       body.categoryAnalysisDateRange
     );

@@ -134,7 +134,7 @@ export default function PredictionsBody() {
         <Card
           noDivider
           header={{
-            title: "Preview predictions",
+            title: "Preview expectations",
             description: displayEditorChart
               ? "Disable chart tool to preview existing"
               : "Select monthly period to preview",

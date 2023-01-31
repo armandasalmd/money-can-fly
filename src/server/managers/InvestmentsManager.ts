@@ -244,10 +244,10 @@ export class InvestmentsManager {
     return savedInvestment != null ? "" : "Failed to save investment";
   }
 
-  public async GetTotalMoneyValue(user: CookieUser, investments: Investment[]): Promise<Money> {
+  public async GetTotalMoneyValue(currency: Currency, investments: Investment[]): Promise<Money> {
     const result: Money = {
       amount: 0,
-      currency: await this.GetDefaultCurrency(user),
+      currency
     };
 
     for (const investment of investments) {

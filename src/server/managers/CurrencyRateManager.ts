@@ -1,4 +1,4 @@
-import { Currency } from "@utils/Types";
+import { Currency, Money } from "@utils/Types";
 import { ICurrencyRateModel, CurrencyRateModel } from "@server/models";
 import { round } from "@server/utils/Global";
 
@@ -17,6 +17,7 @@ interface ExternalCurrencyRate {
 export class CurrencyRateManager {
   private constructor() {}
   private static instance: CurrencyRateManager;
+  private static inmemoryCache: ICurrencyRateModel[] = [];
 
   public static getInstance(): CurrencyRateManager {
     if (!CurrencyRateManager.instance) {
@@ -33,11 +34,17 @@ export class CurrencyRateManager {
   }
 
   private async tryGetCachedRate(date: Date): Promise<ICurrencyRateModel | undefined> {
-    const rate = await CurrencyRateModel.findOne({ rateDay: this.toRateDay(date) });
+    const inmemId = CurrencyRateManager.inmemoryCache.findIndex(
+      (x) => x.rateDay === this.toRateDay(date)
+    );
+
+    let rate: ICurrencyRateModel = inmemId !== -1 ? CurrencyRateManager.inmemoryCache[inmemId] : await CurrencyRateModel.findOne({ rateDay: this.toRateDay(date) });;
 
     if (!rate) return undefined;
 
     rate.fromCache = true;
+
+    if (inmemId === -1) CurrencyRateManager.inmemoryCache.push(rate);
 
     return rate;
   }
@@ -88,11 +95,11 @@ export class CurrencyRateManager {
     to: Currency,
     date: Date = new Date()
   ): Promise<number> {
-    const rates = await this.getRate(date);
-
     if (from === to) {
       return amount;
     }
+    
+    const rates = await this.getRate(date);
 
     if (from === rates.baseCurrency) {
       return round(amount * rates.data[to].value);
@@ -103,5 +110,12 @@ export class CurrencyRateManager {
     }
 
     return round((amount * rates.data[to].value) / rates.data[from].value);
+  }
+
+  public async convertMoney(money: Money, to: Currency, date: Date = new Date()): Promise<Money> {
+    return money.currency === to ? money : {
+      amount: await this.convert(money.amount, money.currency, to, date),
+      currency: to
+    };
   }
 }
