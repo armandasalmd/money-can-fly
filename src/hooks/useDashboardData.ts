@@ -4,6 +4,7 @@ import { useRecoilState } from "recoil";
 import { dashboardData } from "@recoil/dashboard/atoms";
 import { DisplaySections, InvestmentEvent } from "@utils/Types";
 import { DisplayModelResponse } from "@endpoint/dashboard/displayModel";
+import { add } from "date-fns";
 
 function transformDates(data: Partial<DisplayModelResponse>) {
   if (!data) return;
@@ -66,8 +67,23 @@ export default function useDashboardData<T>(section: DisplaySections) {
       // eslint-disable-next-line
       initialized = true;
 
-      // Initial fetch of all sections
-      fetchSections(Object.values(DisplaySections));
+      const now = new Date();
+      const from = new Date(now.getFullYear(), now.getMonth(), 1);
+      const to = add(from, {
+        months: 1,
+        days: -1,
+      });
+
+      fetchSections(Object.values(DisplaySections), {
+        balanceAnalysisDateRange: {
+          from,
+          to,
+        },
+        categoryAnalysisDateRange: {
+          from,
+          to,
+        },
+      });
     }
   }, [data, fetchSections]);
 

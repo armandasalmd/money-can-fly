@@ -15,7 +15,7 @@ export default function PredictionsPage() {
   const reset3 = useResetRecoilState(monthPredictionFormState);
 
   const header: SidebarHeaderProps = {
-    title: isEditing ? "Override existing prediction" : "Set new prediction",
+    title: isEditing ? "Override existing expectation" : "Create new expectation",
     subtitle: isEditing ? "Values for selected period exists" : "Values for selected period does not exist",
   };
 

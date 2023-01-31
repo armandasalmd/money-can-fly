@@ -18,6 +18,18 @@ const UserPreferencesSchema = new Schema<IUserPreferencesModel>({
     type: Number,
     required: true,
   },
+  balanceChartBreakpoints: {
+    type: Number,
+    required: true,
+  },
+  forecastPivotDate: {
+    type: Date,
+    required: true,
+  },
+  forecastPivotValue: {
+    type: Number,
+    required: true,
+  },
 });
 
 export interface UserPreferencesDocument extends IUserPreferencesModel, Document {}

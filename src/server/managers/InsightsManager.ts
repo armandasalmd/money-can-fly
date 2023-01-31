@@ -3,7 +3,6 @@ import { FilterQuery } from "mongoose";
 
 import { CookieUser } from "@server/core";
 import { IUserPreferencesModel, InsightsModel, TransactionModel, ImportModel, IImportModel } from "@server/models";
-import { BalanceManager } from "./BalanceManager";
 import { Currency, Money } from "@utils/Types";
 import { CurrencyRateManager } from "./CurrencyRateManager";
 import { round } from "@server/utils/Global";
@@ -12,14 +11,14 @@ import { capitalise, toDisplayDate } from "@utils/Global";
 export class InsightsManager {
   private defaultCurrency: Currency;
 
+  constructor(private balanceSummary: Money) {}
+
   public async GetInsights(
     user: CookieUser,
     investmentValue: Money,
     prefs: IUserPreferencesModel
   ): Promise<InsightsModel> {
     this.defaultCurrency = prefs.defaultCurrency;
-
-    const balanceManager = new BalanceManager();
 
     const budgetResetDate = this.GetBugdetResetDate(prefs);
     const lastMonth = add(new Date(), { months: -1 });
@@ -29,13 +28,14 @@ export class InsightsManager {
 
     const budgetStartDate = add(budgetResetDate, { months: -1 });
     const budgetDaysLeft = this.GetBudgetDaysLeft(budgetResetDate);
+    const cashValue = this.balanceSummary;
 
-    // TODO: join Promises to .All
-    const cashValue = await balanceManager.GetBalanceSummary(user, this.defaultCurrency);
-    const amountSpentThisPeriod = await this.GetAmountChange(user, budgetStartDate, budgetResetDate, false);
-    const spentInLastWeek = await this.GetAmountChange(user, add(new Date(), { weeks: -1 }), new Date(), false);
-    const lastMonthProfit = await this.GetAmountChange(user, lastMonth, add(lastMonth, { months: 1 }), true);
-    const lastImportMessage = await this.GetLastImportSummary(user);
+    const [amountSpentThisPeriod, spentInLastWeek, lastMonthProfit, lastImportMessage] = await Promise.all([
+      this.GetAmountChange(user, budgetStartDate, budgetResetDate, false),
+      this.GetAmountChange(user, add(new Date(), { weeks: -1 }), new Date(), false),
+      this.GetAmountChange(user, lastMonth, add(lastMonth, { months: 1 }), true),
+      this.GetLastImportSummary(user),
+    ]);
 
     amountSpentThisPeriod.amount = -amountSpentThisPeriod.amount;
     spentInLastWeek.amount = -spentInLastWeek.amount;
@@ -81,6 +81,7 @@ export class InsightsManager {
   private async GetAmountChange(user: CookieUser, from: Date, to: Date, includeIncome: boolean): Promise<Money> {
     const matcher: FilterQuery<any> = {
       userUID: user.userUID,
+      isDeleted: false,
       date: {
         $gte: from,
         $lte: to,

@@ -37,8 +37,8 @@ interface CategoryChartProps {
 }
 
 export default function CategoryChart(props: CategoryChartProps) {
-  if (!props.apiModel || props.apiModel.errorMessage) {
-    return <Empty text={props?.apiModel?.errorMessage} />;
+  if (!props.apiModel || props.apiModel.errorMessage || props.apiModel.chartLabels.length === 0) {
+    return <Empty />;
   }
 
   const data = {
@@ -61,5 +61,5 @@ export default function CategoryChart(props: CategoryChartProps) {
     ],
   };
 
-  return <Bar className="invertColors" height="286px" options={options} data={data} />;
+  return <Bar className="invertColors" height={264} options={options} data={data} />;
 }

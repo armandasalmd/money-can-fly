@@ -1,10 +1,8 @@
 import { atom } from "recoil";
 import { Currency, Money } from "@utils/Types";
+import { IUserPreferencesModel } from "@server/models";
 
-export interface PreferencesForm {
-  defaultCurrency: Currency;
-  monthlyBudget: number;
-  monthlyBudgetStartDay: number;
+export interface PreferencesForm extends Omit<IUserPreferencesModel, "userUID"> {
   balances: {
     [key in Currency]: Money;
   };
@@ -16,6 +14,9 @@ export const preferencesState = atom<PreferencesForm>({
     defaultCurrency: "GBP",
     monthlyBudget: 0,
     monthlyBudgetStartDay: 1,
+    balanceChartBreakpoints: 12,
+    forecastPivotDate: new Date(),
+    forecastPivotValue: 0,
     balances: {
       GBP: {
         amount: 0,

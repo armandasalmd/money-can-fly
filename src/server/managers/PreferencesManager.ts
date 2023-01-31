@@ -12,14 +12,15 @@ export class PreferencesManager {
           defaultCurrency: model.defaultCurrency,
           monthlyBudget: model.monthlyBudget,
           monthlyBudgetStartDay: model.monthlyBudgetStartDay,
+          balanceChartBreakpoints: model.balanceChartBreakpoints,
+          forecastPivotDate: model.forecastPivotDate,
+          forecastPivotValue: model.forecastPivotValue,
         },
       },
       { upsert: true, new: true }
     );
 
-    const newPreferences = preferences.toJSON<IUserPreferencesModel>();
-
-    return newPreferences;
+    return preferences.toJSON<IUserPreferencesModel>();
   }
 
   public async GetPreferences(user: CookieUser): Promise<IUserPreferencesModel> {

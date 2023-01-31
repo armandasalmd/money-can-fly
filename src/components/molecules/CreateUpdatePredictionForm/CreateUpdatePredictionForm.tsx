@@ -59,7 +59,7 @@ export default function CreateUpdatePredictionForm(props: CreateUpdatePrediction
         />
       </div>
       <div className="predictionForm__divider" />
-      <p className="predictionForm__tip">Enter the amount you predict to spend each week below</p>
+      <p className="predictionForm__tip">Enter the amount you expect to spend each week below</p>
       <div className="predictionForm__item">
         {formState.predictions.map((week) => (
           <WeekPredictionItem key={week.week} week={week} onChange={weekPredictionChange} />

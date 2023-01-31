@@ -15,6 +15,7 @@ export interface DrawerProps extends PropsWithChildren {
   extra?: ReactNode;
   fullHeight?: boolean;
   onClose: (open: boolean) => void;
+  scrollable?: boolean;
   size?: DrawerSize;
   title: string;
   subtitle?: string;
@@ -29,6 +30,7 @@ export default function Drawer(props: DrawerProps) {
   const classes = classNames("drawer", props.className, {
     "drawer--large": props.size === "large",
     "drawer--small": props.size === "small",
+    "drawer--scrollable": props.scrollable,
     "drawer--open": props.open,
     "drawer--animatingExit": animatingExit,
     "drawer--fullHeight": props.fullHeight,

@@ -29,7 +29,7 @@ export default function PredictionPreviewList(
           onClick={onSelect}
         />
       ))}
-      {(predictions?.length ?? 0) === 0 && <Empty text="No predictions set yet!" />}
+      {(predictions?.length ?? 0) === 0 && <Empty text="No expectations set yet!" />}
     </div>
   );
 }

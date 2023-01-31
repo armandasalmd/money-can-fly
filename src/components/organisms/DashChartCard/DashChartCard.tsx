@@ -7,6 +7,7 @@ import { useDashboardData } from "@hooks/index";
 import { BalanceAnalysisModel } from "@server/models";
 import { getPeriodNow } from "@utils/Global";
 import { DisplaySections } from "@utils/Types";
+import { ArrowClockwise } from "phosphor-react";
 
 export default function DashChartCard() {
   const { data, mutate } = useDashboardData<BalanceAnalysisModel>(DisplaySections.BalanceAnalysis);
@@ -28,16 +29,25 @@ export default function DashChartCard() {
     });
   }
 
+  const isError = data?.errorMessage;
+
   return (
     <Card
       loading={data === null}
+      error={isError}
       className="dashChart"
       header={{
         color: "info",
-        title: "Balance analysis & predictions",
+        title: "Balance analysis & expectations",
         description: data?.cardDescription ?? "Loading...",
       }}
-      noHeaderSpacing
+      headerActions={[{
+        icon: ArrowClockwise,
+        onClick: () => onChange(dateRange),
+        text: "Refresh",
+        type: "text"
+      }]}
+      noHeaderSpacing={!isError}
       noDivider
     >
       <div className="dashChart__content">

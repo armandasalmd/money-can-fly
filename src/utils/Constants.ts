@@ -14,7 +14,7 @@ const constants = {
       path: "/import",
     },
     predictions: {
-      title: "Predictions",
+      title: "Expectations",
       path: "/predictions",
     },
     transactions: {
