@@ -3,7 +3,7 @@ import { Check, Info } from "phosphor-react";
 
 import AddTimelineEventForm from "./AddTimelineEventForm";
 import { Button, KeyValue } from "@atoms/index";
-import { amountForDisplay } from "@utils/Currency";
+import { amountForDisplay, getDefaultMoney } from "@utils/Currency";
 import { iconOptions } from "@utils/Global";
 import { CreateInvestmentEvent, InvestmentEventType, Money } from "@utils/Types";
 
@@ -25,7 +25,7 @@ export default function AddTimelineEvent(props: AddTimelineEventProps) {
     type: props.eventType,
     eventDate: new Date(),
     subtractFromBalance: true,
-    valueChange: { currency: "USD", amount: 0 },
+    valueChange: getDefaultMoney(),
   });
 
   useEffect(() => {

@@ -3,7 +3,7 @@ import { useState } from "react";
 import { Button, Card, Input } from "@atoms/index";
 import { CurrencyInput } from "@molecules/index";
 import { BorrowList } from "@components/molecules";
-import { amountForDisplay } from "@utils/Currency";
+import { amountForDisplay, getDefaultMoney } from "@utils/Currency";
 import { Borrowing, Money } from "@utils/Types";
 
 const mockBorrows: Borrowing[] = [
@@ -39,10 +39,7 @@ const mockBorrows: Borrowing[] = [
 export default function DashBorrowingsCard() {
   const [error, setError] = useState("");
   const [formState, setFormState] = useState<Borrowing>({
-    money: {
-      amount: 0,
-      currency: "GBP",
-    },
+    money: getDefaultMoney(),
     description: "",
   });
 

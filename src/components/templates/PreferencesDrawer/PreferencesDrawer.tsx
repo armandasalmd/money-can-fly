@@ -41,6 +41,7 @@ export default function PreferencesDrawer(props: PreferencesDrawerProps) {
           setMessageType("success");
           setMessage("Preferences saved");
           setBreakpointCountError("");
+          localStorage.setItem("currency", res.defaultCurrency);
         } else if (res.fieldErrors.balanceChartBreakpoints) {
           setBreakpointCountError(res.fieldErrors.balanceChartBreakpoints);
         } else {
@@ -124,6 +125,8 @@ export default function PreferencesDrawer(props: PreferencesDrawerProps) {
     if (props.open) {
       fetchPreferences().then((res) => {
         res.forecastPivotDate = new Date(res.forecastPivotDate);
+
+        localStorage.setItem("currency", res.defaultCurrency);
 
         setState(res);
       });

@@ -56,7 +56,8 @@ export class BalanceManager {
     if (!balances) {
       return false;
     }
-
+    // TODO: something is wrong with logic here
+    // Existing is not found when adding a new transaction
     const existing = balances.balances[money.currency];
 
     if (!existing) {
