@@ -71,7 +71,9 @@ export class InsightsManager {
   private async GetLastImportSummary(user: CookieUser): Promise<string> {
     const lastImport: IImportModel = await ImportModel.findOne({ userUID: user.userUID }).sort({ date: -1 });
 
-    if (lastImport.importState === "error") {
+    if (!lastImport) {
+      return "No imports yet";
+    } else if (lastImport.importState === "error") {
       return `Failed to import ${capitalise(lastImport.source)} ${toDisplayDate(lastImport.date)}`;
     } else {
       return `${capitalise(lastImport.source)} import ${toDisplayDate(lastImport.date)}. ${lastImport.message}`;

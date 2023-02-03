@@ -85,6 +85,10 @@ export default function useDashboardData<T>(section: DisplaySections) {
         },
       });
     }
+    
+    return () => {
+      initialized = false;
+    };
   }, [data, fetchSections]);
 
   return {

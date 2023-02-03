@@ -23,11 +23,26 @@ export class PreferencesManager {
     return preferences.toJSON<IUserPreferencesModel>();
   }
 
+  public InitPreferences(user: CookieUser): Promise<IUserPreferencesModel> {
+    return this.UpdatePreferences({
+      userUID: user.userUID,
+      defaultCurrency: "USD",
+      monthlyBudget: 0,
+      monthlyBudgetStartDay: 1,
+      balanceChartBreakpoints: 12,
+      forecastPivotDate: new Date(),
+      forecastPivotValue: 0,
+    }, user);
+  }
+
   public async GetPreferences(user: CookieUser): Promise<IUserPreferencesModel> {
-    return (
-      (await UserPreferencesModel.findOne({ userUID: user.userUID }))?.toJSON<IUserPreferencesModel>() ||
-      ({} as IUserPreferencesModel)
-    );
+    const result = await UserPreferencesModel.findOne({ userUID: user.userUID });
+
+    if (!result) {
+      return this.InitPreferences(user);
+    }
+
+    return result.toJSON<IUserPreferencesModel>();
   }
 
   public async GetDefaultCurrency(user: CookieUser): Promise<Currency> {

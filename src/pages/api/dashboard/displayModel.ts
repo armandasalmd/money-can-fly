@@ -9,7 +9,7 @@ import {
 } from "@server/managers";
 import { BalanceAnalysisModel, CategoryAnalysisModel, InsightsModel, InvestmentsModel } from "@server/models";
 import { DateRange, DisplaySections } from "@utils/Types";
-import { IsArray, IsIn, IsNotEmptyObject, IsOptional } from "class-validator";
+import { IsArray, IsIn, IsNotEmptyObject, IsOptional, isDateString } from "class-validator";
 
 export class DisplayModelRequest {
   @IsArray()
@@ -82,9 +82,15 @@ export default validatedApiRoute("POST", DisplayModelRequest, async (request, re
    * BalanceAnalysis section
    */
   if (sections.includes(DisplaySections.BalanceAnalysis)) {
+    const dateRange = body.balanceAnalysisDateRange;
+
+    if (!dateRange) return response.status(400).json({ error: "Missing date range" });
+    if (isDateString(dateRange.from)) dateRange.from = new Date(dateRange.from);
+    if (isDateString(dateRange.to)) dateRange.to = new Date(dateRange.to);
+
     result.balanceAnalysis = await new BalanceAnalysisManager(prefs, cashValue, investmentsValue).GetBalanceAnalysis(
       user,
-      body.balanceAnalysisDateRange,
+      dateRange,
       investments
     );
   }
@@ -93,6 +99,12 @@ export default validatedApiRoute("POST", DisplayModelRequest, async (request, re
    * CategoryAnalysis section
    */
   if (sections.includes(DisplaySections.CategoryAnalysis)) {
+    const dateRange = body.categoryAnalysisDateRange;
+
+    if (!dateRange) return response.status(400).json({ error: "Missing date range" });
+    if (isDateString(dateRange.from)) dateRange.from = new Date(dateRange.from);
+    if (isDateString(dateRange.to)) dateRange.to = new Date(dateRange.to);
+
     result.categoryAnalysis = await new CategoryAnalysisManager(prefs.defaultCurrency).GetCategoryAnalysis(
       user,
       body.categoryAnalysisDateRange

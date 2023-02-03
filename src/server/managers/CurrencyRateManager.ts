@@ -34,11 +34,12 @@ export class CurrencyRateManager {
   }
 
   private async tryGetCachedRate(date: Date): Promise<ICurrencyRateModel | undefined> {
-    const inmemId = CurrencyRateManager.inmemoryCache.findIndex(
-      (x) => x.rateDay === this.toRateDay(date)
-    );
+    const inmemId = CurrencyRateManager.inmemoryCache.findIndex((x) => x.rateDay === this.toRateDay(date));
 
-    let rate: ICurrencyRateModel = inmemId !== -1 ? CurrencyRateManager.inmemoryCache[inmemId] : await CurrencyRateModel.findOne({ rateDay: this.toRateDay(date) });;
+    let rate: ICurrencyRateModel =
+      inmemId !== -1
+        ? CurrencyRateManager.inmemoryCache[inmemId]
+        : await CurrencyRateModel.findOne({ rateDay: this.toRateDay(date) });
 
     if (!rate) return undefined;
 
@@ -68,19 +69,19 @@ export class CurrencyRateManager {
       `${this.ENDPOINT}?apikey=${process.env.CURRENCY_API_KEY}&currencies=EUR%2CGBP&date=${this.toRateDay(date)}`
     );
     const data: ExternalCurrencyRate = await response.json();
-    
+
     if (data.data) {
       const result: ICurrencyRateModel = {
         baseCurrency: "USD",
         data: data.data,
         rateDay: this.toRateDay(date),
-        fromCache: !!cached
+        fromCache: !!cached,
       };
-  
+
       if (!cached) {
         await this.saveToCache(result);
       }
-  
+
       return result;
     } else {
       const result = await CurrencyRateModel.findOne();
@@ -89,16 +90,11 @@ export class CurrencyRateManager {
     }
   }
 
-  public async convert(
-    amount: number,
-    from: Currency,
-    to: Currency,
-    date: Date = new Date()
-  ): Promise<number> {
+  public async convert(amount: number, from: Currency, to: Currency, date: Date = new Date()): Promise<number> {
     if (from === to) {
       return amount;
     }
-    
+
     const rates = await this.getRate(date);
 
     if (from === rates.baseCurrency) {
@@ -113,9 +109,11 @@ export class CurrencyRateManager {
   }
 
   public async convertMoney(money: Money, to: Currency, date: Date = new Date()): Promise<Money> {
-    return money.currency === to ? money : {
-      amount: await this.convert(money.amount, money.currency, to, date),
-      currency: to
-    };
+    return money.currency === to
+      ? money
+      : {
+          amount: await this.convert(money.amount, money.currency, to, date),
+          currency: to,
+        };
   }
 }
