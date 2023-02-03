@@ -2,10 +2,10 @@ import {
   IsBoolean,
   IsDateString,
   IsIn,
+  IsMongoId,
   IsNotEmptyObject,
   IsOptional,
   IsString,
-  Matches,
 } from "class-validator";
 import { validatedApiRoute } from "@server/core";
 import { Money, CreateInvestmentEvent, InvestmentEventType } from "@utils/Types";
@@ -13,7 +13,7 @@ import { InvestmentsManager } from "@server/managers";
 import Constants from "@server/utils/Constants";
 
 export class AddEventRequest implements CreateInvestmentEvent {
-  @Matches(Constants.objectIdRegex)
+  @IsMongoId()
   investmentId: string;
   @IsDateString()
   eventDate: string;

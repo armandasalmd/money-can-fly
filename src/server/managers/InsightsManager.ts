@@ -33,7 +33,7 @@ export class InsightsManager {
     const [amountSpentThisPeriod, spentInLastWeek, lastMonthProfit, lastImportMessage] = await Promise.all([
       this.GetAmountChange(user, budgetStartDate, budgetResetDate, false),
       this.GetAmountChange(user, add(new Date(), { weeks: -1 }), new Date(), false),
-      this.GetAmountChange(user, lastMonth, add(lastMonth, { months: 1 }), true),
+      this.GetAmountChange(user, lastMonth, add(lastMonth, { months: 1, seconds: -1 }), true),
       this.GetLastImportSummary(user),
     ]);
 

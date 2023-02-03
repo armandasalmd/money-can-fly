@@ -4,16 +4,19 @@ import { SetPeriodRequest } from "@endpoint/predictions/setPeriod";
 import { MonthPrediction } from "@utils/Types";
 
 export class PeriodPredictionManager {
-  public async GetPredictions(user: CookieUser, year?: number): Promise<MonthPrediction[]> {
+
+  public constructor(private user: CookieUser) {}
+
+  public async GetPredictions(year?: number): Promise<MonthPrediction[]> {
     let result: PeriodPredictionDocument[] = [];
     
     if (year) {
       const from = new Date(year, 0, 1);
       const to = new Date(year, 11, 31);
 
-      result = await PeriodPredictionModel.find({ userUID: user.userUID, monthDate: { $gte: from, $lte: to } });
+      result = await PeriodPredictionModel.find({ userUID: this.user.userUID, monthDate: { $gte: from, $lte: to } });
     } else {
-      result = await PeriodPredictionModel.find({ userUID: user.userUID });
+      result = await PeriodPredictionModel.find({ userUID: this.user.userUID });
     }
 
     return result.map((x) => {
@@ -31,15 +34,15 @@ export class PeriodPredictionManager {
     });
   }
 
-  public async SetPeriod(request: SetPeriodRequest, user: CookieUser): Promise<IPeriodPredictionModel> {
+  public async SetPeriod(request: SetPeriodRequest): Promise<IPeriodPredictionModel> {
     const model: IPeriodPredictionModel = {
-      userUID: user.userUID,
+      userUID: this.user.userUID,
       currency: request.currency,
       monthDate: new Date(request.periodMonth),
       predictions: request.predictions,
     };
 
-    const existing = await PeriodPredictionModel.findOne({ userUID: user.userUID, monthDate: model.monthDate });
+    const existing = await PeriodPredictionModel.findOne({ userUID: this.user.userUID, monthDate: model.monthDate });
 
     if (existing) {
       existing.predictions = model.predictions;
@@ -54,8 +57,8 @@ export class PeriodPredictionManager {
     return model;
   }
 
-  public async ResetPeriod(predictionId: string, user: CookieUser): Promise<boolean> {
-    const a = await PeriodPredictionModel.deleteOne({ userUID: user.userUID, _id: predictionId });
+  public async ResetPeriod(predictionId: string): Promise<boolean> {
+    const a = await PeriodPredictionModel.deleteOne({ userUID: this.user.userUID, _id: predictionId });
 
     return a.deletedCount > 0;
   }

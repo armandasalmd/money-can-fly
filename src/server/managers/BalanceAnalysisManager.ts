@@ -66,7 +66,7 @@ export class BalanceAnalysisManager {
 
     // Replace closest breakpoint with NOW if possible
     if (isWithinInterval(this.now, { start: dateRange.from, end: dateRange.to })) {
-      const index = this.dateBreakpoints.findLastIndex((o) => o < this.now);
+      const index = this.dateBreakpoints.findIndex((o) => o > this.now);
 
       if (index >= 0) this.dateBreakpoints[index] = this.now;
     }
@@ -98,11 +98,12 @@ export class BalanceAnalysisManager {
     if (firstNaN <= 0) return Array(this.dateBreakpoints.length).fill(NaN);
 
     const projectionDataset: number[] = Array(firstNaN - 1).fill(NaN);
-    const predDelta = expectedWorthDataset[firstNaN - 1] - totalWorthDataset[firstNaN - 1];
+    let predDelta = expectedWorthDataset[firstNaN - 1] - totalWorthDataset[firstNaN - 1];
     projectionDataset.push(totalWorthDataset[firstNaN - 1]);
 
     for (let i = firstNaN; i < this.dateBreakpoints.length; i++) {
       projectionDataset.push(expectedWorthDataset[i] - predDelta * 0.9);
+      predDelta = expectedWorthDataset[i] - projectionDataset[i];
     }
 
     return projectionDataset;
@@ -261,7 +262,7 @@ export class BalanceAnalysisManager {
 
   private MakeLabels(): string[] {
     const template = this.daysCovered < 14 ? "MMM d HH:mm" : "MMM d";
-    return this.dateBreakpoints.map((date) => date === this.now ? "NOW" : format(date, template));
+    return this.dateBreakpoints.map((date) => date === this.now ? "✅ NOW" : format(date, template));
   }
 
   private async ToDefaultMoney(money: Money, date?: Date): Promise<Money> {

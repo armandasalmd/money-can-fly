@@ -5,15 +5,16 @@ import { CurrencyRateManager } from "./CurrencyRateManager";
 import constants from "@server/utils/Constants";
 
 export class BalanceManager {
-  public async UpdateBalances(model: IUserBalanceModel, user: CookieUser): Promise<IUserBalanceModel> {
-    const existing = await UserBalanceModel.findOne({ userUID: user.userUID });
+
+  constructor(private user: CookieUser) {}
+
+  public async UpdateBalances(model: IUserBalanceModel): Promise<IUserBalanceModel> {
+    const existing = await UserBalanceModel.findOne({ userUID: this.user.userUID });
     let result: UserBalanceDocument = null;
 
     if (existing) {
-      if (model) {
-        if (model.balances) {
-          existing.balances = model.balances;
-        }
+      if (model && model.balances) {
+        existing.balances = model.balances;
 
         result = await existing.save();
       }
@@ -21,13 +22,13 @@ export class BalanceManager {
       result = await UserBalanceModel.create(model);
     }
 
-    return result.toJSON<IUserBalanceModel>();
+    return result?.toJSON<IUserBalanceModel>();
   }
 
-  public InitBalances(user: CookieUser): Promise<IUserBalanceModel> {
+  private InitBalances(): Promise<IUserBalanceModel> {
     const result: IUserBalanceModel = {
       balances: {} as any,
-      userUID: user.userUID,
+      userUID: this.user.userUID,
     };
 
     for (const currency of Object.values<Currency>(constants.allowed.currencies as [Currency])) {
@@ -37,41 +38,32 @@ export class BalanceManager {
       };
     }
 
-    return this.UpdateBalances(result, user);
+    return this.UpdateBalances(result);
   }
 
-  public async GetBalances(user: CookieUser): Promise<IUserBalanceModel> {
-    const result = await UserBalanceModel.findOne({ userUID: user.userUID });
-
-    if (!result) {
-      return this.InitBalances(user);
-    }
+  public async GetBalances(): Promise<IUserBalanceModel> {
+    const result = await UserBalanceModel.findOne({ userUID: this.user.userUID });
+    if (!result) return this.InitBalances();
 
     return result.toJSON<IUserBalanceModel>();
   }
 
-  public async CommitMoney(user: CookieUser, money: Money): Promise<boolean> {
-    const balances = await UserBalanceModel.findOne({ userUID: user.userUID });
+  public async CommitMoney(money: Money): Promise<boolean> {
+    if (money === null || typeof money !== "object") return false;
 
-    if (!balances) {
-      return false;
-    }
-    // TODO: something is wrong with logic here
-    // Existing is not found when adding a new transaction
-    const existing = balances.balances[money.currency];
+    const update = await UserBalanceModel.updateOne({
+      userUID: this.user.userUID,
+    }, {
+      $inc: {
+        [`balances.${money.currency}.amount`]: money.amount,
+      },
+    }, { upsert: true });
 
-    if (!existing) {
-      return false;
-    }
-
-    existing.amount += money.amount;
-    await balances.save();
-
-    return true;
+    return update.modifiedCount > 0;
   }
 
-  public async GetBalanceSummary(user: CookieUser, currency: Currency): Promise<Money> {
-    const balances = await this.GetBalances(user);
+  public async GetBalanceSummary(currency: Currency): Promise<Money> {
+    const balances = await this.GetBalances();
     const rateManager = CurrencyRateManager.getInstance();
     const total: Money = {
       amount: 0,

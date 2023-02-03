@@ -26,8 +26,8 @@ export class CreateTransactionRequest implements Money {
 }
 
 export default validatedApiRoute("POST", CreateTransactionRequest, async (request, response, user) => {
-  const manager = new TransactionManager();
-  const result = await manager.CreateTransaction(request.body, user);
+  const manager = new TransactionManager(user);
+  const result = await manager.CreateTransaction(request.body);
 
   return response.status(200).json(result);
 });

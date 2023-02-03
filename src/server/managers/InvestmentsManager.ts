@@ -7,11 +7,6 @@ import { CreateInvestmentRequest } from "@endpoint/investments/create";
 import { InvestmentEventDocument } from "@server/models/mongo/investment/InvestmentModel";
 
 export class InvestmentsManager {
-  private async GetDefaultCurrency(user: CookieUser): Promise<Currency> {
-    const preferencesManager = new PreferencesManager();
-    return await preferencesManager.GetDefaultCurrency(user);
-  }
-
   public async GetInvestments(user: CookieUser): Promise<Investment[]> {
     const investments: InvestmentDocument[] = await InvestmentModel.find({ userUID: user.userUID });
     const result: Investment[] = [];
@@ -65,19 +60,16 @@ export class InvestmentsManager {
       return;
     }
 
-    const transactionManager = new TransactionManager();
+    const transactionManager = new TransactionManager(user);
 
-    await transactionManager.CreateTransaction(
-      {
-        amount: money.amount,
-        currency: money.currency,
-        category,
-        date: new Date().toISOString(),
-        description,
-        source: "cash",
-      },
-      user
-    );
+    await transactionManager.CreateTransaction({
+      amount: money.amount,
+      currency: money.currency,
+      category,
+      date: new Date().toISOString(),
+      description,
+      source: "cash",
+    });
   }
 
   public async CreateInvestment(user: CookieUser, request: CreateInvestmentRequest): Promise<Investment> {

@@ -1,4 +1,4 @@
-import { Min, Max, IsNumberString } from "class-validator";
+import { IsNumberString } from "class-validator";
 import { validatedApiRoute } from "@server/core";
 import { ImportManager } from "@server/managers";
 import { IImportModel } from "@server/models";
@@ -16,11 +16,11 @@ export class ReadImportsResponse {
 }
 
 export default validatedApiRoute("GET", ReadImportsRequest, async (request, response, user) => {
-  const importManager = new ImportManager();
   const skip = parseInt(request.query.skip as string);
   const take = parseInt(request.query.take as string);
-
-  const result = await importManager.ReadImports(user, skip, take);
+  
+  const importManager = new ImportManager(user);
+  const result = await importManager.ReadImports(skip, take);
 
   return response.status(200).json({
     success: true,

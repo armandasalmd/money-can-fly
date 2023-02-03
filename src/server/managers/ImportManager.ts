@@ -19,22 +19,28 @@ export class ImportManager {
   private options: StartImportRequest;
   private csvEntity: ImportCsvEntity;
   private ignoreRegexes: RegExp[] = [];
-  private user: CookieUser;
-  private transactionManager = new TransactionManager();
   private existingTransactions: ITransactionModel[] = [];
   private rowsReadyToSave: ITransactionModel[] = [];
 
-  public async ReadImports(user: CookieUser, skip: number, take: number): Promise<ReadImportsResponse> {
-    const results = await ImportModel.find({ userUID: user.userUID }).sort({ date: -1 }).skip(skip).limit(take);
+  private readonly user: CookieUser;
+  private readonly transactionManager: TransactionManager;
+
+  public constructor(user: CookieUser) {
+    this.user = user;
+    this.transactionManager = new TransactionManager(user);
+  }
+
+  public async ReadImports(skip: number, take: number): Promise<ReadImportsResponse> {
+    const results = await ImportModel.find({ userUID: this.user.userUID }).sort({ date: -1 }).skip(skip).limit(take);
 
     return {
       items: results.map((result) => result.toJSON<IImportModel>()),
-      total: await ImportModel.countDocuments({ userUID: user.userUID }),
+      total: await ImportModel.countDocuments({ userUID: this.user.userUID }),
     };
   }
 
-  public async GetImportsAsSelectItems(user: CookieUser): Promise<SelectItem[]> {
-    const imports = await ImportModel.find({ userUID: user.userUID, importState: "success" }).sort({ date: -1 });
+  public async GetImportsAsSelectItems(): Promise<SelectItem[]> {
+    const imports = await ImportModel.find({ userUID: this.user.userUID, importState: "success" }).sort({ date: -1 });
 
     return imports.map((importItem) => ({
       value: importItem.id,
@@ -43,18 +49,17 @@ export class ImportManager {
   }
 
   private async UndoImport(): Promise<void> {
-    const count = await this.transactionManager.UndoImport(this.importModel.id, this.user);
+    const count = await this.transactionManager.UndoImport(this.importModel.id);
 
     this.importModel.importState = "undo";
     this.importModel.message = "Undone. Removed " + count + " transactions";
     await this.importModel.save();
   }
 
-  public async RunUndoImportBackgroundProcess(importId: string, user: CookieUser): Promise<IImportModel> {
+  public async RunUndoImportBackgroundProcess(importId: string): Promise<IImportModel> {
     this.importModel = await ImportModel.findById(importId);
-    this.user = user;
 
-    if (!this.importModel || this.importModel.userUID !== user.userUID || this.importModel.importState !== "success") {
+    if (!this.importModel || this.importModel.userUID !== this.user.userUID || this.importModel.importState !== "success") {
       return null;
     }
 
@@ -67,21 +72,20 @@ export class ImportManager {
     return this.importModel.toJSON<IImportModel>();;
   }
 
-  public async RunImportBackgroundProcess(request: StartImportRequest, user: CookieUser): Promise<IImportModel> {
+  public async RunImportBackgroundProcess(request: StartImportRequest): Promise<IImportModel> {
     const newImport: ImportDocument = new ImportModel({
       date: new Date(),
       source: request.bank,
       message: "Running",
       importState: "running",
       transactions: [],
-      userUID: user.userUID,
+      userUID: this.user.userUID,
     });
 
     await newImport.save();
 
     this.importModel = newImport;
     this.options = request;
-    this.user = user;
 
     this.StartImport();
 
@@ -125,7 +129,7 @@ export class ImportManager {
           .map((regex) => new RegExp(regex, "i"));
       }
 
-      this.existingTransactions = await this.transactionManager.ImportSearch(this.user, this.options.bank, 2500);
+      this.existingTransactions = await this.transactionManager.ImportSearch(this.options.bank, 2500);
       const successMessage = await this.StepImportRows();
 
       await this.UpdateState("success", successMessage);
