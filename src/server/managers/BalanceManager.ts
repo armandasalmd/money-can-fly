@@ -2,6 +2,7 @@ import { IUserBalanceModel, UserBalanceModel, UserBalanceDocument } from "@serve
 import { CookieUser } from "@server/core";
 import { Currency, Money } from "@utils/Types";
 import { CurrencyRateManager } from "./CurrencyRateManager";
+import constants from "@server/utils/Constants";
 
 export class BalanceManager {
   public async UpdateBalances(model: IUserBalanceModel, user: CookieUser): Promise<IUserBalanceModel> {
@@ -23,8 +24,30 @@ export class BalanceManager {
     return result.toJSON<IUserBalanceModel>();
   }
 
+  public InitBalances(user: CookieUser): Promise<IUserBalanceModel> {
+    const result: IUserBalanceModel = {
+      balances: {} as any,
+      userUID: user.userUID,
+    };
+
+    for (const currency of Object.values<Currency>(constants.allowed.currencies as [Currency])) {
+      result.balances[currency] = {
+        amount: 0,
+        currency,
+      };
+    }
+
+    return this.UpdateBalances(result, user);
+  }
+
   public async GetBalances(user: CookieUser): Promise<IUserBalanceModel> {
-    return (await UserBalanceModel.findOne({ userUID: user.userUID }))?.toJSON<IUserBalanceModel>() || null;
+    const result = await UserBalanceModel.findOne({ userUID: user.userUID });
+
+    if (!result) {
+      return this.InitBalances(user);
+    }
+
+    return result.toJSON<IUserBalanceModel>();
   }
 
   public async CommitMoney(user: CookieUser, money: Money): Promise<boolean> {

@@ -206,6 +206,8 @@ export class BalanceAnalysisManager {
     } else if (this.predictionPoints.length > 0) {
       this.predictionPoints[0].pivotedTotal = this.prefs.forecastPivotValue;
       pivotIndex = 0;
+    } else {
+      return this.predictionPoints.forEach(o => o.pivotedTotal = NaN);
     }
 
     for (let i = pivotIndex + 1; i < this.predictionPoints.length; i++) {
@@ -263,7 +265,7 @@ export class BalanceAnalysisManager {
     for (const breakpoint of this.dateBreakpoints) {
       if (breakpoint > now) {
         dataset.push(NaN);
-        break;
+        continue;
       }
 
       while (eventsSorted.length > 0 && eventsSorted[0].eventDate.getTime() <= breakpoint.getTime()) {
