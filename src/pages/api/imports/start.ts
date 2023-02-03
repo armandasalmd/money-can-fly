@@ -39,8 +39,8 @@ export class StartImportRequest{
 }
 
 export default validatedApiRoute("POST", StartImportRequest, async (request, response, user) => {
-  const importManager = new ImportManager();
-  const newImport = await importManager.RunImportBackgroundProcess(request.body, user);
+  const importManager = new ImportManager(user);
+  const newImport = await importManager.RunImportBackgroundProcess(request.body);
 
   return response.status(200).json({ success: true, import: newImport });
 });

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button, Drawer, Input, Checkbox } from "@atoms/index";
 import { CurrencyInput } from "@molecules/index";
 import { Money } from "@utils/Types";
+import { getDefaultMoney } from "@utils/Currency";
 
 interface CreateInvestmentDrawerProps {
   open: boolean;
@@ -11,10 +12,7 @@ interface CreateInvestmentDrawerProps {
 export default function CreateInvestmentDrawer(props: CreateInvestmentDrawerProps) {
   const [title, setTitle] = useState("");
   const [titleError, setTitleError] = useState("");
-  const [money, setMoney] = useState<Money>({
-    amount: 0,
-    currency: "GBP",
-  });
+  const [money, setMoney] = useState<Money>(getDefaultMoney);
   const [moneyError, setMoneyError] = useState("");
   const [subtract, setSubtract] = useState(false);
 
@@ -53,10 +51,7 @@ export default function CreateInvestmentDrawer(props: CreateInvestmentDrawerProp
   function onClose() {
     setTitle("");
     setTitleError("");
-    setMoney({
-      amount: 0,
-      currency: "GBP",
-    });
+    setMoney(getDefaultMoney());
     setMoneyError("");
     setSubtract(false);
     props.onClose(true);

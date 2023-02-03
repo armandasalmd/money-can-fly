@@ -6,7 +6,7 @@ import { Card } from "@atoms/index";
 import { CreateInvestmentDrawer, InvestmentList } from "@molecules/index";
 import { DisplaySections, Money } from "@utils/Types";
 import { selectedInvestment } from "@recoil/dashboard/atoms";
-import { amountForDisplay } from "@utils/Currency";
+import { amountForDisplay, getDefaultMoney } from "@utils/Currency";
 import { InvestmentDetailsDrawer } from "@components/templates";
 import { subscribe, unsubscribe } from "@utils/Events";
 import { InvestmentsModel } from "@server/models";
@@ -16,22 +16,19 @@ export default function InvestmentsCard() {
   const [selected, setSelected] = useRecoilState(selectedInvestment);
   const { data, mutate } = useDashboardData<InvestmentsModel>(DisplaySections.Investments);
   
-  const total: Money = data?.totalValue || {
-    amount: 0,
-    currency: "GBP",
-  };
+  const total: Money = data?.totalValue || getDefaultMoney();
 
   function onCloseCreate(refresh: boolean) {
     setCreateDrawerOpen(false);
 
     if (refresh) {
-      mutate([DisplaySections.Insights, DisplaySections.BalanceAnalysis]);
+      mutate([DisplaySections.Insights]);
     }
   }
 
   useEffect(() => {
     function onInvestmentsMutated() {
-      mutate([DisplaySections.Insights, DisplaySections.BalanceAnalysis]);
+      mutate([DisplaySections.Insights]);
     }
 
     subscribe("investmentsMutated", onInvestmentsMutated);

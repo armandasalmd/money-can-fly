@@ -11,6 +11,7 @@ import { ArrowClockwise } from "phosphor-react";
 
 export default function DashChartCard() {
   const { data, mutate } = useDashboardData<BalanceAnalysisModel>(DisplaySections.BalanceAnalysis);
+  const [reloading, setReloading] = useState(false);
   const [dateRange, setDateRange] = useState<DateRange | undefined>(
     getPeriodNow()
   );
@@ -23,17 +24,18 @@ export default function DashChartCard() {
 
   function onChange(range: DateRange) {
     setDateRange(range);
-    
+    setReloading(true);
+
     mutate([], {
       balanceAnalysisDateRange: range
-    });
+    }).then(() => setReloading(false));
   }
 
   const isError = data?.errorMessage;
 
   return (
     <Card
-      loading={data === null}
+      loading={data === null || reloading}
       error={isError}
       className="dashChart"
       header={{

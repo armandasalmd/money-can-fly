@@ -8,55 +8,70 @@ import { BalanceManager, CurrencyRateManager } from "@server/managers";
 import { SearchRequest, SearchResponse } from "@endpoint/transactions/search";
 import { escapeRegExp } from "@server/utils/Global";
 import constants from "@server/utils/Constants";
+import { Currency, Money } from "@utils/Types";
+
+interface MoneyWithId extends Money {
+  id: string;
+}
 
 export class TransactionManager {
-  public async CreateTransaction(request: CreateTransactionRequest, user: CookieUser): Promise<ITransactionModel> {
+  private readonly balanceManager: BalanceManager;
+
+  constructor(private user: CookieUser) {
+    this.balanceManager = new BalanceManager(this.user);
+  }
+
+  public async CreateTransaction(request: CreateTransactionRequest): Promise<ITransactionModel> {
     const date = new Date(request.date);
 
     if (constants.negativeCategories.includes(request.category) && request.amount > 0) {
       request.amount = -request.amount;
     }
 
-    const commonValue = await CurrencyRateManager.getInstance().convert(request.amount, request.currency, "USD", date);
+    const [commonValue] = await Promise.all([
+      CurrencyRateManager.getInstance().convert(request.amount, request.currency, "USD", date),
+      this.balanceManager.CommitMoney({
+        amount: request.amount,
+        currency: request.currency,
+      })
+    ]);
 
-    const balanceManager = new BalanceManager();
-    await balanceManager.CommitMoney(user, {
-      amount: request.amount,
-      currency: request.currency,
-    });
-
-    const model: ITransactionModel = {
+    const document = await TransactionModel.create({
       amount: request.amount,
       category: request.category,
       currency: request.currency,
       date,
       description: request.description,
       source: request.source,
-      userUID: user.userUID,
+      userUID: this.user.userUID,
       isActive: true,
       isDeleted: false,
       isImported: false,
       usdValueWhenExecuted: commonValue,
       importId: null,
-    };
-
-    const document = await TransactionModel.create(model);
+    });
 
     return document.toJSON<ITransactionModel>() as ITransactionModel;
   }
 
-  public async UpdateTransaction(request: UpdateTransactionRequest, user: CookieUser): Promise<ITransactionModel> {
+  public async UpdateTransaction(request: UpdateTransactionRequest): Promise<ITransactionModel> {
     const date = new Date(request.date);
-
     const document = await TransactionModel.findById(request.id);
     
-    if (!document || document.userUID !== user.userUID) {
+    if (!document || document.userUID !== this.user.userUID) {
       return null;
     }
 
     if (constants.negativeCategories.includes(document.category) && request.amount > 0) {
       request.amount = -request.amount;
     }
+
+    const uncommit = this.balanceManager.CommitMoney({
+      amount: -document.amount,
+      currency: document.currency,
+    });
+    
+    if (!uncommit) return null;
 
     document.amount =
       constants.negativeCategories.includes(request.category) && request.amount > 0
@@ -69,46 +84,82 @@ export class TransactionManager {
     document.source = request.source;
     document.usdValueWhenExecuted = await CurrencyRateManager.getInstance().convert(request.amount, request.currency, "USD", date);
 
-    await document.save();
+    await Promise.all([
+      document.save(),
+      this.balanceManager.CommitMoney({
+        amount: request.amount,
+        currency: request.currency,
+      })
+    ]);
+
     return document.toJSON<ITransactionModel>() as ITransactionModel;
   }
 
-  public async BulkDeleteTransactions(ids: string[], user: CookieUser): Promise<string[]> {
-    const deletedIds: string[] = [];
+  private async DeleteManyAndUncommit(filter: FilterQuery<ITransactionModel>): Promise<string[]> {
+    const moneyList: MoneyWithId[] = await TransactionModel.find(filter, {
+      amount: 1,
+      currency: 1
+    });
 
-    for (const id of ids) {
-      const result = await TransactionModel.deleteOne({
-        _id: id,
-        userUID: user.userUID,
-      });
+    const totalCurrencyReversed = moneyList.reduce((acc, cur) => {
+      if (!acc[cur.currency]) {
+        acc[cur.currency] = 0;
+      }
 
-      if (result.deletedCount > 0) {
-        deletedIds.push(id);
+      acc[cur.currency] -= cur.amount;
+
+      return acc;
+    }, {});
+
+    const totalCurrency = Object.keys(totalCurrencyReversed).map<Money>((currency) => ({
+      amount: totalCurrencyReversed[currency],
+      currency: currency as Currency,
+    }));
+
+    const deleted = await TransactionModel.deleteMany(filter);
+
+    if (deleted.deletedCount !== 0) {
+      for (const money of totalCurrency) {
+        if (money.amount === 0) continue;
+
+        await this.balanceManager.CommitMoney(money);
       }
     }
 
-    return deletedIds;
+    return moneyList.map((money) => money.id);
   }
 
-  public async SetActive(id: string, active: boolean, user: CookieUser): Promise<boolean> {
-    const result = await TransactionModel.updateOne(
-      {
-        _id: id,
-        userUID: user.userUID,
+  public BulkDeleteTransactions(ids: string[]): Promise<string[]> {
+    return this.DeleteManyAndUncommit({
+      userUID: this.user.userUID,
+      _id: {
+        $in: ids,
       },
-      {
-        $set: {
-          isActive: active,
-        },
-      }
-    );
-
-    return result.modifiedCount > 0;
+    });
   }
 
-  public async Search(request: SearchRequest, user: CookieUser): Promise<SearchResponse> {
+  public async SetActive(id: string, active: boolean): Promise<boolean> {
+    const item = await TransactionModel.findById(id);
+
+    if (!item || item.userUID !== this.user.userUID) return false;
+    if (item.isActive === active) return true;
+
+    item.isActive = active;
+    
+    const [saveResult] = await Promise.all([
+      item.save(),
+      this.balanceManager.CommitMoney({
+        amount: active ? item.amount : -item.amount,
+        currency: item.currency,
+      }),
+    ]);
+
+    return !!saveResult;
+  }
+
+  public async Search(request: SearchRequest): Promise<SearchResponse> {
     const query: FilterQuery<TransactionDocument> = {
-      userUID: user.userUID,
+      userUID: this.user.userUID,
       isDeleted: false,
     };
 
@@ -182,10 +233,10 @@ export class TransactionManager {
     };
   }
 
-  public async ImportSearch(user: CookieUser, importName: string, firstN: number): Promise<ITransactionModel[]> {
+  public async ImportSearch(importName: string, firstN: number): Promise<ITransactionModel[]> {
     const results = await TransactionModel.find(
       {
-        userUID: user.userUID,
+        userUID: this.user.userUID,
         isDeleted: false,
         isImported: true,
         source: importName,
@@ -205,18 +256,37 @@ export class TransactionManager {
   }
 
   public async BulkInsert(transactions: ITransactionModel[]): Promise<boolean> {
-    const result = await TransactionModel.insertMany(transactions);
+    const newTransactions: TransactionDocument[] = await TransactionModel.insertMany(transactions);
 
-    return result.length > 0;
+    // The rest is for commiting the balance changes
+    const total = transactions.reduce((acc, cur) => {
+      if (!acc[cur.currency]) acc[cur.currency] = 0;
+      acc[cur.currency] += cur.amount;
+
+      return acc;
+    }, {});
+
+    const totalCurrency = Object.keys(total).map<Money>((currency) => ({
+      amount: total[currency],
+      currency: currency as Currency,
+    }));
+
+    if (newTransactions?.length > 0) {
+      for (const money of totalCurrency) {
+        if (money.amount === 0) continue;
+
+        if (!await this.balanceManager.CommitMoney(money)) return false;
+      }
+    }
+
+    return true;
   }
 
-  public async UndoImport(importId: string, user: CookieUser): Promise<number> {
-    const result = await TransactionModel.deleteMany({
-      userUID: user.userUID,
+  public async UndoImport(importId: string): Promise<number> {
+    return (await this.DeleteManyAndUncommit({
+      userUID: this.user.userUID,
       isImported: true,
       importId,
-    });
-
-    return result.deletedCount;
+    })).length;
   }
 }

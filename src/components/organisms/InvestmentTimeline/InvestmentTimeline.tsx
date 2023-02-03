@@ -74,7 +74,12 @@ export default function InvestmentTimeline(props: InvestmentTimelineProps) {
         <Select fixedWidthSmall onChange={setSort} required value={sort} items={sortPreset} />
       </div>
       {copy.map((investmentEvent, index) => (
-        <TimelineItem onDelete={onDelete} key={index} itemNumber={index + 1} investmentEvent={investmentEvent} />
+        <TimelineItem
+          onDelete={onDelete}
+          key={index}
+          itemNumber={sort === "asc" ? index + 1 : copy.length - index}
+          investmentEvent={investmentEvent}
+        />
       ))}
     </div>
   );

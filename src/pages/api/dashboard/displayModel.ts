@@ -51,14 +51,14 @@ export default validatedApiRoute("POST", DisplayModelRequest, async (request, re
   const loadInvestmentValue = loadInvestments;
 
   const [prefs, investments] = await Promise.all([
-    new PreferencesManager().GetPreferences(user),
+    new PreferencesManager(user).GetPreferences(),
     loadInvestments ? investmentsManager.GetInvestments(user) : null,
   ]);
 
   // Requires default currency, thus loaded separately
   const [investmentsValue, cashValue] = await Promise.all([
     loadInvestmentValue ? investmentsManager.GetTotalMoneyValue(prefs.defaultCurrency, investments) : null,
-    loadCashValue ? new BalanceManager().GetBalanceSummary(user, prefs.defaultCurrency) : null,
+    loadCashValue ? new BalanceManager(user).GetBalanceSummary(prefs.defaultCurrency) : null,
   ]);
 
   /**

@@ -3,11 +3,11 @@ import { BalanceManager, PreferencesManager } from "@server/managers";
 import { PreferencesForm } from "@recoil/preferences/atoms";
 
 export default apiRoute("GET", async (_, response, user) => {
-  const preferencesManager = new PreferencesManager();
-  const balanceManager = new BalanceManager();
+  const preferencesManager = new PreferencesManager(user);
+  const balanceManager = new BalanceManager(user);
 
-  const preferences = await preferencesManager.GetPreferences(user);
-  const balances = await balanceManager.GetBalances(user);
+  const preferences = await preferencesManager.GetPreferences();
+  const balances = await balanceManager.GetBalances();
   
   const result = {
     defaultCurrency: preferences.defaultCurrency || "USD",

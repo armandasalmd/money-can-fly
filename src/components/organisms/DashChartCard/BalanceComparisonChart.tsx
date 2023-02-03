@@ -1,6 +1,7 @@
 import {
   Chart as ChartJS,
   LinearScale,
+  Filler,
   BarElement,
   PointElement,
   LineElement,
@@ -20,6 +21,7 @@ ChartJS.register(
   LineElement,
   Legend,
   Tooltip,
+  Filler,
   LineController,
   BarController
 );
@@ -39,7 +41,7 @@ export default function BalanceComparisonChart(props: BalanceComparisonChartProp
       {
         type: "line" as const,
         label: "Total worth",
-        borderColor: "rgb(214, 162, 17)",
+        borderColor: "rgb(19, 121, 168)",
         borderWidth: 2,
         cubicInterpolationMode: "monotone",
         data: props.apiModel.totalWorthDataset,
@@ -47,7 +49,7 @@ export default function BalanceComparisonChart(props: BalanceComparisonChartProp
       {
         type: "line" as const,
         label: "Projection",
-        borderColor: "rgb(214, 162, 17)",
+        borderColor: "rgb(19, 121, 168)",
         borderWidth: 2,
         cubicInterpolationMode: "monotone",
         data: props.apiModel.projectionDataset,
@@ -65,11 +67,11 @@ export default function BalanceComparisonChart(props: BalanceComparisonChartProp
       {
         type: "line" as const,
         label: "Investments",
-        backgroundColor: "rgba(54, 118, 191, 0.5)",
-        borderColor: "rgb(19, 121, 168)",
-        borderWidth: 1,
-        barThickness: 36,
+        borderColor: "rgb(214, 162, 17)",
+        backgroundColor: "rgba(214, 162, 17, 0.2)",
+        borderWidth: 2,
         data: props.apiModel.investmentsDataset,
+        fill: "origin"
       },
     ],
   };

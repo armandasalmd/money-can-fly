@@ -1,6 +1,7 @@
 import { Currency, Money } from "@utils/Types";
 import { ICurrencyRateModel, CurrencyRateModel } from "@server/models";
 import { round } from "@server/utils/Global";
+import { addDays } from "date-fns";
 
 interface ExternalCurrencyRate {
   meta: {
@@ -56,9 +57,10 @@ export class CurrencyRateManager {
 
   public async getRate(date: Date): Promise<ICurrencyRateModel> {
     const today = new Date();
+    today.setHours(0, 0, 0, 0);
 
-    if (date >= new Date()) {
-      date = new Date(today.getFullYear(), today.getMonth(), today.getDate() - 1);
+    if (date >= today) {
+      date = addDays(today, -1);
     }
 
     const cached = await this.tryGetCachedRate(date);

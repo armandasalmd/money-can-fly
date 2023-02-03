@@ -16,7 +16,7 @@ export class CategoryAnalysisManager {
   constructor(private defaultCurrency: Currency) {}
 
   public async GetCategoryAnalysis(user: CookieUser, dateRange: DateRange): Promise<CategoryAnalysisModel> {
-    const avgMonthSetting = 6;
+    const avgMonthSetting = 3;
 
     if (dateRange?.from === undefined || dateRange.to === undefined) {
       return this.CreateError("Incorrect date passed in");

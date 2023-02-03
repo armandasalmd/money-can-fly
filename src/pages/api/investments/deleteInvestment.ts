@@ -1,10 +1,9 @@
-import { Matches } from "class-validator";
+import { IsMongoId } from "class-validator";
 import { validatedApiRoute } from "@server/core";
 import { InvestmentsManager } from "@server/managers";
-import Constants from "@server/utils/Constants";
 
 export class CreateInvestmentRequest {
-  @Matches(Constants.objectIdRegex)
+  @IsMongoId()
   investmentId: string;
 }
 

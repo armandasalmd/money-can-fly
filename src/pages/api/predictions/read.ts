@@ -9,14 +9,14 @@ class ReadPredictionsRequest {
 }
 
 export default validatedApiRoute("GET", ReadPredictionsRequest, async (request, response, user) => {
-  const periodPredictionManager = new PeriodPredictionManager();
   let year = undefined;
 
   if (request.query.year) {
     year = parseInt(request.query.year as string);
   }
-
-  const result = await periodPredictionManager.GetPredictions(user, year);
+  
+  const periodPredictionManager = new PeriodPredictionManager(user);
+  const result = await periodPredictionManager.GetPredictions(year);
 
   return response.status(200).json(result);
 });

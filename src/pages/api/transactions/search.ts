@@ -1,4 +1,4 @@
-import { IsIn, IsNotEmptyObject, IsOptional, IsString, Matches, Max, Min, MinLength, ValidateIf } from "class-validator";
+import { IsIn, IsMongoId, IsNotEmptyObject, IsOptional, Max, Min, MinLength, ValidateIf } from "class-validator";
 
 import { validatedApiRoute } from "@server/core";
 import { TransactionManager } from "@server/managers";
@@ -25,8 +25,6 @@ export class SearchRequest implements TransactionForm {
   @IsIn([...allowed.currencies, ""])
   currency?: Currency;
 
-  // @ValidateNested()
-  // @Type(() => DateRangeRequest)
   @IsOptional()
   @IsNotEmptyObject()
   dateRange: DateRange;
@@ -37,7 +35,7 @@ export class SearchRequest implements TransactionForm {
 
   @IsOptional()
   @ValidateIf(o => o.importId !== "")
-  @Matches(constants.objectIdRegex)
+  @IsMongoId()
   importId?: string;
 
   @Min(0)
@@ -53,8 +51,6 @@ export class SearchResponse {
 }
 
 export default validatedApiRoute("POST", SearchRequest, async (request, response, user) => {
-  const manager = new TransactionManager();
-  
   if (request.body.dateRange) {
     if (typeof request.body.dateRange.from === "string") {
       request.body.dateRange.from = new Date(request.body.dateRange.from);
@@ -64,8 +60,9 @@ export default validatedApiRoute("POST", SearchRequest, async (request, response
       request.body.dateRange.to = new Date(request.body.dateRange.to);
     }
   }
-
-  const result = await manager.Search(request.body, user);
+  
+  const manager = new TransactionManager(user);
+  const result = await manager.Search(request.body);
 
   return response.status(200).json({
     success: true,

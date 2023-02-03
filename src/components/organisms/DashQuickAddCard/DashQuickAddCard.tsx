@@ -8,16 +8,16 @@ import {
   CurrencyInput
 } from "@molecules/index";
 import constants from "@utils/Constants";
+import { getDefaultMoney } from "@utils/Currency";
 import { bankNamesPreset, categotyPreset } from "@utils/SelectItems";
 import { Category, Money, Transaction, TransactionBank } from "@utils/Types";
 import { publish } from "@utils/Events";
 import { filterFormState } from "@recoil/dashboard/atoms";
 
 const DEFAULT_STATE: QuickAddFormState = {
-  amount: 0,
+  ...getDefaultMoney(false),
   bank: "cash",
   category: "other",
-  currency: "GBP",
   description: "",
 };
 

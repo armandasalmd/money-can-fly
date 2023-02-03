@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { Story, Meta } from "@storybook/react";
 
 import CurrencyInput, { CurrencyInputProps } from "./CurrencyInput";
-import { Money, Currency } from "@utils/Types";
+import { getDefaultMoney } from "@utils/Currency";
+import { Money } from "@utils/Types";
 
 export default {
   title: "Molecules/CurrencyInput",
@@ -10,7 +11,7 @@ export default {
 } as Meta;
 
 function CurrencyInputWithState(props: CurrencyInputProps) {
-  const [value, setValue] = useState<Money>({ amount: 0, currency: "GBP" });
+  const [value, setValue] = useState<Money>(getDefaultMoney);
 
   return (
     <CurrencyInput fixedWidth {...props} value={value} onChange={setValue} />

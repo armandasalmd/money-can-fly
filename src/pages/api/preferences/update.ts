@@ -37,8 +37,8 @@ export class UpdatePreferencesRequest {
 }
 
 export default validatedApiRoute("PUT", UpdatePreferencesRequest, async (request, response, user) => {
-  const preferencesManager = new PreferencesManager();
-  const balanceManager = new BalanceManager();
+  const preferencesManager = new PreferencesManager(user);
+  const balanceManager = new BalanceManager(user);
   
   const preferences = await preferencesManager.UpdatePreferences({
     defaultCurrency: request.body.defaultCurrency,
@@ -48,12 +48,12 @@ export default validatedApiRoute("PUT", UpdatePreferencesRequest, async (request
     balanceChartBreakpoints: request.body.balanceChartBreakpoints,
     forecastPivotDate: new Date(request.body.forecastPivotDate),
     forecastPivotValue: request.body.forecastPivotValue,
-  }, user);
+  });
   
   const balances = await balanceManager.UpdateBalances({
     balances: request.body.balances,
     userUID: user.userUID,
-  }, user);
+  });
 
   return response.status(200).json({
     ...preferences,
