@@ -1,20 +1,20 @@
-import { useState } from "react";
-import { DayPickerRangeProps, DateRange } from "react-day-picker/dist/index";
+import { useEffect, useState } from "react";
+import { useRecoilState } from "recoil";
+import { DayPickerRangeProps } from "react-day-picker/dist/index";
 
 import { Card, DateRangePicker } from "@atoms/index";
 import BalanceComparisonChart from "./BalanceComparisonChart";
 import { useDashboardData } from "@hooks/index";
 import { BalanceAnalysisModel } from "@server/models";
-import { getPeriodNow } from "@utils/Global";
-import { DisplaySections } from "@utils/Types";
+import { DisplaySections, DateRange } from "@utils/Types";
 import { ArrowClockwise } from "phosphor-react";
+import { balanceChartDateRange } from "@recoil/dashboard/atoms";
+import { subscribe, unsubscribe } from "@utils/Events";
 
 export default function DashChartCard() {
   const { data, mutate } = useDashboardData<BalanceAnalysisModel>(DisplaySections.BalanceAnalysis);
   const [reloading, setReloading] = useState(false);
-  const [dateRange, setDateRange] = useState<DateRange | undefined>(
-    getPeriodNow()
-  );
+  const [dateRange, setDateRange] = useRecoilState(balanceChartDateRange);
 
   const pickerOptions: DayPickerRangeProps = {
     mode: "range",
@@ -32,6 +32,18 @@ export default function DashChartCard() {
   }
 
   const isError = data?.errorMessage;
+
+  useEffect(() => {
+    function onCashBalanceChanged() {
+      mutate([DisplaySections.Insights], {
+        balanceAnalysisDateRange: dateRange
+      });
+    }
+
+    subscribe("cashBalanceChanged", onCashBalanceChanged);
+
+    return () => unsubscribe("cashBalanceChanged", onCashBalanceChanged);
+  });
 
   return (
     <Card

@@ -1,11 +1,11 @@
-import { useState, useEffect } from "react";
-import { useRecoilState } from "recoil";
+import { useState, useEffect, useCallback } from "react";
+import { useRecoilState, useRecoilValue } from "recoil";
 
 import { useDashboardData } from "@hooks/index";
 import { Card } from "@atoms/index";
 import { CreateInvestmentDrawer, InvestmentList } from "@molecules/index";
 import { DisplaySections, Money } from "@utils/Types";
-import { selectedInvestment } from "@recoil/dashboard/atoms";
+import { selectedInvestment, balanceChartDateRange } from "@recoil/dashboard/atoms";
 import { amountForDisplay, getDefaultMoney } from "@utils/Currency";
 import { InvestmentDetailsDrawer } from "@components/templates";
 import { subscribe, unsubscribe } from "@utils/Events";
@@ -15,28 +15,32 @@ export default function InvestmentsCard() {
   const [createDrawerOpen, setCreateDrawerOpen] = useState(false);
   const [selected, setSelected] = useRecoilState(selectedInvestment);
   const { data, mutate } = useDashboardData<InvestmentsModel>(DisplaySections.Investments);
+  const balanceDateRange = useRecoilValue(balanceChartDateRange);
   
   const total: Money = data?.totalValue || getDefaultMoney();
+
+  const mutateOtherSections = useCallback(() => {
+    mutate([DisplaySections.Insights, DisplaySections.BalanceAnalysis], {
+      balanceAnalysisDateRange: balanceDateRange,
+    });
+  }, [mutate, balanceDateRange]);
 
   function onCloseCreate(refresh: boolean) {
     setCreateDrawerOpen(false);
 
     if (refresh) {
       mutate([DisplaySections.Insights]);
+      mutateOtherSections();
     }
   }
 
   useEffect(() => {
-    function onInvestmentsMutated() {
-      mutate([DisplaySections.Insights]);
-    }
-
-    subscribe("investmentsMutated", onInvestmentsMutated);
+    subscribe("investmentsMutated", mutateOtherSections);
 
     return () => {
-      unsubscribe("investmentsMutated", onInvestmentsMutated);
+      unsubscribe("investmentsMutated", mutateOtherSections);
     }
-  }, [mutate]);
+  }, [mutate, mutateOtherSections]);
 
   useEffect(() => {
     // Update selected investment if it has not need deleted

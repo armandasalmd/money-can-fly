@@ -4,9 +4,10 @@ import useSWRInfinite from "swr/infinite";
 import { useRecoilValue, useRecoilState } from "recoil";
 
 import { TransactionSearchForm, TransactionList } from "@molecules/index";
-import { filterFormState, transactionsCount } from "@recoil/dashboard/atoms";
+import { filterFormState, transactionsCount, balanceChartDateRange } from "@recoil/dashboard/atoms";
 import { subscribe, unsubscribe } from "@utils/Events";
-import { Transaction, TransactionForm } from "@utils/Types";
+import { DisplaySections, Transaction, TransactionForm } from "@utils/Types";
+import useDashboardData from "@hooks/useDashboardData";
 
 const fetcher = (url: string, filters: TransactionForm, setTotal: (n: number) => void) => {
   const q = new URLSearchParams(url.substring(url.indexOf("?") + 1));
@@ -51,6 +52,8 @@ export default function TransactionSidebar(props: TransactionSidebarProps) {
     (index) => `/api/transactions/search?skip=${index * PAGE_SIZE}&take=${PAGE_SIZE}`,
     (url: string) => fetcher(url, searchForm, setTotalCount)
   );
+  const { mutate: dashMutate } = useDashboardData();
+  const balanceDateRange = useRecoilValue(balanceChartDateRange);
 
   function onLoadMore() {
     setSize(size + 1);
@@ -75,6 +78,9 @@ export default function TransactionSidebar(props: TransactionSidebarProps) {
       },
     }).then(() => {
       mutate();
+      dashMutate([DisplaySections.BalanceAnalysis, DisplaySections.Insights], {
+        balanceAnalysisDateRange: balanceDateRange,
+      });
     });
   }
 
@@ -84,11 +90,9 @@ export default function TransactionSidebar(props: TransactionSidebarProps) {
     }
 
     subscribe("transactionSearchFormSubmit", onFilter);
-
-    return () => {
-      unsubscribe("transactionSearchFormSubmit", onFilter);
-    };
-  }, [mutate]);
+    return () => unsubscribe("transactionSearchFormSubmit", onFilter);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className={classes} ref={thisRef}>

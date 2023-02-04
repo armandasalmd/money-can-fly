@@ -1,4 +1,4 @@
-import { IsIn, IsDateString, IsString, MinLength, IsNumber, IsPositive, IsDefined } from "class-validator";
+import { IsIn, IsDateString, IsString, MinLength, IsNumber, IsPositive, IsDefined, IsOptional, IsBoolean } from "class-validator";
 import { Currency, Category, TransactionBank, Money } from "@utils/Types";
 import { validatedApiRoute } from "@server/core";
 import constants from "@server/utils/Constants";
@@ -23,6 +23,9 @@ export class CreateTransactionRequest implements Money {
   description: string;
   @IsIn(constants.allowed.sources)
   source: TransactionBank;
+  @IsOptional()
+  @IsBoolean()
+  isInvestment?: boolean;
 }
 
 export default validatedApiRoute("POST", CreateTransactionRequest, async (request, response, user) => {

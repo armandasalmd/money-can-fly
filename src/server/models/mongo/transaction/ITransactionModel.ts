@@ -8,6 +8,7 @@ export interface ITransactionModel extends BaseModel, Money {
   description: string;
   isActive: boolean;
   isImported: boolean;
+  isInvestment: boolean;
   isDeleted: boolean;
   source: TransactionBank;
   usdValueWhenExecuted: number;

@@ -26,6 +26,11 @@ export const TransactionSchema = new Schema<ITransactionModel>({
     type: Boolean,
     required: true,
   },
+  isInvestment: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
   source: {
     type: String,
     required: true,

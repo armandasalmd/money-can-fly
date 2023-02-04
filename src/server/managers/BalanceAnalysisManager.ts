@@ -18,9 +18,14 @@ interface IPredictionPoint {
   pivotedTotal?: number; // in default currency
 }
 
-interface ITransactionBucket {
+interface IAggregateResult {
   _id: Date | "sumAfterEndDate";
-  useValueChange: number;
+  changes: Money[];
+}
+
+interface IPeriodChangeInDefaultCurrency {
+  _id: Date | "sumAfterEndDate";
+  totalAmount: number;
 }
 
 export class BalanceAnalysisManager {
@@ -112,43 +117,71 @@ export class BalanceAnalysisManager {
   private async CalculateTotalWorthDataset(user: CookieUser, range: DateRange): Promise<number[]> {
     // Scenario 1: range is in the future
     if (this.now <= range.from) return Array(this.dateBreakpoints.length).fill(NaN);
-
     // Scenario 2: range is in the past, or intersects with now
-    const [result, usdWorthToday] = await Promise.all([
-      TransactionModel.aggregate([
-        {
-          $match: {
-            userUID: user.userUID,
-            isActive: true,
-            isDeleted: false,
-            date: { $gte: range.from, $lte: this.now },
+
+    const aggregateResults: IAggregateResult[] = await TransactionModel.aggregate([
+      {
+        $match: {
+          userUID: user.userUID,
+          isActive: true,
+          isDeleted: false,
+          date: { $gte: range.from, $lte: this.now },
+        },
+      },
+      {
+        $bucket: {
+          groupBy: "$date",
+          boundaries: this.dateBreakpoints,
+          default: "gapSumToNow",
+          output: {
+            changes: { $push: { amount: "$amount", currency: "$currency" } },
           },
         },
-        {
-          $bucket: {
-            groupBy: "$date",
-            boundaries: this.dateBreakpoints,
-            default: "gapSumToNow",
-            output: {
-              useValueChange: { $sum: "$usdValueWhenExecuted" },
-            },
+      },
+      {
+        $unwind: "$changes",
+      },
+      {
+        $group: {
+          _id: {
+            currency: "$changes.currency",
+            period: "$_id"
           },
-        },
-      ]),
-      this.rateManager.convert(this.totalWorthToday.amount, this.totalWorthToday.currency, "USD"),
+          amount: {
+            $sum: "$changes.amount",
+          },
+        }
+      },
+      {
+        $group: {
+          _id: "$_id.period",
+          changes: {
+            $push: {
+              currency: "$_id.currency",
+              amount: "$amount"
+            }
+          }
+        }
+      },
+      {
+        $sort: {
+          _id: 1
+        }
+      }
     ]);
 
-    const sumAfterEndDate = result.find((o: ITransactionBucket) => o._id === "sumAfterEndDate")?.useValueChange ?? 0;
+    const groupedChanges = await this.SimplifyAggregateResults(aggregateResults);
+    const sumAfterEndDate = groupedChanges.find((o: IPeriodChangeInDefaultCurrency) => o._id === "sumAfterEndDate")?.totalAmount ?? 0;
 
-    let backwardsSum = usdWorthToday - sumAfterEndDate;
+    let backwardsSum = this.totalWorthToday.amount - sumAfterEndDate; // In default currency
     let worthDataset: number[] = [];
 
-    for (let i = result.length - 1; i >= 0; i--) {
-      const bucket: ITransactionBucket = result[i];
+    for (let i = groupedChanges.length - 1; i >= 0; i--) {
+      const bucket = groupedChanges[i];
 
       if (bucket._id === "sumAfterEndDate") continue;
 
-      backwardsSum = backwardsSum - bucket.useValueChange;
+      backwardsSum = backwardsSum - bucket.totalAmount;
       worthDataset.push(backwardsSum);
     }
 
@@ -161,6 +194,13 @@ export class BalanceAnalysisManager {
 
     // Map all values to default currency
     return await Promise.all(worthDataset.map((o) => this.rateManager.convert(o, "USD", this.prefs.defaultCurrency)));
+  }
+
+  private async SimplifyAggregateResults(items: IAggregateResult[]): Promise<IPeriodChangeInDefaultCurrency[]> {
+    const rateManager = CurrencyRateManager.getInstance();
+    const amounts = await Promise.all(items.map(o => rateManager.sumMoney(o.changes, this.prefs.defaultCurrency)));
+
+    return items.map((o, i) => ({ _id: o._id, totalAmount: amounts[i].amount }));
   }
 
   private CreateDescription(): string {

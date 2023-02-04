@@ -1,10 +1,10 @@
 import { useEffect, useCallback } from "react";
 import { useRecoilState } from "recoil";
+import { add } from "date-fns";
 
 import { dashboardData } from "@recoil/dashboard/atoms";
 import { DisplaySections, InvestmentEvent } from "@utils/Types";
 import { DisplayModelResponse } from "@endpoint/dashboard/displayModel";
-import { add } from "date-fns";
 
 function transformDates(data: Partial<DisplayModelResponse>) {
   if (!data) return;
@@ -30,12 +30,16 @@ function transformDates(data: Partial<DisplayModelResponse>) {
 
 let initialized = false;
 
-export default function useDashboardData<T>(section: DisplaySections) {
+export default function useDashboardData<T>(section?: DisplaySections) {
   const [data, setData] = useRecoilState(dashboardData);
 
   const fetchSections = useCallback(
     async (sections: DisplaySections[] = [], body: object = {}) => {
       try {
+        if (section !== undefined && !sections.includes(section)) {
+          sections.push(section);
+        }
+        
         const response = await fetch("/api/dashboard/displayModel", {
           method: "POST",
           headers: {
@@ -43,7 +47,7 @@ export default function useDashboardData<T>(section: DisplaySections) {
           },
           body: JSON.stringify({
             ...body,
-            sections: [...sections, section],
+            sections
           }),
         });
 
@@ -63,7 +67,7 @@ export default function useDashboardData<T>(section: DisplaySections) {
   );
 
   useEffect(() => {
-    if (!initialized && data === null) {
+    if (!initialized && data === null && section !== undefined) {
       // eslint-disable-next-line
       initialized = true;
 
@@ -87,12 +91,16 @@ export default function useDashboardData<T>(section: DisplaySections) {
     }
     
     return () => {
-      initialized = false;
+      // Settimeout somehow prevents the hook from being called twice
+      // As this endpoint is expensive, its worth using this hack
+      setTimeout(() => {
+        initialized = false;
+      });
     };
-  }, [data, fetchSections]);
+  }, [data, fetchSections, section]);
 
   return {
-    data: (data?.[section] ?? null) as T,
+    data: (section === undefined || !data ? null : data[section]) as T,
     mutate: fetchSections,
   };
 }

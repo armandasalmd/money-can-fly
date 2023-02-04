@@ -54,21 +54,19 @@ export class InvestmentsManager {
     money: Money,
     user: CookieUser,
     description: string,
-    category: Category = "deposits"
+    category: Category = "deposits",
+    date: Date = new Date()
   ): Promise<void> {
-    if (money.amount === 0) {
-      return;
-    }
+    if (money.amount === 0) return;
 
-    const transactionManager = new TransactionManager(user);
-
-    await transactionManager.CreateTransaction({
+    await new TransactionManager(user).CreateTransaction({
       amount: money.amount,
       currency: money.currency,
       category,
-      date: new Date().toISOString(),
+      date: date.toISOString(),
       description,
       source: "cash",
+      isInvestment: true,
     });
   }
 
@@ -79,7 +77,7 @@ export class InvestmentsManager {
       dateCreated: new Date(),
       timelineEvents: [
         {
-          eventDate: new Date(),
+          eventDate: request.startDate,
           type: "created",
           valueChange: request.initialDeposit,
           title: "Investment created",
@@ -95,7 +93,7 @@ export class InvestmentsManager {
 
     if (request.subtractFromBalance) {
       request.initialDeposit.amount *= -1;
-      await this.SubmitCashTransaction(request.initialDeposit, user, `Investment: ${request.title}`);
+      await this.SubmitCashTransaction(request.initialDeposit, user, `Investment: ${request.title}`, "deposits", request.startDate);
     }
 
     return result;
@@ -239,7 +237,7 @@ export class InvestmentsManager {
   public async GetTotalMoneyValue(currency: Currency, investments: Investment[]): Promise<Money> {
     const result: Money = {
       amount: 0,
-      currency
+      currency,
     };
 
     for (const investment of investments) {
