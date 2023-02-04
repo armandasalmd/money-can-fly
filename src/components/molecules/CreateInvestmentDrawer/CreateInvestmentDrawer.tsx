@@ -1,7 +1,6 @@
 import { useState } from "react";
-import { Button, Drawer, Input, Checkbox } from "@atoms/index";
+import { Button, Drawer, Input, Checkbox, DatePicker } from "@atoms/index";
 import { CurrencyInput } from "@molecules/index";
-import { Money } from "@utils/Types";
 import { getDefaultMoney } from "@utils/Currency";
 
 interface CreateInvestmentDrawerProps {
@@ -12,8 +11,10 @@ interface CreateInvestmentDrawerProps {
 export default function CreateInvestmentDrawer(props: CreateInvestmentDrawerProps) {
   const [title, setTitle] = useState("");
   const [titleError, setTitleError] = useState("");
-  const [money, setMoney] = useState<Money>(getDefaultMoney);
+  const [money, setMoney] = useState(getDefaultMoney);
   const [moneyError, setMoneyError] = useState("");
+  const [date, setDate] = useState(new Date());
+  const [dateError, setDateError] = useState("");
   const [subtract, setSubtract] = useState(false);
 
   function submit() {
@@ -33,6 +34,13 @@ export default function CreateInvestmentDrawer(props: CreateInvestmentDrawerProp
       setMoneyError("");
     }
 
+    if (!date || date > new Date()) {
+      setDateError("Date in the future is not allowed");
+      valid = false;
+    } else {
+      setDateError("");
+    }
+
     if (valid) {
       fetch("/api/investments/create", {
         method: "POST",
@@ -43,6 +51,7 @@ export default function CreateInvestmentDrawer(props: CreateInvestmentDrawerProp
           title,
           initialDeposit: money,
           subtractFromBalance: subtract,
+          startDate: date
         }),
       }).then(onClose);
     }
@@ -54,6 +63,8 @@ export default function CreateInvestmentDrawer(props: CreateInvestmentDrawerProp
     setMoney(getDefaultMoney());
     setMoneyError("");
     setSubtract(false);
+    setDate(new Date());
+    setDateError("");
     props.onClose(true);
   }
 
@@ -61,8 +72,9 @@ export default function CreateInvestmentDrawer(props: CreateInvestmentDrawerProp
     <Drawer destroyOnClose fullHeight onClose={onClose} open={props.open} title="Create investment" size="small">
       <div className="investmentDrawer">
         <div className="investmentDrawer__body">
-          <Input error={titleError} title="Investment title" value={title} onChange={setTitle} />
-          <CurrencyInput error={moneyError} title="Initial deposit" onlyPositive onChange={setMoney} value={money} />
+          <Input error={titleError} required title="Investment title" value={title} onChange={setTitle} />
+          <CurrencyInput error={moneyError} required title="Initial deposit" onlyPositive onChange={setMoney} value={money} />
+          <DatePicker onSelect={setDate} value={date} error={dateError} title="Investment date" required name="startDate" />
           <Checkbox
             value={subtract ? "checked" : "unchecked"}
             onChange={setSubtract}

@@ -83,7 +83,11 @@ export class InsightsManager {
   private async GetAmountChange(user: CookieUser, from: Date, to: Date, includeIncome: boolean): Promise<Money> {
     const matcher: FilterQuery<any> = {
       userUID: user.userUID,
+      isActive: true,
       isDeleted: false,
+      isInvestment: {
+        $ne: true,
+      },
       date: {
         $gte: from,
         $lte: to,
@@ -96,26 +100,26 @@ export class InsightsManager {
       };
     }
 
-    const result = await TransactionModel.aggregate([
+    const result: Money[] = await TransactionModel.aggregate([
       {
         $match: matcher,
       },
       {
         $group: {
-          _id: null,
-          total: {
-            $sum: "$usdValueWhenExecuted",
+          _id: "$currency",
+          amount: {
+            $sum: "$amount",
           },
         },
       },
+      {
+        $addFields: {
+          currency: "$_id",
+        }
+      }
     ]);
 
-    const rateManager = CurrencyRateManager.getInstance();
-
-    return {
-      amount: await rateManager.convert(result[0]?.total ?? 0, "USD", this.defaultCurrency),
-      currency: this.defaultCurrency,
-    };
+    return await CurrencyRateManager.getInstance().sumMoney(result, this.defaultCurrency);
   }
 
   private GetBudgetDaysLeft(resetDate: Date): number {

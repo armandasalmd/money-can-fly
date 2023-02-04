@@ -118,4 +118,14 @@ export class CurrencyRateManager {
           currency: to,
         };
   }
+
+  public async sumMoney(moneys: Money[], to: Currency, date: Date = new Date()): Promise<Money> {
+    const result: Money = { amount: 0, currency: to };
+
+    for (const money of moneys) {
+      result.amount += money.currency === to ? money.amount : await this.convert(money.amount, money.currency, to, date);
+    }
+
+    return result;
+  }
 }

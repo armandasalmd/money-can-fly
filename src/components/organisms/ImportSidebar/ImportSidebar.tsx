@@ -71,7 +71,6 @@ export default function ImportSidebar(props: ImportSidebarProps) {
         props.setRunningImportId(running._id);
       }
     } else {
-      console.log("Muttate");
       mutate();
     }
 

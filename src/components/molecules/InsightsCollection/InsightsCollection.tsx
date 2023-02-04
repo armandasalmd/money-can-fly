@@ -16,36 +16,48 @@ export interface InsightsCollectionProps {
 export default function InsightsCollection(props: InsightsCollectionProps) {
   const router = useRouter();
   let { data } = useDashboardData<InsightsModel>(DisplaySections.Insights);
-  
+
   const loading = data === null;
   const profitable = data?.lastMonthProfit?.amount > 0;
-  
+  const overspent = data?.budgetRemaining?.amount < 0;
+
   if (!data) data = {} as any;
 
   return (
     <div className={classNames("insightsCollection", props.className)}>
       <Insight loading={loading} title="Total worth" subtitle="/ Cash balance" color="info">
-        <h1>{amountForDisplay(data.totalWorth)}<span>/ {amountForDisplay(data.availableBalance)}</span></h1>
+        <h1>
+          {amountForDisplay(data.totalWorth)}
+          <span>/ {amountForDisplay(data.availableBalance)}</span>
+        </h1>
         <label>{amountForDisplay(data.spentInLastWeek)} spent in last 7 days</label>
       </Insight>
-      <Insight loading={loading} title="Last month profit" color="warning">
+      <Insight loading={loading} title="Previous month's profit" color="warning">
         <h1>{amountForDisplay(data.lastMonthProfit)}</h1>
-        <label>{data.lastMonth} was {!profitable && "not"} profitable</label>
+        <label>
+          {data.lastMonth} was {!profitable && "not"} profitable
+        </label>
       </Insight>
-      <Insight loading={loading} title="Budget remaining" color="success">
+      <Insight loading={loading} title="Budget remaining" color={overspent ? "error" : "success"}>
         <h1>
           {amountForDisplay(data.budgetRemaining)}
           {!loading && <span>left until {format(data.budgetResetDate, "LLL do")}</span>}
         </h1>
-        {!loading && <label>Spend up to {amountForDisplay(data.budgetRecommendedPerDay)} per day. {data.budgetRecommendedDaysLeft} days left</label>}
+        {!loading && !overspent && (
+          <label>
+            Spend up to {amountForDisplay(data.budgetRecommendedPerDay)} per day. {data.budgetRecommendedDaysLeft} days left
+          </label>
+        )}
+        {!loading && overspent && (
+          <label>
+            You've overspent your budget. {data.budgetRecommendedDaysLeft} days left
+          </label>
+        )}
       </Insight>
       <Insight loading={loading} title="Last import" color="error">
         <p className="hint">{data.lastImportMessage}</p>
         <div className="insightsCollection__alignEnd">
-          <Button
-            type="danger"
-            wrapContent
-            onClick={() => router.push(Constants.navbarLinks.imports.path)}>
+          <Button type="danger" wrapContent onClick={() => router.push(Constants.navbarLinks.imports.path)}>
             Import now
           </Button>
         </div>

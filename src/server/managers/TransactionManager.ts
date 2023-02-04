@@ -47,6 +47,7 @@ export class TransactionManager {
       isActive: true,
       isDeleted: false,
       isImported: false,
+      isInvestment: request.isInvestment === undefined ? false : request.isInvestment,
       usdValueWhenExecuted: commonValue,
       importId: null,
     });

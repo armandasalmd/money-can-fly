@@ -7,6 +7,7 @@ import { PreferencesForm, preferencesState } from "@recoil/preferences/atoms";
 import { currencyPreset } from "@utils/SelectItems";
 import { Money } from "@utils/Types";
 import { amountForDisplay } from "@utils/Currency";
+import { publish } from "@utils/Events";
 
 interface PreferencesDrawerProps {
   open: boolean;
@@ -42,6 +43,8 @@ export default function PreferencesDrawer(props: PreferencesDrawerProps) {
           setMessage("Preferences saved");
           setBreakpointCountError("");
           localStorage.setItem("currency", res.defaultCurrency);
+
+          publish("cashBalanceChanged", null);
         } else if (res.fieldErrors.balanceChartBreakpoints) {
           setBreakpointCountError(res.fieldErrors.balanceChartBreakpoints);
         } else {

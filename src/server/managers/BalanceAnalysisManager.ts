@@ -20,7 +20,7 @@ interface IPredictionPoint {
 
 interface ITransactionBucket {
   _id: Date | "sumAfterEndDate";
-  useValueChange: number;
+  usdValueChange: number;
 }
 
 export class BalanceAnalysisManager {
@@ -112,7 +112,6 @@ export class BalanceAnalysisManager {
   private async CalculateTotalWorthDataset(user: CookieUser, range: DateRange): Promise<number[]> {
     // Scenario 1: range is in the future
     if (this.now <= range.from) return Array(this.dateBreakpoints.length).fill(NaN);
-
     // Scenario 2: range is in the past, or intersects with now
     const [result, usdWorthToday] = await Promise.all([
       TransactionModel.aggregate([
@@ -130,7 +129,7 @@ export class BalanceAnalysisManager {
             boundaries: this.dateBreakpoints,
             default: "gapSumToNow",
             output: {
-              useValueChange: { $sum: "$usdValueWhenExecuted" },
+              usdValueChange: { $sum: "$usdValueWhenExecuted" },
             },
           },
         },
@@ -138,7 +137,7 @@ export class BalanceAnalysisManager {
       this.rateManager.convert(this.totalWorthToday.amount, this.totalWorthToday.currency, "USD"),
     ]);
 
-    const sumAfterEndDate = result.find((o: ITransactionBucket) => o._id === "sumAfterEndDate")?.useValueChange ?? 0;
+    const sumAfterEndDate = result.find((o: ITransactionBucket) => o._id === "sumAfterEndDate")?.usdValueChange ?? 0;
 
     let backwardsSum = usdWorthToday - sumAfterEndDate;
     let worthDataset: number[] = [];
@@ -148,7 +147,7 @@ export class BalanceAnalysisManager {
 
       if (bucket._id === "sumAfterEndDate") continue;
 
-      backwardsSum = backwardsSum - bucket.useValueChange;
+      backwardsSum = backwardsSum - bucket.usdValueChange;
       worthDataset.push(backwardsSum);
     }
 

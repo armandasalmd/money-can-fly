@@ -15,6 +15,7 @@ export interface DatePickerProps {
   onSelect?: (date: Date, name: string) => void;
   required?: boolean;
   value: Date | undefined;
+  error?: string;
 }
 
 export default function DatePicker(props: DatePickerProps) {
@@ -56,6 +57,7 @@ export default function DatePicker(props: DatePickerProps) {
           />
         )}
       </div>
+      {props.error && <p className="input__error">{props.error}</p>}
     </div>
   );
 }

@@ -10,9 +10,10 @@ import {
 import constants from "@utils/Constants";
 import { getDefaultMoney } from "@utils/Currency";
 import { bankNamesPreset, categotyPreset } from "@utils/SelectItems";
-import { Category, Money, Transaction, TransactionBank } from "@utils/Types";
+import { Category, DisplaySections, Money, Transaction, TransactionBank } from "@utils/Types";
 import { publish } from "@utils/Events";
-import { filterFormState } from "@recoil/dashboard/atoms";
+import { filterFormState, balanceChartDateRange } from "@recoil/dashboard/atoms";
+import { useDashboardData } from "@hooks/index";
 
 const DEFAULT_STATE: QuickAddFormState = {
   ...getDefaultMoney(false),
@@ -34,6 +35,8 @@ export default function DashQuickAddCard() {
     ...DEFAULT_STATE
   });
   const filterForm = useRecoilValue(filterFormState);
+  const balanceDateRange = useRecoilValue(balanceChartDateRange);
+  const { mutate } = useDashboardData();
 
   const headerActions: CardHeaderAction[] = [
     {
@@ -81,6 +84,9 @@ export default function DashQuickAddCard() {
         setState({ ...DEFAULT_STATE });
 
         publish("transactionSearchFormSubmit", filterForm);
+        mutate([DisplaySections.BalanceAnalysis, DisplaySections.Insights], {
+          balanceAnalysisDateRange: balanceDateRange,
+        });
       }
     })
   }
