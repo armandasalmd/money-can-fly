@@ -272,6 +272,7 @@ export class ImportManager {
       source: this.options.bank,
       usdValueWhenExecuted: commonValue,
       importId: this.importModel._id,
+      isInvestment: false,
     });
 
     return "success";

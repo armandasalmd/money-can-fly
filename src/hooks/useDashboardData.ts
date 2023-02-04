@@ -97,7 +97,7 @@ export default function useDashboardData<T>(section?: DisplaySections) {
         initialized = false;
       });
     };
-  }, [data, fetchSections]);
+  }, [data, fetchSections, section]);
 
   return {
     data: (section === undefined || !data ? null : data[section]) as T,

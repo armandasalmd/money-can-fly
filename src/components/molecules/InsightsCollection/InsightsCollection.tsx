@@ -50,7 +50,7 @@ export default function InsightsCollection(props: InsightsCollectionProps) {
         )}
         {!loading && overspent && (
           <label>
-            You've overspent your budget. {data.budgetRecommendedDaysLeft} days left
+            You&apos;ve overspent your budget. {data.budgetRecommendedDaysLeft} days left
           </label>
         )}
       </Insight>

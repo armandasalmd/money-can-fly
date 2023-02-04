@@ -23,7 +23,7 @@ export default function InvestmentsCard() {
     mutate([DisplaySections.Insights, DisplaySections.BalanceAnalysis], {
       balanceAnalysisDateRange: balanceDateRange,
     });
-  }, [mutate]);
+  }, [mutate, balanceDateRange]);
 
   function onCloseCreate(refresh: boolean) {
     setCreateDrawerOpen(false);
