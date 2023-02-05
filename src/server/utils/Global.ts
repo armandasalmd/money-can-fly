@@ -7,12 +7,16 @@ export function round(num: number, precision = 2) {
   return Math.round(num * factor) / factor;
 }
 
-export function splitDateIntoEqualIntervals(start: Date, end: Date, numberOfIntervals: number) {
+export function splitDateIntoEqualIntervals(start: Date, end: Date, numberOfIntervals: number, endOfDay = false) {
   const diff = end.getTime() - start.getTime();
   const intervalLength = diff / (numberOfIntervals - 1);
   const intervals = [start];
 
-  for (let i = 1; i < numberOfIntervals; i++) intervals.push(new Date(start.getTime() + i * intervalLength));
+  for (let i = 1; i < numberOfIntervals; i++) {
+    const d = new Date(start.getTime() + i * intervalLength);
+    if (endOfDay) d.setHours(23, 59, 59, 999);
+    intervals.push(d);
+  }
 
   return intervals;
 }

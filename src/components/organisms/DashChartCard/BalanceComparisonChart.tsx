@@ -62,7 +62,7 @@ export default function BalanceComparisonChart(props: BalanceComparisonChartProp
         borderColor: "rgb(121, 181, 148)",
         cubicInterpolationMode: "monotone",
         data: props.apiModel.expectedWorthDataset,
-        borderDash: [10, 8],
+        borderDash: [10, 8]
       },
       {
         type: "line" as const,
@@ -70,6 +70,7 @@ export default function BalanceComparisonChart(props: BalanceComparisonChartProp
         borderColor: "rgb(214, 162, 17)",
         backgroundColor: "rgba(214, 162, 17, 0.2)",
         borderWidth: 2,
+        cubicInterpolationMode: "monotone",
         data: props.apiModel.investmentsDataset,
         fill: "origin"
       },

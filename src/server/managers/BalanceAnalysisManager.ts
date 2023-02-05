@@ -30,6 +30,7 @@ interface IPeriodChangeInDefaultCurrency {
 
 export class BalanceAnalysisManager {
   private dateBreakpoints: Date[];
+  private nowBreakpointIndex: number;
   private daysCovered: number;
   private rateManager: CurrencyRateManager;
   private predictionPoints: IPredictionPoint[];
@@ -66,14 +67,15 @@ export class BalanceAnalysisManager {
     this.dateBreakpoints = splitDateIntoEqualIntervals(
       dateRange.from,
       dateRange.to,
-      this.prefs.balanceChartBreakpoints
+      this.prefs.balanceChartBreakpoints,
+      this.daysCovered > 14
     );
 
     // Replace closest breakpoint with NOW if possible
     if (isWithinInterval(this.now, { start: dateRange.from, end: dateRange.to })) {
-      const index = this.dateBreakpoints.findIndex((o) => o > this.now);
+      this.nowBreakpointIndex = this.dateBreakpoints.findIndex((o) => o > this.now);
 
-      if (index >= 0) this.dateBreakpoints[index] = this.now;
+      if (this.nowBreakpointIndex >= 0) this.dateBreakpoints[this.nowBreakpointIndex] = this.now;
     }
 
     const labels = this.MakeLabels();
@@ -119,7 +121,7 @@ export class BalanceAnalysisManager {
     if (this.now <= range.from) return Array(this.dateBreakpoints.length).fill(NaN);
     // Scenario 2: range is in the past, or intersects with now
 
-    const aggregateResults: IAggregateResult[] = await TransactionModel.aggregate([
+    const aggregateResults = await TransactionModel.aggregate([
       {
         $match: {
           userUID: user.userUID,
@@ -132,7 +134,7 @@ export class BalanceAnalysisManager {
         $bucket: {
           groupBy: "$date",
           boundaries: this.dateBreakpoints,
-          default: "gapSumToNow",
+          default: "sumAfterEndDate",
           output: {
             changes: { $push: { amount: "$amount", currency: "$currency" } },
           },
@@ -171,17 +173,17 @@ export class BalanceAnalysisManager {
     ]);
 
     const groupedChanges = await this.SimplifyAggregateResults(aggregateResults);
-    const sumAfterEndDate = groupedChanges.find((o: IPeriodChangeInDefaultCurrency) => o._id === "sumAfterEndDate")?.totalAmount ?? 0;
+    const sumAfterEndDate = groupedChanges.find((o: IPeriodChangeInDefaultCurrency) => o._id == "sumAfterEndDate")?.totalAmount ?? 0;
 
     let backwardsSum = this.totalWorthToday.amount - sumAfterEndDate; // In default currency
-    let worthDataset: number[] = [];
+    let worthDataset: number[] = [backwardsSum];
+    let breakpointsToCalculate = this.dateBreakpoints.slice(0, this.nowBreakpointIndex);
 
-    for (let i = groupedChanges.length - 1; i >= 0; i--) {
-      const bucket = groupedChanges[i];
+    for (let i = breakpointsToCalculate.length - 1; i >= 0; i--) {
+      const bucket = groupedChanges.find(o => o._id instanceof Date && o._id.getTime() == breakpointsToCalculate[i].getTime());
 
-      if (bucket._id === "sumAfterEndDate") continue;
+      if (bucket) backwardsSum = backwardsSum - bucket.totalAmount;
 
-      backwardsSum = backwardsSum - bucket.totalAmount;
       worthDataset.push(backwardsSum);
     }
 
@@ -192,15 +194,17 @@ export class BalanceAnalysisManager {
       worthDataset.push(this.dateBreakpoints[i] > this.now ? NaN : worthDataset[worthDataset.length - 1]);
     }
 
-    // Map all values to default currency
-    return await Promise.all(worthDataset.map((o) => this.rateManager.convert(o, "USD", this.prefs.defaultCurrency)));
+    return worthDataset;
   }
 
   private async SimplifyAggregateResults(items: IAggregateResult[]): Promise<IPeriodChangeInDefaultCurrency[]> {
-    const rateManager = CurrencyRateManager.getInstance();
-    const amounts = await Promise.all(items.map(o => rateManager.sumMoney(o.changes, this.prefs.defaultCurrency)));
+    return await Promise.all(
+      items.map(async (o) => {
+        const total = await this.rateManager.sumMoney(o.changes, this.prefs.defaultCurrency);
 
-    return items.map((o, i) => ({ _id: o._id, totalAmount: amounts[i].amount }));
+        return { _id: o._id, totalAmount: total.amount };
+      })
+    );
   }
 
   private CreateDescription(): string {
@@ -301,7 +305,7 @@ export class BalanceAnalysisManager {
   }
 
   private MakeLabels(): string[] {
-    const template = this.daysCovered < 14 ? "MMM d HH:mm" : "MMM d";
+    const template = this.daysCovered <= 14 ? "MMM d HH:mm" : "MMM d";
     return this.dateBreakpoints.map((date) => date === this.now ? "✅ NOW" : format(date, template));
   }
 
