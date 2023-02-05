@@ -30,7 +30,7 @@ export const filterFormState = atom<TransactionForm>({
     category: undefined,
     currency: undefined,
     dateRange: {
-      from: dateFromNow(-365),
+      from: dateFromNow(-365 * 5),
       to: dateFromNow(1),
     },
     searchTerm: "",
