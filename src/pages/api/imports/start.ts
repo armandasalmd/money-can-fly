@@ -39,6 +39,10 @@ export class StartImportRequest{
 }
 
 export default validatedApiRoute("POST", StartImportRequest, async (request, response, user) => {
+  // this route is not protected by middleware, so we need to check if user is logged in
+  // middleware cannot handle big payloads in body
+  if (!user) return response.status(401).json({ success: false, message: "Unauthorized" });
+
   const importManager = new ImportManager(user);
   const newImport = await importManager.RunImportBackgroundProcess(request.body);
 

@@ -17,7 +17,6 @@ export async function middleware(request: NextRequest) {
 export const config = {
   matcher: [
     "/api/dashboard/:function*",
-    "/api/imports/:function*",
     "/api/investments/:function*",
     "/api/predictions/:function*",
     "/api/preferences/:function*",

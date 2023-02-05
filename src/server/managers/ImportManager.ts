@@ -82,6 +82,8 @@ export class ImportManager {
       userUID: this.user.userUID,
     });
 
+    console.log("Starting import for user " + this.user.email);
+
     await newImport.save();
 
     this.importModel = newImport;
@@ -102,6 +104,8 @@ export class ImportManager {
   }
 
   private async StartImport(): Promise<void> {
+    console.log("Background process started");
+
     const { csvData } = this.options;
 
     if (typeof csvData !== "string" || csvData.length === 0) {
