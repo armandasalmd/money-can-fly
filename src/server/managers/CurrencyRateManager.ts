@@ -35,33 +35,41 @@ export class CurrencyRateManager {
   }
 
   private async tryGetCachedRate(date: Date): Promise<ICurrencyRateModel | undefined> {
-    const inmemId = CurrencyRateManager.inmemoryCache.findIndex((x) => x.rateDay === this.toRateDay(date));
+    const rateDay = this.toRateDay(date);
+    const inmemRate = CurrencyRateManager.inmemoryCache.find((x) => x.rateDay === rateDay);
 
-    let rate: ICurrencyRateModel =
-      inmemId !== -1
-        ? CurrencyRateManager.inmemoryCache[inmemId]
-        : await CurrencyRateModel.findOne({ rateDay: this.toRateDay(date) });
+    if (inmemRate) {
+      return inmemRate;
+    }
 
-    if (!rate) return undefined;
+    let dbRate = await CurrencyRateModel.findOne({ rateDay });
 
-    rate.fromCache = true;
+    if (!dbRate) return undefined;
 
-    if (inmemId === -1) CurrencyRateManager.inmemoryCache.push(rate);
+    dbRate.fromCache = true;
 
-    return rate;
+    CurrencyRateManager.inmemoryCache.push(dbRate.toObject());
+
+    return dbRate;
   }
 
   private async saveToCache(rate: ICurrencyRateModel): Promise<void> {
-    await CurrencyRateModel.create(rate);
+    CurrencyRateManager.inmemoryCache.push(rate);
+    await CurrencyRateModel.findOneAndUpdate(
+      {
+        rateDay: rate.rateDay,
+      },
+      {
+        $set: rate,
+      },
+      { upsert: true, new: true }
+    );
   }
 
   public async getRate(date: Date): Promise<ICurrencyRateModel> {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
-
-    if (date >= today) {
-      date = addDays(today, -1);
-    }
+    if (date >= today) date = addDays(today, -1);
 
     const cached = await this.tryGetCachedRate(date);
 
@@ -72,7 +80,7 @@ export class CurrencyRateManager {
     );
     const data: ExternalCurrencyRate = await response.json();
 
-    if (data.data) {
+    if (data && data.data) {
       const result: ICurrencyRateModel = {
         baseCurrency: "USD",
         data: data.data,
@@ -80,15 +88,16 @@ export class CurrencyRateManager {
         fromCache: !!cached,
       };
 
-      if (!cached) {
-        await this.saveToCache(result);
-      }
+      await this.saveToCache(result);
 
       return result;
     } else {
-      const result = await CurrencyRateModel.findOne();
-
-      return result.toJSON<ICurrencyRateModel>();
+      const result = (await CurrencyRateModel.findOne()).toObject();
+      CurrencyRateManager.inmemoryCache.push({
+        ...result,
+        rateDay: this.toRateDay(date),
+      });
+      return result;
     }
   }
 
@@ -123,7 +132,8 @@ export class CurrencyRateManager {
     const result: Money = { amount: 0, currency: to };
 
     for (const money of moneys) {
-      result.amount += money.currency === to ? money.amount : await this.convert(money.amount, money.currency, to, date);
+      result.amount +=
+        money.currency === to ? money.amount : await this.convert(money.amount, money.currency, to, date);
     }
 
     return result;

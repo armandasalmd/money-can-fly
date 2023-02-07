@@ -84,7 +84,6 @@ export class InsightsManager {
     const matcher: FilterQuery<any> = {
       userUID: user.userUID,
       isActive: true,
-      isDeleted: false,
       isInvestment: {
         $ne: true,
       },

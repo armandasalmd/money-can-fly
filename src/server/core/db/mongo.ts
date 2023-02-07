@@ -1,4 +1,4 @@
-import mongoose from "mongoose";
+import mongoose, { ConnectOptions} from "mongoose";
 
 const MONGODB_URI = process.env.MONGO_URI;
 
@@ -23,9 +23,9 @@ async function dbConnect() {
   }
 
   if (!cached.promise) {
-    cached.promise = mongoose.connect(MONGODB_URI, {}).then((mongoose) => {
-      return mongoose;
-    });
+    mongoose.set("strictQuery", true);
+
+    cached.promise = mongoose.connect(MONGODB_URI, {});
   }
   cached.conn = await cached.promise;
   return cached.conn;

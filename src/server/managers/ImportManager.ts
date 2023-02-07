@@ -271,7 +271,6 @@ export class ImportManager {
       description: row.description,
       userUID: this.user.userUID,
       isActive: true,
-      isDeleted: false,
       isImported: true,
       source: this.options.bank,
       usdValueWhenExecuted: commonValue,
