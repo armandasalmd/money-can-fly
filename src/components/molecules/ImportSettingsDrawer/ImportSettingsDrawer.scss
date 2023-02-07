@@ -1,0 +1,33 @@
+
+.importSettings {
+  $base: &;
+
+  &__section {
+    &:not(:last-child) {
+      margin-bottom: $unit * 1.5;
+    }
+
+    #{$base}__title {
+      margin-bottom: $unit * 0.5;
+      font-size: 1.3rem;
+    }
+
+    #{$base}__info {
+      margin-bottom: $unit * 0.25;
+      color: var(--shade40);
+      font-size: 1rem;
+    }
+
+    #{$base}__main {
+      margin-top: $unit;
+      display: flex;
+      flex-direction: column;
+      gap: $unit * 0.75;
+    }
+  }
+
+  &__tagGroup {
+    margin-bottom: $unit * 0.25;
+  }
+
+}

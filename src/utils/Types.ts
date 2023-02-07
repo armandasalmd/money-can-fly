@@ -22,6 +22,7 @@ export type CheckState = "checked" | "unchecked" | "indeterminate";
 export type ColorType = "primary" | "secondary";
 export type Size = "small" | "medium" | "large";
 export type Sort = "asc" | "desc";
+export type CategoryFallbacks = Record<Category, string[]>;
 
 export type Currency = "USD" | "EUR" | "GBP";
 export type Category =

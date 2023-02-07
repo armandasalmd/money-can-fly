@@ -68,12 +68,13 @@ export default function Navbar(props: NavbarProps) {
             tall
             icon={theme === "dark" ? Sun : MoonStars}
             onClick={toggleTheme}
+            tooltip="Toggle theme"
           />
-          <Button tall icon={Faders} onClick={() => setPreferencesOpen(true)} />
+          <Button tall icon={Faders} onClick={() => setPreferencesOpen(true)} tooltip="App settings" />
           <Button tall icon={User}>
             {displayName}
           </Button>
-          <Button tall icon={SignOut} onClick={handleLogout} />
+          <Button tall icon={SignOut} onClick={handleLogout} tooltip="Logout" />
         </div>
       </div>
       <PreferencesDrawer open={preferencesOpen} onClose={setPreferencesOpen} />

@@ -18,6 +18,7 @@ export const config = {
   matcher: [
     "/api/dashboard/:function*",
     "/api/investments/:function*",
+    "/api/investments/settings/:function*",
     "/api/predictions/:function*",
     "/api/preferences/:function*",
     "/api/transactions/:function*",

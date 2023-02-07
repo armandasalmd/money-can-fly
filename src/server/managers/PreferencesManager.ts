@@ -1,8 +1,7 @@
-import { UserPreferencesModel, IUserPreferencesModel } from "@server/models";
 import { CookieUser } from "@server/core";
+import { UserPreferencesModel, IUserPreferencesModel } from "@server/models";
 
 export class PreferencesManager {
-
   public constructor(private user: CookieUser) {}
 
   public async UpdatePreferences(model: IUserPreferencesModel): Promise<IUserPreferencesModel> {
@@ -10,13 +9,8 @@ export class PreferencesManager {
       { userUID: this.user.userUID },
       {
         $set: {
+          ...model,
           userUID: this.user.userUID,
-          defaultCurrency: model.defaultCurrency,
-          monthlyBudget: model.monthlyBudget,
-          monthlyBudgetStartDay: model.monthlyBudgetStartDay,
-          balanceChartBreakpoints: model.balanceChartBreakpoints,
-          forecastPivotDate: model.forecastPivotDate,
-          forecastPivotValue: model.forecastPivotValue,
         },
       },
       { upsert: true, new: true }

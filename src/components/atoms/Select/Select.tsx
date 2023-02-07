@@ -14,7 +14,6 @@ export interface SelectProps {
   items: SelectItem[];
   name?: string;
   onChange?: (value: string, name: string) => void;
-  setValue?(value: string, item: object): void;
   menuAbove?: boolean;
   placeholder?: string;
   required?: boolean;

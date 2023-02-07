@@ -5,6 +5,7 @@ import {
   WeekPredictionDocument,
 } from "./periodPrediction/PeriodPredictionModel";
 import { default as ImportModel, ImportDocument } from "./import/ImportModel";
+import { default as ImportSettingsModel, ImportSettingsDocument } from "./importSettings/ImportSettingsModel";
 import { default as UserPreferencesModel, UserPreferencesDocument } from "./userPreferences/UserPreferencesModel";
 import { default as TransactionModel, TransactionDocument } from "./transaction/TransactionModel";
 import { default as CurrencyRateModel, CurrencyRateDocument } from "./currencyRate/CurrencyRateModel";
@@ -14,6 +15,7 @@ export { type ICurrencyRateModel } from "./currencyRate/ICurrencyRateModel";
 export { type ITransactionModel } from "./transaction/ITransactionModel";
 export { type IUserPreferencesModel } from "./userPreferences/IUserPreferencesModel";
 export { type IImportModel } from "./import/IImportModel";
+export { type IImportSettingsModel, defaultCategoryFallbacks } from "./importSettings/IImportSettingsModel";
 export { type IInvestmentModel } from "./investment/IInvestmentModel";
 export { type IInvestmentEventModel } from "./investment/IInvestmentEventModel";
 export { type IPeriodPredictionModel } from "./periodPrediction/IPeriodPredictionModel";
@@ -24,6 +26,7 @@ export {
   UserBalanceModel,
   PeriodPredictionModel,
   ImportModel,
+  ImportSettingsModel,
   InvestmentModel,
   UserPreferencesModel,
   TransactionModel,
@@ -33,6 +36,7 @@ export {
   type PeriodPredictionDocument,
   type WeekPredictionDocument,
   type ImportDocument,
+  type ImportSettingsDocument,
   type UserPreferencesDocument,
   type TransactionDocument, 
   type InvestmentDocument
