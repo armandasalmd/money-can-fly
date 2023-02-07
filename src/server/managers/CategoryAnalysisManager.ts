@@ -80,7 +80,6 @@ export class CategoryAnalysisManager {
             $lt: 0,
           },
           isActive: true,
-          isDeleted: false,
         },
       },
       {

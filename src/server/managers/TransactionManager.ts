@@ -45,7 +45,6 @@ export class TransactionManager {
       source: request.source,
       userUID: this.user.userUID,
       isActive: true,
-      isDeleted: false,
       isImported: false,
       isInvestment: request.isInvestment === undefined ? false : request.isInvestment,
       usdValueWhenExecuted: commonValue,
@@ -160,8 +159,7 @@ export class TransactionManager {
 
   public async Search(request: SearchRequest): Promise<SearchResponse> {
     const query: FilterQuery<TransactionDocument> = {
-      userUID: this.user.userUID,
-      isDeleted: false,
+      userUID: this.user.userUID
     };
 
     if (request.category) {
@@ -228,6 +226,7 @@ export class TransactionManager {
 
     const count = await TransactionModel.countDocuments(query);
 
+    console.log("results");
     return {
       total: count,
       items: transactions || [],
@@ -238,7 +237,6 @@ export class TransactionManager {
     const results = await TransactionModel.find(
       {
         userUID: this.user.userUID,
-        isDeleted: false,
         isImported: true,
         source: importName,
       },

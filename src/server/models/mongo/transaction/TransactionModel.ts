@@ -22,10 +22,6 @@ export const TransactionSchema = new Schema<ITransactionModel>({
     type: Boolean,
     required: true,
   },
-  isDeleted: {
-    type: Boolean,
-    required: true,
-  },
   isInvestment: {
     type: Boolean,
     required: false,
@@ -50,6 +46,8 @@ export const TransactionSchema = new Schema<ITransactionModel>({
   userUID: {
     type: String,
     required: true,
+    unique: false,
+    index: true
   },
   importId: {
     type: Schema.Types.ObjectId,
