@@ -98,7 +98,7 @@ export default function ImportConfigForm(props: ImportConfigFormProps) {
       noContentPaddingY
       noDivider
       header={{
-        title: "Import configuration",
+        title: "Step 2. Choose file configuration",
         description: "Using file " + props.importFile.name,
         color: "primary",
       }}

@@ -6,5 +6,6 @@ export * from "./TransactionManager";
 export * from "./PreferencesManager";
 export * from "./PeriodPredictionManager";
 export * from "./ImportManager";
+export * from "./ImportSettingsManager";
 export * from "./InvestmentsManager";
 export * from "./InsightsManager";

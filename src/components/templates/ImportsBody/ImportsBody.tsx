@@ -1,10 +1,12 @@
 import { useState } from "react";
 
 import { Message, UploadArea, Card, FileState, MessageColor } from "@atoms/index";
+import { ImportSettingsDrawer } from "@molecules/index";
 import { ImportConfigForm } from "@organisms/index";
 import { ImportFormState } from "@organisms/ImportConfigForm/ImportPresets";
 import { StartImportRequest } from "@endpoint/imports/start";
 import { ImportCsvReader } from "@utils/CsvReader";
+import { GearSix } from "phosphor-react";
 
 interface ImportsBodyProps {
   onImportStarted: (importId: string) => void;
@@ -14,6 +16,7 @@ export default function ImportsBody(props: ImportsBodyProps) {
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState<MessageColor>("info");
   const [file, setFile] = useState<File>(null);
+  const [settingsOpen, setSettingsOpen] = useState(false);
 
   function onSubmitFile(filesState: FileState) {
     if (Object.keys(filesState).find((o) => true)) {
@@ -65,9 +68,18 @@ export default function ImportsBody(props: ImportsBodyProps) {
       <Card
         noDivider
         header={{
-          title: "Upload CSV statement",
-          description: "Select CSV file to unlock next step",
+          title: "Step 1. Upload CSV statement",
+          description: "Select a file to use for import",
         }}
+        headerActions={[
+          {
+            text: "",
+            onClick: () => setSettingsOpen(true),
+            type: "default",
+            icon: GearSix,
+            tooltip: "File parsing settings",
+          }
+        ]}
       >
         <UploadArea
           multiple={false}
@@ -79,6 +91,7 @@ export default function ImportsBody(props: ImportsBodyProps) {
         />
       </Card>
       <ImportConfigForm importFile={file} onStartImport={onStartImport} onClose={() => setFile(null)} />
+      {settingsOpen && <ImportSettingsDrawer open={true} onClose={() => setSettingsOpen(false)} />}
     </div>
   );
 }

@@ -11,6 +11,7 @@ export interface CardHeaderAction {
   text: string;
   onClick?(): void;
   type: ButtonType;
+  tooltip?: string;
 }
 
 export interface CardProps extends PropsWithChildren {
@@ -52,6 +53,7 @@ export default function Card(props: CardProps) {
       onClick={action.onClick}
       type={action.type}
       icon={action.icon}
+      tooltip={action.tooltip}
     >
       {action.text}
     </Button>

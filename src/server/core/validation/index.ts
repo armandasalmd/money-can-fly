@@ -1,0 +1,1 @@
+export { IsCategoryMap } from "./IsCategoryMap";

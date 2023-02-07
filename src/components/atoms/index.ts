@@ -20,3 +20,4 @@ export { default as SidebarHeader, type SidebarHeaderProps } from "./SidebarHead
 export { default as SkeletonItem } from "./SkeletonItem/SkeletonItem";
 export { default as UploadArea, type FileState } from "./UploadArea/UploadArea";
 export { default as TabItem, type TabItemProps } from "./TabItem/TabItem";
+export { default as Tag } from "./Tag/Tag";

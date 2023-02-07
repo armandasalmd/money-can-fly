@@ -19,7 +19,7 @@
     "firebase": "^9.14.0",
     "iron-session": "^6.3.1",
     "jsonwebtoken": "^8.5.1",
-    "mongoose": "^6.7.3",
+    "mongoose": "^6.9.1",
     "next": "12.3.1",
     "nextjs-progressbar": "^0.0.16",
     "phosphor-react": "^1.4.1",

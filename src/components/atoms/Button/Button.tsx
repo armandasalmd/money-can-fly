@@ -51,7 +51,7 @@ export default function Button(props: ButtonProps) {
           size: 20,
           color: iconColor,
         })}
-      {typeof props.children === "string" ? <p>{props.children}</p> : props.children}
+      {typeof props.children === "string" && props.children !== "" ? <p>{props.children}</p> : props.children}
     </div>
   );
 }

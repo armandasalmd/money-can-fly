@@ -1,0 +1,38 @@
+
+.tag {
+  $gapSize: $unit * 0.4;
+
+  display: inline-flex;
+  align-items: center;
+  background-color: var(--color-neutral);
+  min-height: $unit * 1.625; // 26px
+  border-radius: $defaultBorderRadius * 0.5;
+  padding: 0 $unit * 0.5;
+
+  margin-bottom: $gapSize;
+  margin-right: $gapSize;
+  box-sizing: border-box;
+
+  span {
+    color: var(--shade70);
+    font-size: 1.05rem;
+  }
+
+  &__closeIcon {
+    cursor: pointer;
+    margin-left: $unit * 0.25;
+  }
+
+  &:hover {
+    @include focusOutline(var(--shade15));
+  }
+
+  &--disabled {
+    border: $disabledBorderStyle;
+    user-select: none;
+    
+    span {
+      color: var(--shade30);
+    }
+  }
+}
