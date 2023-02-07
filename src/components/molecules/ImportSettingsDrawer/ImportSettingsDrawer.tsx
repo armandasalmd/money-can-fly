@@ -135,7 +135,7 @@ export default function ImportSettingsDrawer(props: ImportSettingsDrawerProps) {
             />
             {category && (
               <TagList
-                title={`Ignore terms for ${category}`}
+                title={`Linking terms for ${category}`}
                 values={state.categoryFallbacks[category] || []}
                 editable
                 onChange={onChangeCallback(onCategoryTermsChange)}
