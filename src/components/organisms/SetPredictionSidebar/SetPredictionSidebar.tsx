@@ -2,20 +2,21 @@ import { useState, useRef, useEffect } from "react";
 import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
 import { ChartBar, NoteBlank } from "phosphor-react";
 
-import { Button, Message, MessageColor } from "@atoms/index";
+import { Button, Message, MessageColor, Loader } from "@atoms/index";
 import { CreateUpdatePredictionForm } from "@components/molecules";
 import { MonthPrediction } from "@utils/Types";
 import { SetPeriodRequest } from "@endpoint/predictions/setPeriod";
-import { monthPredictionFormState, editorChartToolState } from "@recoil/predictions/atoms";
+import { monthPredictionFormState, editorChartToolState, chartToolState } from "@recoil/predictions/atoms";
 import { publish } from "@utils/Events";
 
 export default function SetPredictionSidebar() {
   const thisRef = useRef<HTMLDivElement>(null);
-  const [saving, setSaving] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
   const [messageColor, setMessageColor] = useState<MessageColor>("info");
 
   const resetFormState = useResetRecoilState(monthPredictionFormState);
+  const resetSelectedPreview = useResetRecoilState(chartToolState);
   const formState = useRecoilValue(monthPredictionFormState);
   const [editorChartTool, setEditorChartTool] = useRecoilState(editorChartToolState);
   const previewEnabled = editorChartTool !== null;
@@ -45,7 +46,7 @@ export default function SetPredictionSidebar() {
       periodMonth: prediction.period.from.toISOString(),
     };
 
-    setSaving(true);
+    setLoading(true);
 
     fetch("/api/predictions/setPeriod", {
       method: "PUT",
@@ -61,14 +62,14 @@ export default function SetPredictionSidebar() {
           setMessageColor("success");
           publish("predictionsUpdated", data.data);
           setEditorChartTool(null);
-          resetFormState();
+          resetSelectedPreview();
         } else {
           generalError();
         }
       })
       .catch(generalError)
       .finally(() => {
-        setSaving(false);
+        setLoading(false);
         scrollTop();
       });
   }
@@ -100,8 +101,9 @@ export default function SetPredictionSidebar() {
             Clear form
           </Button>
         </div>
-        <CreateUpdatePredictionForm loading={saving} onSubmit={onFormSubmit} />
+        <CreateUpdatePredictionForm setLoading={setLoading} loading={loading} onSubmit={onFormSubmit} />
       </div>
+      {loading && <Loader className="setPrediction__loader" />}
     </div>
   );
 }

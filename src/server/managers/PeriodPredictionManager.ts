@@ -34,6 +34,23 @@ export class PeriodPredictionManager {
     });
   }
 
+  public async GetPredictionByMonth(month: Date): Promise<MonthPrediction> {
+    const result = await PeriodPredictionModel.findOne({ userUID: this.user.userUID, monthDate: month });
+
+    if (!result) return null;
+
+    return {
+      id: result.id,
+      totalChange: result.predictions.reduce((a, b) => a + b.moneyIn - b.moneyOut, 0),
+      currency: result.currency,
+      predictions: result.predictions,
+      period: {
+        from: result.monthDate,
+        to: result.monthDate,
+      }
+    };
+  }
+
   public async SetPeriod(request: SetPeriodRequest): Promise<IPeriodPredictionModel> {
     const model: IPeriodPredictionModel = {
       userUID: this.user.userUID,

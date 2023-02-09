@@ -1,6 +1,7 @@
 .setPrediction {
   background-color: var(--shade5);
   height: 100%;
+  position: relative;
 
   &__container {
     background-color: var(--bg-card);
@@ -10,5 +11,13 @@
     display: flex;
     gap: $halfUnit;
     margin: $unit * 0.75 $unit * 0.75 $halfUnit;
+  }
+
+  &__loader {
+    @extend %loaderBackgroundFill;
+
+    p {
+      color: var(--color-text);
+    }
   }
 }
