@@ -224,11 +224,8 @@ export class TransactionManager {
       limit: request.take,
     });
 
-    const count = await TransactionModel.countDocuments(query);
-
-    console.log("results");
     return {
-      total: count,
+      total: await TransactionModel.countDocuments(query),
       items: transactions || [],
     };
   }

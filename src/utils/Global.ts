@@ -1,6 +1,5 @@
 import { IconProps } from "phosphor-react";
-import addMonths from "date-fns/addMonths";
-import addDays from "date-fns/addDays";
+import { add } from "date-fns";
 import { CheckState, DateRange } from "./Types";
 
 export function toCheckState(value: boolean | null): CheckState {
@@ -97,7 +96,10 @@ export function getDateRange(periodStart: Date = new Date()): DateRange {
 
   return {
     from: periodStartRaw,
-    to: addDays(addMonths(periodStartRaw, 1), -1),
+    to: add(periodStartRaw, {
+      months: 1,
+      days: -1,
+    })
   };
 }
 

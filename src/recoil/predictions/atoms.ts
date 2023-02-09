@@ -1,5 +1,5 @@
 import { atom } from "recoil";
-import { MonthPrediction, WeekPrediction } from "@utils/Types";
+import { DateRange, MonthPrediction, WeekPrediction } from "@utils/Types";
 import { getPeriodNow } from "@utils/Global";
 
 export function getDefaultWeekPredictions(): WeekPrediction[] {
@@ -24,13 +24,17 @@ export function getDefaultWeekPredictions(): WeekPrediction[] {
   return weeks;
 }
 
-export const monthPredictionFormState = atom<MonthPrediction>({
-  key: "monthPredictionForm",
-  default: {
-    period: getPeriodNow(),
+export function getDefaultForm(period?: DateRange): MonthPrediction {
+  return {
+    period: period || getPeriodNow(),
     currency: "GBP",
     predictions: getDefaultWeekPredictions(),
-  }
+  };
+}
+
+export const monthPredictionFormState = atom<MonthPrediction>({
+  key: "monthPredictionForm",
+  default: getDefaultForm()
 });
 
 export const editorChartToolState = atom<MonthPrediction | null>({

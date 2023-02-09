@@ -4,12 +4,13 @@ import { WeekPrediction, MonthPrediction, DateRange } from "@utils/Types";
 import { Button, DatePeriodSelect, Select } from "@atoms/index";
 import { currencyPreset } from "@utils/SelectItems";
 import WeekPredictionItem from "./WeekPredictionItem";
-import { monthPredictionFormState } from "@recoil/predictions/atoms";
+import { monthPredictionFormState, getDefaultForm, getDefaultWeekPredictions } from "@recoil/predictions/atoms";
 import { useRecoilState } from "recoil";
 
 export interface CreateUpdatePredictionFormProps {
   onSubmit: (prediction: MonthPrediction, isEmpty: boolean) => void;
   loading: boolean;
+  setLoading: (loading: boolean) => void;
 }
 
 export default function CreateUpdatePredictionForm(props: CreateUpdatePredictionFormProps) {
@@ -25,6 +26,29 @@ export default function CreateUpdatePredictionForm(props: CreateUpdatePrediction
     setFormState({ ...formState, predictions });
   }
 
+  function selectedPeriodChange(range: DateRange) {
+    props.setLoading(true);
+
+    fetch("/api/predictions/read?month=" + range.from.toISOString()).then((o) => o.json()).then((data: MonthPrediction) => {
+      if (data && data.period) {
+        const d = getDefaultWeekPredictions();
+        
+        data.period.from = new Date(data.period.from);
+        data.period.to = new Date(data.period.to);
+        data.predictions.forEach((item, index) => {
+          item.label = d[index].label;
+        });
+
+        setFormState({
+          ...data,
+          period: range
+        });
+      } else {
+        setFormState(getDefaultForm(range));
+      }
+    }).finally(() => props.setLoading(false));
+  }
+
   useEffect(() => {
     setTotalPrediction({
       week: -1,
@@ -34,20 +58,22 @@ export default function CreateUpdatePredictionForm(props: CreateUpdatePrediction
     });
   }, [formState]);
 
+  useEffect(() => {
+    if (formState && formState.period) {
+      selectedPeriodChange(formState.period); // Initial fetch
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   return (
     <div className="predictionForm">
       <div className="predictionForm__item predictionForm__item--double">
         <DatePeriodSelect
           title="Monthly period"
           value={formState.period}
-          monthsAhead={12}
+          monthsAhead={18}
           monthsBehind={12}
-          onChange={(range: DateRange) => {
-            setFormState({
-              ...formState,
-              period: range,
-            });
-          }}
+          onChange={selectedPeriodChange}
         />
         <Select
           items={currencyPreset}
