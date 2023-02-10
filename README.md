@@ -8,6 +8,8 @@ This repo contains both **Frontend** and **Backend** code for [*MoneyCanFly*](ht
 
 This project was built to give meaninful financial insights for everyday person. Many adults have difficulties when tracking their total balance or other assets. Most of the time individual's money is split between multiple bank accounts and investment providers. This app gives user an ability to join all of its worth into one place and generate helpful insights. With meaningful insights user can have a better understanding about his current/future financial situation. As a result, user can make better financial choices impacting its future positively. That's why project was named 🕊️**Money Can Fly**🕊️
 
+![image](https://user-images.githubusercontent.com/17089888/218181221-8adfe401-cd38-4f2e-904c-e31d4878049c.png)
+
 ## How does it work?
 
 For this app to work we need data:
@@ -16,6 +18,8 @@ For this app to work we need data:
 - Investments
 
 Importing transactions from various banks automatically is possible through [Open Banking](https://www.openbanking.org.uk/) initiative. This means that user could see multiple bank accounts balance summary in real-time. In contrast, it's difficult to acquire bank API keys due to legal issues. **MoneyCanFly takes different approach - import bank statements exported as CSV**. Many banks support CSV statements (i.e. Barclays, Revolut, Monzo). Import process will do heavy work to assign spending categories, filter duplicates etc.
+
+![image](https://user-images.githubusercontent.com/17089888/218182250-f2c5dd27-38bf-4eec-b892-c5b86a2e5024.png)
 
 ___
 
