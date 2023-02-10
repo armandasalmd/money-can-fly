@@ -6,7 +6,7 @@ This repo contains both **Frontend** and **Backend** code for [*MoneyCanFly*](ht
 
 ## About the idea
 
-This project was built to give meaninful financial insights for everyday person. Many adults have difficulties when tracking their total balance or other assets. Most of the time individual's money is split between multiple bank accounts and investment providers. This app gives user an ability to join all of its worth into one place and generate helpful insights. With meaningful insights user can have a better understanding about his current/future financial situation. As a result, user can make better financial choices impacting its future positively. That's why project was named 🕊️**Money Can Fly**🕊️
+This project was built to give meaninful financial insights for everyday person. Many adults have difficulties when tracking their total balance or other assets. Most of the time individual's money is split between multiple bank or investment accounts. This app gives user an ability to join all of its worth into one place and generate helpful insights. With meaningful insights user can have a better understanding about his current/future financial situation. As a result, user can make better financial choices impacting its future positively. That's why project was named 🕊️**Money Can Fly**🕊️
 
 ![image](https://user-images.githubusercontent.com/17089888/218181221-8adfe401-cd38-4f2e-904c-e31d4878049c.png)
 
