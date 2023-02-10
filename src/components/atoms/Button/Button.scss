@@ -119,8 +119,8 @@
 
 #{$themeDarkClass} {
   .button {
-    --bg-button: #{$shade80};
-    --bg-button-hover: #{$shade70};
+    // --bg-button: #{$shade80};
+    --bg-button-hover: #{$shade80};
     --bg-button-easy: rgba(92, 130, 234, 0.2);
     --bg-button-easy-hover: rgba(122, 152, 236, 0.3);
     --bg-button-easy-outline: rgba(122, 152, 236, 0.6);

@@ -12,13 +12,13 @@
   display: grid;
   grid-template-columns: auto 1fr auto auto;
   gap: $halfUnit;
-  border-top: $defaultBorder;
+  border-bottom: $defaultBorder;
   align-items: center;
   padding: $unit * 0.5 $unit * 0.75;
   overflow: hidden;
 
   &:hover {
-    background-color: var(--shade10);
+    background-color: var(--shade5);
 
     #{$base}__amount,
     #{$base}__delete {

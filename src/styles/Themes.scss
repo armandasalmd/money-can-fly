@@ -11,7 +11,7 @@ $themeLightClass: ".theme--light";
   --bg-card: white;
   --bg-select-menu: white;
   --bg-navbar: white;
-  --bg-input: rgba(167, 164, 174, 0.1);
+  --bg-input: rgba(167, 164, 174, 0.12);
   --bg-input-hover: rgba(167, 164, 174, 0.13);
   --bg-input-error: #{mix($shade0, $colorError, 95%)};
   --bg-mask: rgba(0, 0, 0, 0.3);
@@ -53,10 +53,10 @@ $themeLightClass: ".theme--light";
 
 // Global color variables for dark
 #{$themeDarkClass} {
-  --bg-card: #282828;
-  --bg-select-menu: #373738;
-  --bg-navbar: #282828;
-  --bg-input: rgba(167, 164, 174, 0.12);
+  --bg-card: #26262a;
+  --bg-select-menu: #3a3a42;
+  --bg-navbar: #242428;
+  --bg-input: rgba(167, 164, 174, 0.11);
   --bg-input-hover: rgba(167, 164, 174, 0.07);
   --bg-input-error: #{mix($shade80, $colorError, 97%)};
   --bg-mask: rgba(255, 255, 255, 0.2);
@@ -77,24 +77,24 @@ $themeLightClass: ".theme--light";
   --color-information: #{$colorInformationDark};
   --color-success: #{$colorSuccessDark};
   --color-neutral: #3e434a;
-  --shade100: #{$shade0};
-  --shade80: #{$shade5};
-  --shade70: #{$shade10};
-  --shade60: #{$shade15};
-  --shade50: #{$shade20};
-  --shade40: #{$shade30};
-  --shade30: #{$shade40};
-  --shade20: #{$shade50};
-  --shade15: #{$shade60};
-  --shade10: #{$shade70};
-  --shade5: #{$shade80};
-  --shade0: #{lighten($shade100, 7%)};
+  --shade100: #fff;
+  --shade80: #eeedf4;
+  --shade70: #e4e3ee;
+  --shade60: #cdcdd8;
+  --shade50: #bdbdc6;
+  --shade40: #a5a5af;
+  --shade30: #919199;
+  --shade20: #777785;
+  --shade15: #5f5e67;
+  --shade10: #46464b;
+  --shade5: #35353b;
+  --shade0: #{lighten(#000, 8%)};
 
   --card-shadow: #{$shadowDefaultDark};
   --dropdown-shadow: #{$shadowDefaultDark};
 
   color-scheme: dark;
-  background-color: #151515;
+  background-color: #151517;
 
   p.text {
     color: #{$colorTextLight};

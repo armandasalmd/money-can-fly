@@ -14,14 +14,14 @@
   &__sidebarHeader {
     grid-column: 2;
     grid-row: 1;
-    background: var(--bg-card);
+    background: var(--bg-navbar);
   }
 
   &__sidebar {
     grid-column: 2;
     grid-row: 2;
     overflow-y: auto;
-    background: var(--bg-card);
+    background: var(--bg-navbar);
     border-left: $defaultBorder;
   }
   
