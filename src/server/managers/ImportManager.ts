@@ -268,6 +268,7 @@ export class ImportManager {
       category: row.category as any,
       currency: row.currency as any,
       date: row.transactionDate,
+      dateUpdated: new Date(),
       description: row.description,
       userUID: this.user.userUID,
       isActive: true,

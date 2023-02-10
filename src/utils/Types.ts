@@ -38,6 +38,7 @@ export type Category =
   | "other"
   | "deposits"
   | "salary"
+  | "investments"
   | "trendUp"
   | "trendDown";
 export type ImportState = "running" | "success" | "error" | "undo";
@@ -62,7 +63,7 @@ export interface Borrowing {
 export interface Transaction extends Money {
   _id?: string;
   date: Date;
-  inserted: Date;
+  dateUpdated: Date;
   category: Category;
   description: string;
   source: TransactionBank;

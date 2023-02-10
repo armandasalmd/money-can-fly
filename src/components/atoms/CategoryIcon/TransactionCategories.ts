@@ -8,6 +8,7 @@ import {
   Gift,
   House,
   Question,
+  ProjectorScreenChart,
   ShoppingBag,
   Student,
   Tag,
@@ -26,6 +27,14 @@ export type TransactionCategories = {
   [key: string]: TransactionCategory;
 };
 
+const mixedCategories: TransactionCategories = {
+  investments: {
+    color: "#f8b62b",
+    icon: ProjectorScreenChart,
+    name: "Investments",
+  }
+};
+
 const incomeCategories: TransactionCategories = {
   deposits: {
     color: "#5fb041",
@@ -41,7 +50,7 @@ const incomeCategories: TransactionCategories = {
     color: "#338f48",
     icon: TrendUp,
     name: "Trend up"
-  },
+  }
 };
 
 const transactionCategories: TransactionCategories = {
@@ -102,6 +111,6 @@ const transactionCategories: TransactionCategories = {
   }
 };
 
-const allCategories = {...incomeCategories, ...transactionCategories};
+const all = {...incomeCategories, ...transactionCategories, ...mixedCategories };
 
-export default allCategories;
+export default all;

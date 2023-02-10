@@ -5,6 +5,7 @@ import { Category, TransactionBank, Money, Currency } from "@utils/Types";
 export interface ITransactionModel extends BaseModel, Money {
   category: Category;
   date: Date;
+  dateUpdated: Date;
   description: string;
   isActive: boolean;
   isImported: boolean;

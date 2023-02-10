@@ -47,7 +47,7 @@ export const addEditTransactionState = atom<Transaction>({
     description: "",
     isActive: true,
     source: "cash",
-    inserted: new Date(),
+    dateUpdated: new Date(),
   }
 });
 

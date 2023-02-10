@@ -1,5 +1,6 @@
 const constants = {
   positiveCategories: ["deposits", "trendUp", "salary"],
+  neutralCategories: ["investments"],
   negativeCategories: [
     "food",
     "shopping",
@@ -29,6 +30,7 @@ const constants = {
       "other",
       "deposits",
       "salary",
+      "investments",
       "trendUp",
       "trendDown",
     ],

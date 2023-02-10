@@ -5,6 +5,7 @@ import { InvestmentModel, InvestmentDocument, IInvestmentEventModel } from "@ser
 import { TransactionManager, PreferencesManager, CurrencyRateManager } from "@server/managers";
 import { CreateInvestmentRequest } from "@endpoint/investments/create";
 import { InvestmentEventDocument } from "@server/models/mongo/investment/InvestmentModel";
+import { capitalise } from "@utils/Global";
 
 export class InvestmentsManager {
   public async GetInvestments(user: CookieUser): Promise<Investment[]> {
@@ -54,7 +55,7 @@ export class InvestmentsManager {
     money: Money,
     user: CookieUser,
     description: string,
-    category: Category = "deposits",
+    category: Category = "investments",
     date: Date = new Date()
   ): Promise<void> {
     if (money.amount === 0) return;
@@ -93,7 +94,7 @@ export class InvestmentsManager {
 
     if (request.subtractFromBalance) {
       request.initialDeposit.amount *= -1;
-      await this.SubmitCashTransaction(request.initialDeposit, user, `Investment: ${request.title}`, "deposits", request.startDate);
+      await this.SubmitCashTransaction(request.initialDeposit, user, `Investment ${request.title}`, "investments", request.startDate);
     }
 
     return result;
@@ -108,7 +109,7 @@ export class InvestmentsManager {
 
     const clientModel: Investment = await this.ToInvestment(investment);
 
-    await this.SubmitCashTransaction(clientModel.currentValue, user, `Deleted investment: ${clientModel.title}`);
+    await this.SubmitCashTransaction(clientModel.currentValue, user, `Deleted investment ${clientModel.title}`);
     await investment.delete();
 
     return true;
@@ -146,7 +147,7 @@ export class InvestmentsManager {
           currency: toBeDeleted.valueChange.currency,
         },
         user,
-        `Deleted investment event: ${toBeDeleted.title}`,
+        `Deleted investment event ${capitalise(toBeDeleted.type)}`,
         toBeDeleted.valueChange.amount > 0 ? "trendUp" : "trendDown"
       );
 
@@ -225,7 +226,7 @@ export class InvestmentsManager {
           currency: event.valueChange.currency,
         },
         user,
-        `Investment event: ${title}`
+        `Investment event ${capitalise(event.type)}`
       );
     }
 

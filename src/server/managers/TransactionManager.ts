@@ -41,6 +41,7 @@ export class TransactionManager {
       category: request.category,
       currency: request.currency,
       date,
+      dateUpdated: new Date(),
       description: request.description,
       source: request.source,
       userUID: this.user.userUID,
@@ -80,6 +81,7 @@ export class TransactionManager {
     document.category = request.category;
     document.currency = request.currency;
     document.date = date;
+    document.dateUpdated = new Date();
     document.description = request.description;
     document.source = request.source;
     document.usdValueWhenExecuted = await CurrencyRateManager.getInstance().convert(request.amount, request.currency, "USD", date);
@@ -145,6 +147,7 @@ export class TransactionManager {
     if (item.isActive === active) return true;
 
     item.isActive = active;
+    item.dateUpdated = new Date();
     
     const [saveResult] = await Promise.all([
       item.save(),

@@ -1,5 +1,5 @@
 import { IconProps } from "phosphor-react";
-import { add } from "date-fns";
+import { add, differenceInDays, format } from "date-fns";
 import { CheckState, DateRange } from "./Types";
 
 export function toCheckState(value: boolean | null): CheckState {
@@ -31,7 +31,14 @@ export function getValue(
 export function toDisplayDate(
   date: string | Date,
   rft = new Intl.RelativeTimeFormat(undefined, { numeric: "auto" }),
+  firstNDays?: number,
 ): string {
+  date = typeof date === "object" ? date : new Date(date);
+
+  if (firstNDays && differenceInDays(new Date(), date) > firstNDays) {
+    return format(date, date.getHours() === 0 && date.getMinutes() === 0 ? "yyyy-MM-dd" : "yyyy-MM-dd HH:mm");
+  }
+
   const SECOND = 1000;
   const MINUTE = 60 * SECOND;
   const HOUR = 60 * MINUTE;
@@ -50,8 +57,7 @@ export function toDisplayDate(
     { ge: 0, divisor: 1, text: "just now" },
   ];
   const now = new Date().getTime();
-  const diff = now -
-    (typeof date === "object" ? date : new Date(date)).getTime();
+  const diff = now - date.getTime();
   const diffAbs = Math.abs(diff);
   for (const interval of intervals) {
     if (diffAbs >= interval.ge) {
