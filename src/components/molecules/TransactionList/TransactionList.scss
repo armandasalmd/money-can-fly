@@ -57,14 +57,26 @@
   }
 
   &--positive {
-    background-color: rgba($colorSuccess, 0.1);
+    background-color: rgba($colorSuccess, 0.11);
 
     #{$base}__amount {
       color: var(--color-success);
     }
 
     &:hover {
-      background-color: rgba($colorSuccess, 0.3);
+      background-color: rgba($colorSuccess, 0.25);
+    }
+  }
+
+  &--investment {
+    background-color: rgba($colorWarning, 0.1);
+
+    #{$base}__amount {
+      color: var(--color-warning);
+    }
+
+    &:hover {
+      background-color: rgba($colorWarning, 0.22);
     }
   }
 }

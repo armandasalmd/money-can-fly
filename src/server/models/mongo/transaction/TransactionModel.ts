@@ -10,6 +10,10 @@ export const TransactionSchema = new Schema<ITransactionModel>({
     type: Date,
     required: true,
   },
+  dateUpdated: {
+    type: Date,
+    required: true
+  },
   description: {
     type: String,
     required: true,

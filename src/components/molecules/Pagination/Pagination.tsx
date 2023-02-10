@@ -14,7 +14,7 @@ export interface PaginationProps {
 
 export default function Pagination(props: PaginationProps) {
   const { currentPage, jump } = props;
-  const [pageVal, setPageVal] = useState("");
+  const [pageVal, setPageVal] = useState(null);
   const classes = classNames("pagination", {});
 
   useDebounce(onChange, 1000, [pageVal]);
@@ -22,9 +22,9 @@ export default function Pagination(props: PaginationProps) {
   const placeholder = "Page " + currentPage + "/" + props.maxPage;
 
   function onChange() {
-    if (pageVal !== "") {
+    if (pageVal !== null) {
       callIfFunction(jump, pageVal);
-      setPageVal("");
+      setPageVal(null);
     }
   }
 
@@ -32,19 +32,25 @@ export default function Pagination(props: PaginationProps) {
     let parsed = parseInt(value);
     
     if (!isNaN(parsed)) {
-      if (props.maxPage < parsed) {
-        parsed = props.maxPage;
-      } else if (parsed === 0) {
-        parsed = 1;
-      }
-
-      setPageVal(parsed.toString());
+      handleChange(parsed - (pageVal || currentPage));
     }
   }
 
+  function handleChange(change: number) {
+    let targetPage = (pageVal || currentPage) + change;
+
+    if (props.maxPage < targetPage) {
+      targetPage = props.maxPage;
+    } else if (targetPage <= 0) {
+      targetPage = 1;
+    }
+
+    setPageVal(targetPage);
+  }
+
   return <div className={classes}>
-    <Button disabled={currentPage <= 1} wrapContent icon={SkipBack} onClick={() => handleInput((currentPage - 1).toString())} />
-    <Input style={{width: 100}} fixedWidth placeholder={placeholder} setValue={handleInput} value={pageVal} />
-    <Button disabled={currentPage >= props.maxPage} wrapContent icon={SkipForward} onClick={() => handleInput((currentPage + 1).toString())} />
+    <Button disabled={currentPage <= 1} wrapContent icon={SkipBack} onClick={() => handleChange(-1)} />
+    <Input style={{width: 100}} fixedWidth placeholder={placeholder} setValue={handleInput} value={pageVal || ""} />
+    <Button disabled={currentPage >= props.maxPage} wrapContent icon={SkipForward} onClick={() => handleChange(1)} />
   </div>;
 }

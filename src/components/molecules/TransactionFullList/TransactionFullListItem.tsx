@@ -41,11 +41,11 @@ export default function TransactionFullListItem(props: TransactionFullListItemPr
       <div className="tFullListItem__otherDetails">
         <div className="tFullListItem__detail">
           <CalendarCheck {...iconOptions} />
-          <p>Transaction {toDisplayDate(props.transaction.date)}</p>
+          <p>Completed {toDisplayDate(props.transaction.date, undefined, 30)}</p>
         </div>
         <div className="tFullListItem__detail">
           <Airplay {...iconOptions} />
-          <p>Inserted {toDisplayDate(props.transaction.inserted)}</p>
+          <p>Updated {toDisplayDate(props.transaction.dateUpdated || props.transaction.date, undefined, 30)}</p>
         </div>
       </div>
       <div className="tFullListItem__actions">

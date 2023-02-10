@@ -50,6 +50,7 @@ export default function TransactionsBody() {
     setTransactionInEdit({
       ...transaction,
       date: new Date(transaction.date),
+      dateUpdated: new Date(),
       amount: Math.abs(transaction.amount)
     });
     setAddDrawerOpen(true);

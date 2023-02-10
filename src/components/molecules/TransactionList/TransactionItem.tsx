@@ -19,6 +19,7 @@ export default function TransactionItem(props: TransactionItemProps) {
     <div
       className={classNames("tItem", {
         "tItem--positive": isPositive,
+        "tItem--investment": t.category === "investments",
       })}
     >
       <CategoryIcon category={t.category} size="small" />
