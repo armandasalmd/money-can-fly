@@ -1,6 +1,9 @@
 # MoneyCanFly - NextJs project
 
-[MoneyCanFly link](https://money-can-fly.vercel.app/)
+[MoneyCanFly link](https://money-can-fly.vercel.app/). Use preview account to have fun
+> Username: preview@preview.com
+> 
+> Password: preview
 
 This repo contains both **Frontend** and **Backend** code for [*MoneyCanFly*](https://money-can-fly.vercel.app/) idea. As [NextJs](https://nextjs.org/) library is the main driving force for this project, each endpoint runs as a serverless function. Server logic/ UI components and UX design itself were created from scratch, except of some 3rd party libraries. The project is hosted by [Vercel](https://vercel.com/) - original creators of [NextJs](https://nextjs.org/) framework itself.
 
