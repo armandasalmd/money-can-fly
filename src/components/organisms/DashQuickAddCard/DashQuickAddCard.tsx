@@ -77,7 +77,7 @@ export default function DashQuickAddCard() {
       currency: state.currency,
       description: state.description,
       date: new Date(),
-      inserted: new Date(),
+      dateUpdated: new Date(),
       isActive: true,
     }).then((success) => {
       if (success) {

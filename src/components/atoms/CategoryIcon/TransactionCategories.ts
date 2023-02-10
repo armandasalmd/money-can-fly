@@ -111,4 +111,6 @@ const transactionCategories: TransactionCategories = {
   }
 };
 
-export default {...incomeCategories, ...transactionCategories, ...mixedCategories };
+const all = {...incomeCategories, ...transactionCategories, ...mixedCategories };
+
+export default all;
