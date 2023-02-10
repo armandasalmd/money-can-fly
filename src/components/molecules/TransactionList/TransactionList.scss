@@ -33,6 +33,7 @@
 
   &__title {
     @extend %listItemTitle;
+    margin-right: -$unit; // compensate hidden delete button width
   }
 
   &__subtitle {
@@ -47,7 +48,7 @@
 
   &__amount,
   &__delete {
-    transform: translateX($unit * 1.5);
+    transform: translateX($unit * 2);
   }
 
   &__delete {

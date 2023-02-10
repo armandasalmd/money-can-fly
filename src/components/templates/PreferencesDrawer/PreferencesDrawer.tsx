@@ -137,7 +137,7 @@ export default function PreferencesDrawer(props: PreferencesDrawerProps) {
   }, [props.open, setState]);
 
   return (
-    <Drawer open={props.open} scrollable onClose={handleClose} title="Settings" size="small" extra={saveButton}>
+    <Drawer open={props.open} onClose={handleClose} title="Settings" size="small" extra={saveButton}>
       <div style={{ display: "flex", flexFlow: "column", gap: 16 }}>
         <Message colorType={messageType} counterMargin fadeIn messageStyle="bordered" onDismiss={() => setMessage("")}>
           {message}

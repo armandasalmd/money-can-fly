@@ -99,7 +99,6 @@ export default function ImportSettingsDrawer(props: ImportSettingsDrawerProps) {
       subtitle="Set file parsing options"
       open={props.open}
       onClose={handleClose}
-      scrollable
       extra={saveButton}
     >
       <div className="importSettings">

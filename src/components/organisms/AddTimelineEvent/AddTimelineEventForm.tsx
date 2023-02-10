@@ -1,4 +1,4 @@
-import { Checkbox, DatePicker } from "@atoms/index";
+import { Checkbox, DatePicker, Input } from "@atoms/index";
 import { CurrencyInput } from "@molecules/index";
 import { CreateInvestmentEvent, InvestmentEventType, Money } from "@utils/Types";
 
@@ -18,7 +18,8 @@ export default function AddTimelineEventForm(props: AddTimelineEventFormProps) {
   function onCheckChange(value: boolean) {
     props.setData({
       ...props.data,
-      subtractFromBalance: value,
+      updateBalance: value,
+      updateNote: "",
     });
   }
 
@@ -36,6 +37,13 @@ export default function AddTimelineEventForm(props: AddTimelineEventFormProps) {
     });
   }
 
+  function onNoteChange(text: string) {
+    props.setData({
+      ...props.data,
+      updateNote: text,
+    });
+  }
+
   return (
     <div className="addEventForm">
       <DatePicker title="Event timestamp" value={new Date(props.data.eventDate)} onSelect={onDateChange} />
@@ -46,11 +54,15 @@ export default function AddTimelineEventForm(props: AddTimelineEventFormProps) {
         onlyPositive
         disableCurrencyChange
       />
-      {props.eventType === "deposit" && (
+      {props.eventType !== "adjustment" && (
+        <Input disabled={!props.data.updateBalance} title="Cash balance note" value={props.data.updateNote} onChange={onNoteChange}
+        />
+      )}
+      {props.eventType !== "adjustment" && (
         <Checkbox
           horizontal
-          title="Subtract equivalent amount from cash balance"
-          value={props.data.subtractFromBalance ? "checked" : "unchecked"}
+          title="Make changes to cash balance"
+          value={props.data.updateBalance ? "checked" : "unchecked"}
           onChange={onCheckChange}
         />
       )}
