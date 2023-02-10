@@ -116,7 +116,7 @@ export default function ImportConfigForm(props: ImportConfigFormProps) {
           <div className="importConfig__presetsList">{presetButtons}</div>
         </div>
         {error && (
-          <Message colorType="error" onDismiss={() => setError("")}>
+          <Message colorType="error" messageStyle="bordered" onDismiss={() => setError("")}>
             {error}
           </Message>
         )}

@@ -96,7 +96,12 @@ export default function TransactionSidebar(props: TransactionSidebarProps) {
 
   return (
     <div className={classes} ref={thisRef}>
-      {props.searchFormOpen && <TransactionSearchForm />}
+      {props.searchFormOpen && (
+        <>
+          <TransactionSearchForm />
+          <div className="tSidebar__divider"></div>
+        </>
+      )}
       <TransactionList
         showLoadMore={!isEnd}
         showSkeletons={isLoading}

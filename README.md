@@ -1,38 +1,65 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# MoneyCanFly - NextJs project
 
-## Getting Started
+[MoneyCanFly link](https://money-can-fly.vercel.app/)
 
-First, run the development server:
+This repo contains both **Frontend** and **Backend** code for [*MoneyCanFly*](https://money-can-fly.vercel.app/) idea. As [NextJs](https://nextjs.org/) library is the main driving force for this project, each endpoint runs as a serverless function. Server logic/ UI components and UX design itself were created from scratch, except of some 3rd party libraries. The project is hosted by [Vercel](https://vercel.com/) - original creators of [NextJs](https://nextjs.org/) framework itself.
 
-```bash
-npm run dev
-# or
-yarn dev
-```
+## About the idea
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+This project was built to give meaninful financial insights for everyday person. Many adults have difficulties when tracking their total balance or other assets. Most of the time individual's money is split between multiple bank accounts and investment providers. This app gives user an ability to join all of its worth into one place and generate helpful insights. With meaningful insights user can have a better understanding about his current/future financial situation. As a result, user can make better financial choices impacting its future positively. That's why project was named 🕊️**Money Can Fly**🕊️
 
-You can start editing the page by modifying `pages/index.js`. The page auto-updates as you edit the file.
+## How does it work?
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.js`.
+For this app to work we need data:
+- Transactions
+- Payments
+- Investments
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+Importing transactions from various banks automatically is possible through [Open Banking](https://www.openbanking.org.uk/) initiative. This means that user could see multiple bank accounts balance summary in real-time. In contrast, it's difficult to acquire bank API keys due to legal issues. **MoneyCanFly takes different approach - import bank statements exported as CSV**. Many banks support CSV statements (i.e. Barclays, Revolut, Monzo). Import process will do heavy work to assign spending categories, filter duplicates etc.
 
-## Learn More
+___
 
-To learn more about Next.js, take a look at the following resources:
+## Technical information
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Frontend:
+1. `ChartJs` chart visualisation tool
+1. `DateFns` to interect with dates
+1. `PhosporIcons` as an icon package
+1. `Recoil` to manage React global state
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+Backend: 
 
-## Deploy on Vercel
+1. `Firebase` to authenticate the user
+1. `IronSession` to safely authorise the user within an API 
+1. `Mongoose` to communicate with Mongo Database
+1. `currencyAPI` to get historical exchange rates
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Core development libraries:
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+1. `NextJs` - *ReactJs meta framework*
+1. `Sass` - *CSS pre-compiler*
+1. `Storybook` - *Component documentation*
 
-Project was setup using this guide [HERE](https://feralamillo.medium.com/next-js-full-power-typescript-linting-and-sass-fef276868544)
+## How to run the project locally?
 
-Create pagination in react article [HERE](https://javascript.plainenglish.io/building-a-pagination-component-in-react-with-typescript-2e7f7b62b35d)
+1. `git clone <...>`
+1. `cd ./money-can-fly`
+1. `yarn install`
+1. `yarn dev`
+
+> 📌 Note that without Environment variables (`.env.local` file) the project won't run!
+
+#### ENV variables used
+- IRON_SESSION_SECRET
+- CURRENCY_API_KEY
+- MONGO_URI
+- NEXT_PUBLIC_FIREBASE_PUBLIC_API_KEY
+- NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN
+- NEXT_PUBLIC_FIREBASE_PROJECT_ID
+- NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET
+- NEXT_PUBLIC_FIREBASE_SENDER_ID
+- NEXT_PUBLIC_FIREBASE_APP_ID
+
+Values for each variable are **secret**. But you can acquire your values and experiment with this code (or contact me).
+
+[MoneyCanFly link](https://money-can-fly.vercel.app/)

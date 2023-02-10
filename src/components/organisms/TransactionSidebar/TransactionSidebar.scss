@@ -1,3 +1,7 @@
 .tSidebar {
   height: 100%;
+
+  &__divider {
+    border-bottom: $defaultBorder;
+  }
 }

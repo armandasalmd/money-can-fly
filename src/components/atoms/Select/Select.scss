@@ -166,4 +166,8 @@
       stroke: var(--color-text-primary);
     }
   }
+
+  .selectMenuItem--selected {
+    background-color: rgba($colorPrimary, 0.3);
+  }
 }
