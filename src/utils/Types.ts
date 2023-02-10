@@ -116,7 +116,8 @@ export interface CreateInvestmentEvent {
   eventDate: Date | string;
   type: InvestmentEventType;
   valueChange: Money;
-  subtractFromBalance?: boolean;
+  updateBalance?: boolean;
+  updateNote?: string;
 }
 
 export interface Investment {

@@ -24,7 +24,8 @@ export default function AddTimelineEvent(props: AddTimelineEventProps) {
   const [data, setData] = useState<CreateInvestmentEvent>({
     type: props.eventType,
     eventDate: new Date(),
-    subtractFromBalance: true,
+    updateBalance: true,
+    updateNote: "",
     valueChange: getDefaultMoney(),
   });
 

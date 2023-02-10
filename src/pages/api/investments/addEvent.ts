@@ -24,7 +24,10 @@ export class AddEventRequest implements CreateInvestmentEvent {
   valueChange: Money;
   @IsOptional()
   @IsBoolean()
-  subtractFromBalance?: boolean;
+  updateBalance?: boolean;
+  @IsOptional()
+  @IsString()
+  updateNote?: string;
 }
 
 export default validatedApiRoute("POST", AddEventRequest, async (request, response, user) => {

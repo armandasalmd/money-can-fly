@@ -57,6 +57,11 @@ export default function InvestmentDetailsDrawer(props: InvestmentDetailsDrawerPr
     });
   }
 
+  function onTabChange(id: string) {
+    setMessage(null);
+    setActiveTabId(id);
+  }
+
   return (
     <Drawer
       size="small"
@@ -64,7 +69,6 @@ export default function InvestmentDetailsDrawer(props: InvestmentDetailsDrawerPr
       onClose={onClose}
       title="Inspect & manage investment"
       subtitle={investment.title}
-      fullHeight
       noPadding
       destroyOnClose
     >
@@ -78,7 +82,7 @@ export default function InvestmentDetailsDrawer(props: InvestmentDetailsDrawerPr
           {message}
         </Message>
       )}
-      <Tabs tabId={activeTabId} onTabChange={setActiveTabId} spaceEvenly>
+      <Tabs tabId={activeTabId} onTabChange={onTabChange} spaceEvenly>
         <TabItem id="timeline" text="Timeline">
           <InvestmentTimeline displayMessage={displayMessage} />
         </TabItem>

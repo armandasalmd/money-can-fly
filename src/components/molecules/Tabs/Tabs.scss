@@ -12,12 +12,14 @@
     gap: $unit * 0.5;
     background-color: var(--shade0);
     border-bottom: $defaultBorder;
+    z-index: 1;
+    position: sticky;
+    top: 0;
   }
 
   &__content {
     padding: $unit $paddingX;
     height: 100%;
-    overflow: auto;
   }
 
   &--spaceEvenly {

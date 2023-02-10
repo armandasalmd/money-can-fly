@@ -69,7 +69,7 @@ export default function CreateInvestmentDrawer(props: CreateInvestmentDrawerProp
   }
 
   return (
-    <Drawer destroyOnClose fullHeight onClose={onClose} open={props.open} title="Create investment" size="small">
+    <Drawer destroyOnClose onClose={onClose} open={props.open} title="Create investment" size="small">
       <div className="investmentDrawer">
         <div className="investmentDrawer__body">
           <Input error={titleError} required title="Investment title" value={title} onChange={setTitle} />

@@ -94,7 +94,13 @@ export class InvestmentsManager {
 
     if (request.subtractFromBalance) {
       request.initialDeposit.amount *= -1;
-      await this.SubmitCashTransaction(request.initialDeposit, user, `Investment ${request.title}`, "investments", request.startDate);
+      await this.SubmitCashTransaction(
+        request.initialDeposit,
+        user,
+        `Investment ${request.title}`,
+        "investments",
+        request.startDate
+      );
     }
 
     return result;
@@ -148,7 +154,7 @@ export class InvestmentsManager {
         },
         user,
         `Deleted investment event ${capitalise(toBeDeleted.type)}`,
-        toBeDeleted.valueChange.amount > 0 ? "trendUp" : "trendDown"
+        "investments",
       );
 
       await investment.save();
@@ -219,14 +225,16 @@ export class InvestmentsManager {
     investment.timelineEvents.sort((a, b) => a.eventDate.getTime() - b.eventDate.getTime());
     investment.dateModified = new Date();
 
-    if (event.subtractFromBalance && event.type !== "adjustment") {
+    if (event.updateBalance && event.type !== "adjustment") {
+      const message = event.updateNote || `${capitalise(event.type)} event`;
+
       await this.SubmitCashTransaction(
         {
           amount: event.valueChange.amount * -1,
           currency: event.valueChange.currency,
         },
         user,
-        `Investment event ${capitalise(event.type)}`
+        `[${investment.title}] ${message}`
       );
     }
 
