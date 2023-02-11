@@ -3,7 +3,7 @@ import classNames from "classnames";
 import { useRouter } from "next/router";
 import { MoonStars, Sun, SignOut, User, Faders } from "phosphor-react";
 
-import { useAuth, useTheme } from "@context/index";
+import { useAuth, usePreferences } from "@context/index";
 import { Button, Logo } from "@atoms/index";
 import { PreferencesDrawer } from "@components/templates";
 import Constants from "@utils/Constants";
@@ -36,7 +36,7 @@ export default function Navbar(props: NavbarProps) {
   const { navbarLinks } = Constants;
   const [preferencesOpen, setPreferencesOpen] = useState(false);
   const { user, logout } = useAuth();
-  const { theme, setTheme } = useTheme();
+  const { theme, setTheme } = usePreferences();
   const router = useRouter();
   const displayName = user.displayName || user.email.split("@")[0];
   const classses = classNames("navbar", props.className);

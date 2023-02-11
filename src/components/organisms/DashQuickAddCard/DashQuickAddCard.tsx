@@ -4,23 +4,24 @@ import { Article, Bank, Bookmark } from "phosphor-react";
 import { useRecoilValue } from "recoil";
 
 import { Button, Card, CardHeaderAction, Input, Select } from "@atoms/index";
-import {
-  CurrencyInput
-} from "@molecules/index";
+import { CurrencyInput } from "@molecules/index";
 import constants from "@utils/Constants";
-import { getDefaultMoney } from "@utils/Currency";
 import { bankNamesPreset, categotyPreset } from "@utils/SelectItems";
-import { Category, DisplaySections, Money, Transaction, TransactionBank } from "@utils/Types";
+import { Category, Currency, DisplaySections, Money, Transaction, TransactionBank } from "@utils/Types";
 import { publish } from "@utils/Events";
 import { filterFormState, balanceChartDateRange } from "@recoil/dashboard/atoms";
 import { useDashboardData } from "@hooks/index";
+import { usePreferences } from "@context/PreferencesContext";
 
-const DEFAULT_STATE: QuickAddFormState = {
-  ...getDefaultMoney(false),
-  bank: "cash",
-  category: "other",
-  description: "",
-};
+function getDefaultState(currenct: Currency): QuickAddFormState {
+  return {
+    bank: "cash",
+    category: "other",
+    description: "",
+    currency: currenct,
+    amount: 0,
+  };
+}
 
 interface QuickAddFormState extends Money {
   bank: TransactionBank;
@@ -30,10 +31,9 @@ interface QuickAddFormState extends Money {
 
 export default function DashQuickAddCard() {
   const router = useRouter();
+  const { defaultCurrency } = usePreferences();
   const [error, setError] = useState("");
-  const [state, setState] = useState<QuickAddFormState>({
-    ...DEFAULT_STATE
-  });
+  const [state, setState] = useState<QuickAddFormState>(getDefaultState(defaultCurrency));
   const filterForm = useRecoilValue(filterFormState);
   const balanceDateRange = useRecoilValue(balanceChartDateRange);
   const { mutate } = useDashboardData();
@@ -56,7 +56,7 @@ export default function DashQuickAddCard() {
 
   function onSubmit() {
     const emptyFields: string[] = [];
-    
+
     Object.entries(state).forEach(([key, value]) => {
       if (!value) {
         emptyFields.push(key);
@@ -81,14 +81,14 @@ export default function DashQuickAddCard() {
       isActive: true,
     }).then((success) => {
       if (success) {
-        setState({ ...DEFAULT_STATE });
+        setState(getDefaultState(defaultCurrency));
 
         publish("transactionSearchFormSubmit", filterForm);
         mutate([DisplaySections.BalanceAnalysis, DisplaySections.Insights], {
           balanceAnalysisDateRange: balanceDateRange,
         });
       }
-    })
+    });
   }
 
   async function apiCreate(transaction: Transaction): Promise<boolean> {
@@ -100,11 +100,11 @@ export default function DashQuickAddCard() {
       },
     });
     const data = await response.json();
-    
+
     if (data.message) {
       setError(data.message);
     }
-    
+
     return !!data._id;
   }
 

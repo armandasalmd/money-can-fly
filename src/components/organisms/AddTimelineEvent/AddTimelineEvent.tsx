@@ -3,9 +3,10 @@ import { Check, Info } from "phosphor-react";
 
 import AddTimelineEventForm from "./AddTimelineEventForm";
 import { Button, KeyValue } from "@atoms/index";
-import { amountForDisplay, getDefaultMoney } from "@utils/Currency";
+import { amountForDisplay } from "@utils/Currency";
 import { iconOptions } from "@utils/Global";
 import { CreateInvestmentEvent, InvestmentEventType, Money } from "@utils/Types";
+import { usePreferences } from "@context/index";
 
 const infoMessages: { [key in Exclude<InvestmentEventType, "created">]: string } = {
   adjustment:
@@ -21,12 +22,16 @@ interface AddTimelineEventProps {
 }
 
 export default function AddTimelineEvent(props: AddTimelineEventProps) {
+  const { defaultCurrency } = usePreferences();
   const [data, setData] = useState<CreateInvestmentEvent>({
     type: props.eventType,
     eventDate: new Date(),
     updateBalance: true,
     updateNote: "",
-    valueChange: getDefaultMoney(),
+    valueChange: {
+      currency: defaultCurrency,
+      amount: 0,
+    },
   });
 
   useEffect(() => {

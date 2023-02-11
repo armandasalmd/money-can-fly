@@ -8,6 +8,7 @@ import { currencyPreset } from "@utils/SelectItems";
 import { Money } from "@utils/Types";
 import { amountForDisplay } from "@utils/Currency";
 import { publish } from "@utils/Events";
+import { usePreferences } from "@context/PreferencesContext";
 
 interface PreferencesDrawerProps {
   open: boolean;
@@ -21,6 +22,7 @@ export default function PreferencesDrawer(props: PreferencesDrawerProps) {
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState<"success" | "error">("success");
   const [breakpointCountError, setBreakpointCountError] = useState("");
+  const { setDefaultCurrency } = usePreferences();
 
   function onSave() {
     fetch("/api/preferences/update", {
@@ -42,7 +44,7 @@ export default function PreferencesDrawer(props: PreferencesDrawerProps) {
           setMessageType("success");
           setMessage("Preferences saved");
           setBreakpointCountError("");
-          localStorage.setItem("currency", res.defaultCurrency);
+          setDefaultCurrency(res.defaultCurrency);
 
           publish("cashBalanceChanged", null);
         } else if (res.fieldErrors.balanceChartBreakpoints) {
@@ -129,8 +131,7 @@ export default function PreferencesDrawer(props: PreferencesDrawerProps) {
       fetchPreferences().then((res) => {
         res.forecastPivotDate = new Date(res.forecastPivotDate);
 
-        localStorage.setItem("currency", res.defaultCurrency);
-
+        setDefaultCurrency(res.defaultCurrency);
         setState(res);
       });
     }

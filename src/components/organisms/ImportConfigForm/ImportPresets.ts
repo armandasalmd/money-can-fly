@@ -25,7 +25,7 @@ const customImportPreset: ImportPreset = {
   formState: {
     bank: "cash",
     ignoreDescriptionPattern: "",
-    defaultCurrency: "GBP",
+    defaultCurrency: "USD",
     categoryColumn: "",
     hasCurrencyColumn: false,
     hasTransactionFeeColumn: false,
@@ -59,7 +59,7 @@ const revolutImportPreset: ImportPreset = {
   formState: {
     bank: "revolut",
     ignoreDescriptionPattern: "Cash at",
-    defaultCurrency: "GBP",
+    defaultCurrency: "EUR",
     categoryColumn: "",
     hasCurrencyColumn: true,
     hasTransactionFeeColumn: true,

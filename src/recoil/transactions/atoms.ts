@@ -4,7 +4,6 @@ import { Transaction, TransactionForm } from "@utils/Types";
 import { dateFromNow } from "@utils/Global";
 import { IRecoilPaginationState } from "@hooks/useRecoilPagination";
 import constants from "@utils/Constants";
-import { getDefaultMoney } from "@utils/Currency";
 
 export const pagedTransactionsState = atom<IRecoilPaginationState<Transaction>>({
   key: "pagedTransactions",
@@ -41,7 +40,8 @@ export const filterFormState = atom<TransactionForm>({
 export const addEditTransactionState = atom<Transaction>({
   key: "addEditTransaction",
   default: {
-    ...getDefaultMoney(false),
+    amount: 0,
+    currency: "USD",
     category: "other",
     date: new Date(),
     description: "",
