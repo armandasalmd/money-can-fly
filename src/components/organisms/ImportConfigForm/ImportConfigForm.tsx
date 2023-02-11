@@ -99,7 +99,7 @@ export default function ImportConfigForm(props: ImportConfigFormProps) {
           setError(error.message);
         });
     }
-  }, [props.importFile]);
+  }, [props.importFile, defaultCurrency]);
 
   if (!props.importFile) {
     return null;

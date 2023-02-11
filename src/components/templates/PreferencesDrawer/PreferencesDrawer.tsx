@@ -135,7 +135,7 @@ export default function PreferencesDrawer(props: PreferencesDrawerProps) {
         setState(res);
       });
     }
-  }, [props.open, setState]);
+  }, [props.open, setState, setDefaultCurrency]);
 
   return (
     <Drawer open={props.open} onClose={handleClose} title="Settings" size="small" extra={saveButton}>
