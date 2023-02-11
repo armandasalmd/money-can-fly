@@ -1,4 +1,4 @@
-export { default as Button, type ButtonType } from "./Button/Button";
+export { default as Button, type ButtonType, type ButtonProps } from "./Button/Button";
 export { default as Card, type CardHeaderAction } from "./Card/Card";
 export { default as CategoryIcon } from "./CategoryIcon/CategoryIcon";
 export { default as Checkbox } from "./Checkbox/Checkbox";
@@ -14,6 +14,7 @@ export { default as KeyValue } from "./KeyValue/KeyValue";
 export { default as Loader } from "./Loader/Loader";
 export { default as Logo } from "./Logo/Logo";
 export { default as Message, type MessageColor } from "./Message/Message";
+export { default as PopConfirm, type PopConfirmPlacement, type PopConfirmProps } from "./PopConfirm/PopConfirm";
 export { default as Select, type SelectProps } from "./Select/Select";
 export { default as SelectMenu } from "./Select/SelectMenu";
 export { default as SidebarHeader, type SidebarHeaderProps } from "./SidebarHeader/SidebarHeader";

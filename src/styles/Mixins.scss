@@ -7,6 +7,7 @@
   overflow: hidden;
   text-overflow: ellipsis;
   -webkit-line-clamp: $lineClamp;
+  line-clamp: $lineClamp;
 }
 
 @mixin headerGradient($startColor: var(--color-text-primary), $endColor: var(--color-information)) {

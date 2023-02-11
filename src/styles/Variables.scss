@@ -65,6 +65,8 @@ $shadowDefaultDark: 0px 0px 8px 2px rgba(255, 255, 255, 0.04);
 $shadowDropdown: 0px 4px 12px 2px rgba(0, 0, 0, 0.14);
 $shadowInputError: 0 0 0 2px rgba($colorError, 0.3);
 $shadowInputWarning: 0 0 0 2px rgba($colorWarning, 0.3);
+$shadowPopup: 0px 0px 6px 4px rgba(0, 0, 0, 0.09);
+$shadowPopupDark: 0px 0px 6px 4px #{rgba($colorErrorDark, 0.2)};
 
 /**
   * ====== MEDIA QUERIES ======

@@ -16,6 +16,7 @@ export interface ButtonProps extends PropsWithChildren {
   type?: ButtonType;
   wrapContent?: boolean;
   tooltip?: string;
+  small?: boolean;
 }
 
 export default function Button(props: ButtonProps) {
@@ -26,6 +27,7 @@ export default function Button(props: ButtonProps) {
       "button--centerText": props.centerText,
       "button--disabled": props.disabled,
       "button--tall": props.tall,
+      "button--small": props.small,
       "button--wrapContent": props.wrapContent,
       "button--ellipsis": props.ellipsis,
       "button--iconOnly": !props.children && props.icon,

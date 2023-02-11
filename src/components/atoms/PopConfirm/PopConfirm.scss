@@ -1,0 +1,77 @@
+.popConfirm {
+  &__popup {
+    background: var(--bg-card);
+    box-shadow: var(--popup-shadow);
+    border-radius: $containerBorderRadius;
+    color: var(--color-text);
+    padding: $halfUnit;
+    border: 1px solid var(--color-popup-border);
+
+    animation: popupIn 0.2s ease-out;
+  
+    position: fixed;
+    z-index: 1;
+
+    display: grid;
+    grid-template-columns: auto $unit * 13.5;
+    grid-template-rows: auto auto auto;
+    gap: $unit * 0.5;
+  }
+}
+
+.popup {
+  &__icon {
+    grid-column: 1;
+    grid-row: 1 / span 3;
+    justify-self: center;
+  }
+
+  &__title {
+    grid-column: 2;
+    grid-row: 1;
+    font-size: 1.15rem;
+    
+    @include ellipsis();
+  }
+
+  &__description {
+    grid-column: 2;
+    grid-row: 2;
+
+    font-size: 1.1rem;
+    color: var(--shade60);
+  }
+
+  &__actions {
+    grid-column: 2;
+    grid-row: 3;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: $unit * 0.5;
+  }
+
+  &--bottomLeft {
+    transform-origin: top left;
+  }
+
+  &--bottomRight {
+    transform-origin: top right;
+  }
+
+  &--topLeft {
+    transform-origin: bottom left;
+  }
+
+  &--topRight {
+    transform-origin: bottom right;
+  }
+}
+
+#{$themeDarkClass} {
+  .popup {
+    &__icon {
+      filter: invert(0.8) hue-rotate(160deg) saturate(2);
+    }
+  }
+}

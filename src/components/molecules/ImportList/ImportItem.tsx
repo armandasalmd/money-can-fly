@@ -4,7 +4,7 @@ import { HourglassMedium, CheckSquare, XSquare, ClockCounterClockwise } from "ph
 
 import { Import, ImportState } from "@utils/Types";
 import { capitalise } from "@utils/Global";
-import { Button } from "@atoms/index";
+import { Button, PopConfirm } from "@atoms/index";
 
 type ImportMapper = {
   [key in ImportState]: any;
@@ -29,6 +29,25 @@ interface ImportItemProps extends Import {
 }
 
 export default function ImportItem(props: ImportItemProps) {
+  let undoButton = undefined;
+
+  if (props.importState === "success") {
+    undoButton = (
+      <PopConfirm
+        title="Undo this import?"
+        description="This will delete all transaction that were added by this import"
+        placement="bottomRight"
+        onConfirm={() => props.onUndo(props._id)}
+      >
+        <Button
+          tooltip="Undo import"
+          icon={ClockCounterClockwise}
+          type="text"
+        />
+      </PopConfirm>
+    );
+  }
+
   return (
     <div className="iItem">
       <div className="iItem__details">
@@ -39,7 +58,7 @@ export default function ImportItem(props: ImportItemProps) {
         <p className="iItem__subtitle">{props.message}</p>
       </div>
       <div className="iItem__right">
-        {props.importState === "success" && <Button tooltip="Undo import" icon={ClockCounterClockwise} type="text" onClick={() => props.onUndo(props._id)} />}
+        {undoButton}
         <div className="iItem__icon">
           {createElement(iconDict[props.importState], {
             size: 28,

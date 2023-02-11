@@ -89,6 +89,15 @@
     }
   }
 
+  &--small {
+    padding: $halfUnit $unit * 0.75;
+    height: auto;
+
+    p {
+      font-size: 1.1rem;
+    }
+  }
+
   &--tall {
     height: $inputHeightLarge;
   }
