@@ -3,7 +3,7 @@ import { Trash } from "phosphor-react";
 import { format } from "date-fns";
 
 import { Transaction } from "@utils/Types";
-import { CategoryIcon } from "@atoms/index";
+import { CategoryIcon, PopConfirm } from "@atoms/index";
 import { amountForDisplay } from "@utils/Currency";
 
 export interface TransactionItemProps {
@@ -28,7 +28,9 @@ export default function TransactionItem(props: TransactionItemProps) {
         <p className="tItem__subtitle">{format(t.date, "yyyy-MM-dd • HH:mm")}</p>
       </div>
       <h3 className="tItem__amount">{amountForDisplay(t)}</h3>
-      <Trash className="tItem__delete" size={24} color="var(--shade40)" onClick={() => props.onDelete?.(t._id)} />
+      <PopConfirm description={`Delete ${t.description}`} placement="topRight" onConfirm={() => props.onDelete?.(t._id)}>
+        <Trash className="tItem__delete" size={24} color="var(--shade40)"/>
+      </PopConfirm>
     </div>
   );
 }

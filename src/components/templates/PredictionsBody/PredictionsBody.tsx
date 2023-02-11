@@ -12,11 +12,8 @@ import { yearsPreset } from "@utils/SelectItems";
 import {
   editorChartToolState,
   chartToolState,
-  monthPredictionFormState,
-  getDefaultWeekPredictions,
 } from "@recoil/predictions/atoms";
 import { subscribe, unsubscribe } from "@utils/Events";
-import { getDateRange } from "@utils/Global";
 
 function getCardHeader(p: MonthPrediction, editorChartOverride: boolean): HeaderProps {
   if (editorChartOverride) {
@@ -60,23 +57,7 @@ export default function PredictionsBody() {
 
   const editorChartTool = useRecoilValue(editorChartToolState);
   const [chartTool, setChartTool] = useRecoilState(chartToolState);
-  const [_, setFormState] = useRecoilState(monthPredictionFormState);
   const displayEditorChart = editorChartTool !== null;
-
-  const editAction: CardHeaderAction = {
-    text: "Update",
-    onClick: () => {
-      const d = getDefaultWeekPredictions();
-      const weekPredCopy = chartTool.predictions.map((o, index) => ({ ...o, label: d[index].label }));
-
-      setFormState({
-        ...chartTool,
-        predictions: weekPredCopy,
-        period: getDateRange(chartTool.period.from),
-      });
-    },
-    type: "default",
-  };
 
   const deleteAction: CardHeaderAction = {
     text: "Delete",
@@ -101,6 +82,11 @@ export default function PredictionsBody() {
         });
     },
     type: "danger",
+    popConfirm: {
+      placement: "bottomRight",
+      description: "Delete prediction for selected month",
+      onConfirm: () => {},
+    }
   };
 
   function onYearChange(year: string) {
@@ -163,7 +149,7 @@ export default function PredictionsBody() {
         <Card
           noDivider
           header={getCardHeader(chartTool, displayEditorChart)}
-          headerActions={chartTool && !displayEditorChart ? [deleteAction, editAction] : undefined}
+        headerActions={chartTool && !displayEditorChart ? [deleteAction] : undefined}
         >
           {(chartTool || displayEditorChart) && (
             <WeeklyPredictionsChart prediction={displayEditorChart ? editorChartTool : chartTool} />

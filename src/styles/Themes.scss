@@ -1,11 +1,6 @@
 $themeDarkClass: ".theme--dark";
 $themeLightClass: ".theme--light";
 
-.theme {
-  height: 100vh;
-  width: 100vw;
-}
-
 // Global color variables
 #{$themeLightClass} {
   --bg-card: white;
@@ -46,6 +41,8 @@ $themeLightClass: ".theme--light";
 
   --card-shadow: #{$shadowDefault};
   --dropdown-shadow: #{$shadowDropdown};
+  --popup-shadow: #{$shadowPopup};
+  --color-popup-border: var(--color-border);
 
   color-scheme: light;
   background-color: #f4f5f7;
@@ -92,6 +89,8 @@ $themeLightClass: ".theme--light";
 
   --card-shadow: #{$shadowDefaultDark};
   --dropdown-shadow: #{$shadowDefaultDark};
+  --popup-shadow: #{$shadowPopupDark};
+  --color-popup-border: #{rgba($colorErrorDark, 0.5)};
 
   color-scheme: dark;
   background-color: #151517;

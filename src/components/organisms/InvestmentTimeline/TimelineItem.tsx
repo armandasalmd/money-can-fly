@@ -1,6 +1,7 @@
 import { format } from "date-fns";
 import { Trash } from "phosphor-react";
 
+import { PopConfirm } from "@atoms/index";
 import { InvestmentEvent } from "@utils/Types";
 import { amountForDisplay } from "@utils/Currency";
 import { iconOptions } from "@utils/Global";
@@ -24,13 +25,21 @@ export default function TimelineItem(props: TimelineItemProps) {
         {total && <div className="timelineItem__desc">Total value becomes {amountForDisplay(total)}</div>}
         <div className="timelineItem__date">{format(eventDate, "yyyy-MM-dd HH:mm")}</div>
       </div>
-      <div
-        onClick={() => props.onDelete(props.investmentEvent)}
-        className="timelineItem__delete center"
-        title={type === "created" ? "Delete entire investment" : "Delete single event"}
+      <PopConfirm
+        placement="topRight"
+        onConfirm={() => props.onDelete(props.investmentEvent)}
+        title={type === "created" ? "Delete everything?" : undefined}
+        description={
+          type === "created" ? "Deleting this will delete all investment events" : "Delete event"
+        }
       >
-        <Trash {...iconOptions} size={22} />
-      </div>
+        <div
+          className="timelineItem__delete center"
+          title={type === "created" ? "Delete entire investment" : "Delete single event"}
+        >
+          <Trash {...iconOptions} size={22} />
+        </div>
+      </PopConfirm>
     </div>
   );
 }

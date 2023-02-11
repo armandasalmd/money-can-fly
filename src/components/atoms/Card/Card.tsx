@@ -3,7 +3,7 @@ import classNames from "classnames";
 
 import Header, { HeaderProps } from "@atoms/Header/Header";
 import Button, { ButtonType } from "@atoms/Button/Button";
-import { Message, Loader } from "@atoms/index";
+import { Message, Loader, PopConfirm, PopConfirmProps } from "@atoms/index";
 import { IconComponentType } from "@utils/Types";
 
 export interface CardHeaderAction {
@@ -12,6 +12,7 @@ export interface CardHeaderAction {
   onClick?(): void;
   type: ButtonType;
   tooltip?: string;
+  popConfirm?: PopConfirmProps;
 }
 
 export interface CardProps extends PropsWithChildren {
@@ -46,27 +47,41 @@ export default function Card(props: CardProps) {
     props.className
   );
 
-  const headerActions = props.headerActions?.map((action, index) => (
-    <Button
-      key={index}
-      wrapContent
-      onClick={action.onClick}
-      type={action.type}
-      icon={action.icon}
-      tooltip={action.tooltip}
-    >
-      {action.text}
-    </Button>
-  ));
+  const headerActions = props.headerActions?.map((action, index) => {
+    const button = (
+      <Button
+        key={index}
+        wrapContent
+        onClick={action.popConfirm ? undefined : action.onClick}
+        type={action.type}
+        icon={action.icon}
+        tooltip={action.tooltip}
+      >
+        {action.text}
+      </Button>
+    );
+
+    if (action.popConfirm) {
+      return (
+        <PopConfirm key={index} {...action.popConfirm} onConfirm={action.onClick}>
+          {button}
+        </PopConfirm>
+      );
+    } else {
+      return button;
+    }
+  });
+
+  const hasPopConfirm = props.headerActions?.some((action) => action.popConfirm);
 
   return (
     <div className={classes} style={props.style}>
       <div className="card__header">
-        {props.header && (
-          <Header className="card__headerTitle" {...props.header} />
-        )}
+        {props.header && <Header className="card__headerTitle" {...props.header} />}
         {props.headerActions && (
-          <div className="card__headerActions">{headerActions}</div>
+          <div className="card__headerActions" style={{ transform: hasPopConfirm ? "unset" : undefined }}>
+            {headerActions}
+          </div>
         )}
       </div>
       {props.error && (
@@ -75,13 +90,7 @@ export default function Card(props: CardProps) {
         </Message>
       )}
       <div className="card__content">{props.children}</div>
-      {props.loading && (
-        <Loader
-          className="card__loader"
-          text={props.loadingText}
-          color="secondary"
-        />
-      )}
+      {props.loading && <Loader className="card__loader" text={props.loadingText} color="secondary" />}
     </div>
   );
 }

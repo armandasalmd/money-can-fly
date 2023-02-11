@@ -19,6 +19,13 @@ export default function CreateUpdateTransactionForm(props: CreateUpdateTransacti
   const [formState, setFormState] = useRecoilState(props.atom);
   const { defaultCurrency } = usePreferences();
 
+  useEffect(() => {
+    if (!formState._id) {
+      setFormState({ ...formState, currency: defaultCurrency });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   if (formState === null) {
     return null;
   }
@@ -35,13 +42,6 @@ export default function CreateUpdateTransactionForm(props: CreateUpdateTransacti
       setFormState({ ...formState, [name]: value });
     }
   }
-
-  useEffect(() => {
-    if (!formState._id) {
-      setFormState({ ...formState, currency: defaultCurrency });
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <div className={classes}>
