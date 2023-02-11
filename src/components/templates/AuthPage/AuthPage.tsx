@@ -3,7 +3,7 @@ import Image from "next/image";
 import { useRouter } from "next/router";
 
 import { Button, Input, Logo } from "@atoms/index";
-import { useTheme } from "@context/index";
+import { usePreferences } from "@context/index";
 import { callIfFunction } from "@utils/Global";
 
 export interface FormItem {
@@ -39,7 +39,7 @@ interface AuthFormProps {
 
 export default function AuthPage(props: AuthFormProps) {
   const router = useRouter();
-  const { setSuspend } = useTheme();
+  const { setSuspend } = usePreferences();
 
   const defaultState = props.formItems.reduce<FormInputState>(function (
     acc,

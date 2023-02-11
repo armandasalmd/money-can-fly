@@ -7,6 +7,7 @@ import { capitalise, toCheckState } from "@utils/Global";
 import { bankNamesPreset, currencyPreset } from "@utils/SelectItems";
 import { SelectItem } from "@utils/SelectItems";
 import { ImportCsvReader } from "@utils/CsvReader";
+import { usePreferences } from "@context/index";
 
 const currencyIcons = {
   gbp: CurrencyGbp,
@@ -21,13 +22,23 @@ export interface ImportConfigFormProps {
 }
 
 export default function ImportConfigForm(props: ImportConfigFormProps) {
+  const { defaultCurrency } = usePreferences();
   const [error, setError] = useState("");
-  const [formState, setFormState] = useState<ImportFormState>(importPresets.custom.formState);
-
   const [csvColumnsSelect, setCsvColumnsSelect] = useState<SelectItem[]>([]);
+  const [formState, setFormState] = useState<ImportFormState>({
+    ...importPresets.custom.formState,
+    defaultCurrency
+  });
 
   function onPresetClick(preset: ImportPreset) {
-    setFormState(preset.formState);
+    if (preset.type !== "custom") {
+      setFormState(preset.formState);
+    } else {
+      setFormState({
+        ...preset.formState,
+        defaultCurrency,
+      });
+    }
   }
 
   function onInputChange(value: string | boolean, name: string) {
@@ -73,7 +84,10 @@ export default function ImportConfigForm(props: ImportConfigFormProps) {
 
   useEffect(() => {
     setError("");
-    setFormState(importPresets.custom.formState);
+    setFormState({
+      ...importPresets.custom.formState,
+      defaultCurrency
+    });
 
     if (props.importFile) {
       const importCsvReader = new ImportCsvReader();

@@ -20,7 +20,6 @@ export default function DashboardBody() {
         <div className="dashboardBody__column">
           <DashQuickAddCard />
           <InvestmentsCard />
-          {/* <DashBorrowingsCard /> */}
         </div>
       </div>
     </div>

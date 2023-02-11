@@ -43,10 +43,3 @@ export function parseCurrency(text: string, onlyPositive: boolean): number {
 
   return NaN;
 }
-
-export function getDefaultMoney(fromStorage = true): Money {
-  return {
-    amount: 0,
-    currency: fromStorage ? localStorage.getItem("currency") as Currency : "GBP",
-  };
-}

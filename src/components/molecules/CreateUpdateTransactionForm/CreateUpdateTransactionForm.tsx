@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import classNames from "classnames";
 import { RecoilState, useRecoilState } from "recoil";
 import { Article, Bank, Bookmark } from "phosphor-react";
@@ -6,6 +7,7 @@ import { Input, Select, DatePicker, Message } from "@atoms/index";
 import { CurrencyInput } from "@molecules/index";
 import { bankNamesPreset, categotyPreset } from "@utils/SelectItems";
 import { FieldErrors, Money, Transaction } from "@utils/Types";
+import { usePreferences } from "@context/index";
 
 export interface CreateUpdateTransactionFormProps {
   atom: RecoilState<Transaction>;
@@ -15,6 +17,7 @@ export interface CreateUpdateTransactionFormProps {
 export default function CreateUpdateTransactionForm(props: CreateUpdateTransactionFormProps) {
   const classes = classNames("tForm", {});
   const [formState, setFormState] = useRecoilState(props.atom);
+  const { defaultCurrency } = usePreferences();
 
   if (formState === null) {
     return null;
@@ -32,6 +35,13 @@ export default function CreateUpdateTransactionForm(props: CreateUpdateTransacti
       setFormState({ ...formState, [name]: value });
     }
   }
+
+  useEffect(() => {
+    if (!formState._id) {
+      setFormState({ ...formState, currency: defaultCurrency });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className={classes}>

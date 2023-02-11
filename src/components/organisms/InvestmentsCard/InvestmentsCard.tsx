@@ -6,7 +6,7 @@ import { Card } from "@atoms/index";
 import { CreateInvestmentDrawer, InvestmentList } from "@molecules/index";
 import { DisplaySections, Money } from "@utils/Types";
 import { selectedInvestment, balanceChartDateRange } from "@recoil/dashboard/atoms";
-import { amountForDisplay, getDefaultMoney } from "@utils/Currency";
+import { amountForDisplay } from "@utils/Currency";
 import { InvestmentDetailsDrawer } from "@components/templates";
 import { subscribe, unsubscribe } from "@utils/Events";
 import { InvestmentsModel } from "@server/models";
@@ -16,8 +16,7 @@ export default function InvestmentsCard() {
   const [selected, setSelected] = useRecoilState(selectedInvestment);
   const { data, mutate } = useDashboardData<InvestmentsModel>(DisplaySections.Investments);
   const balanceDateRange = useRecoilValue(balanceChartDateRange);
-  
-  const total: Money = data?.totalValue || getDefaultMoney();
+  const total: Money = data?.totalValue;
 
   const mutateOtherSections = useCallback(() => {
     mutate([DisplaySections.Insights, DisplaySections.BalanceAnalysis], {
@@ -57,7 +56,7 @@ export default function InvestmentsCard() {
       header={{
         color: "info",
         title: "Investments",
-        description: `Total worth is ${amountForDisplay(total)}`,
+        description: `Total worth is ${total ? amountForDisplay(total) : "0"}`,
       }}
       noDivider
       noContentPaddingX

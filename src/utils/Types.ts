@@ -23,8 +23,15 @@ export type ColorType = "primary" | "secondary";
 export type Size = "small" | "medium" | "large";
 export type Sort = "asc" | "desc";
 export type CategoryFallbacks = Record<Category, string[]>;
-
+export type Theme = "light" | "dark";
 export type Currency = "USD" | "EUR" | "GBP";
+export type ImportState = "running" | "success" | "error" | "undo";
+export type TransactionBank = "barclays" | "revolut" | "cash";
+export type ImportPresetType = Exclude<TransactionBank, "cash"> | "custom";
+export type TransactionStatusFilter = "active" | "inactive";
+export type AmountFilter = "incomeOnly" | "moreThan10Spent" | "moreThan25Spent" | "moreThan50Spent" | "moreThan100Spent" | "moreThan250Spent";
+export type InvestmentEventType = "deposit" | "adjustment" | "withdrawal" | "created";
+
 export type Category =
   | "food"
   | "shopping"
@@ -41,12 +48,6 @@ export type Category =
   | "investments"
   | "trendUp"
   | "trendDown";
-export type ImportState = "running" | "success" | "error" | "undo";
-export type TransactionBank = "barclays" | "revolut" | "cash";
-export type ImportPresetType = Exclude<TransactionBank, "cash"> | "custom";
-export type TransactionStatusFilter = "active" | "inactive";
-export type AmountFilter = "incomeOnly" | "moreThan10Spent" | "moreThan25Spent" | "moreThan50Spent" | "moreThan100Spent" | "moreThan250Spent";
-export type InvestmentEventType = "deposit" | "adjustment" | "withdrawal" | "created";
 
 export interface Money {
   amount: number;
