@@ -16,7 +16,7 @@ export default validatedApiRoute("POST", LoginRequest, async (request, response)
       request.session.user = {
         email: payload.email,
         userUID: payload.user_id,
-        exp: new Date(Date.now() + constants.sessionMaxAge).toISOString(),
+        exp: new Date(Date.now() + ((constants.sessionMaxAge - 60) * 1000)).toISOString(),
       };
       
       await request.session.save();

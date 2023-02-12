@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/router";
 
 import { useAuth } from "@context/index";
@@ -10,7 +10,7 @@ import AuthPage, {
 import Constants from "@utils/Constants";
 
 export default function Login() {
-  const { user, login } = useAuth();
+  const { login } = useAuth();
   const router = useRouter();
   const pushPath = Constants.navbarLinks.dashboard.path || "/";
   const [error, setError] = useState<string | null>(null);
@@ -36,18 +36,17 @@ export default function Login() {
 
   async function handleSubmit(state: FormInputState) {
     try {
-      await login(state.email.value, state.password.value);
-      router.push(pushPath);
+      if (await login(state.email.value, state.password.value)) {
+        router.push(pushPath);
+      } else {
+        setError("Server error. Try refreshing the page.");
+      }
     } catch (error) {
-      setError("Invalid email or password");
+      const [,message, errorType] = error.message.match(Constants.firebaseErrorRegex);
+
+      setError(Constants.firebaseAuthErrors[errorType] || message || "Unknown error");
     }
   }
-
-  useEffect(() => {
-    if (user) {
-      router.push(pushPath);
-    }
-  }, [router, user, pushPath]);
 
   return (
     <AuthPage

@@ -7,6 +7,7 @@ import {
   type UserCredential,
 } from "firebase/auth";
 import { auth } from "../../firebase";
+import AuthUtils from "@utils/Auth";
 
 export interface UseAuthProps {
   user: User;
@@ -31,9 +32,17 @@ export function AuthContextProvider({ children }) {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       if (user) {
-        setUser(user);
+        // If firebase user exists but api token is expired, re-login to api
+        if (AuthUtils.isApiTokenExpired()) {          
+          loginToApi(user).then((success) => {
+            setUser(success ? user : null);
+          });
+        } else {
+          setUser(user);
+        }
       } else {
         setUser(null);
+        AuthUtils.clearApiExpiry();
       }
 
       setLoading(false);
@@ -42,8 +51,11 @@ export function AuthContextProvider({ children }) {
     return () => unsubscribe();
   }, []);
 
-  async function loginToApi(user: UserCredential): Promise<boolean> {
-    const token = await user.user.getIdToken(true);
+  async function loginToApi(user: User): Promise<boolean> {
+    AuthUtils.setApiLoginInProgress(true);
+
+    const token = await user.getIdToken(true);
+
     const response = await fetch("/api/auth/login", {
       method: "POST",
       body: JSON.stringify({ userIdToken: token }),
@@ -52,15 +64,24 @@ export function AuthContextProvider({ children }) {
       },
     });
     const data = await response.json();
+    
+    AuthUtils.setApiLoginInProgress(true);
 
-    return data?.success === true;
+    if (data?.success === true && data.user?.exp) {
+      AuthUtils.setApiExpiry(data.user.exp);
+      
+      return true;
+    }
+
+    return false;
   }
 
   async function register(email: string, password: string) {
     const user = await createUserWithEmailAndPassword(auth, email, password);
 
-    if (!await loginToApi(user)) {
+    if (!await loginToApi(user.user)) {
       await logout();
+      return;
     }
 
     return user;
@@ -69,8 +90,9 @@ export function AuthContextProvider({ children }) {
   async function login(email: string, password: string) {
     const user = await signInWithEmailAndPassword(auth, email, password);
 
-    if (!await loginToApi(user)) {
+    if (!await loginToApi(user.user)) {
       await logout();
+      return;
     }
 
     return user;

@@ -23,6 +23,15 @@ const constants = {
     },
   },
   publicRoutes: ["/login", "/register"],
+  firebaseAuthErrors: {
+    "auth/invalid-email": "Invalid email",
+    "auth/user-not-found": "User not found",
+    "auth/wrong-password": "Wrong password",
+    "auth/email-already-in-use": "Email already in use",
+    "auth/operation-not-allowed": "Operation not allowed",
+    "auth/weak-password": "Weak password",
+  },
+  firebaseErrorRegex: /Firebase: (.*) \((.*)\)/
 };
 
 export default constants;

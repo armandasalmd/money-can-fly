@@ -47,7 +47,7 @@ export default function PopConfirm(props: PopConfirmProps) {
         className: "popup__icon",
         size: 20,
         weight: "fill",
-        color: "var(--color-warning)",
+        color: props.icon ? "var(--shade40)" : "var(--color-warning)",
       })}
       <h3 className="popup__title">{props.title || "Are you sure?"}</h3>
       {props.description && <p className="popup__description">{props.description}</p>}
