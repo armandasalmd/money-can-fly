@@ -4,6 +4,7 @@
   display: inline-flex;
   flex-flow: column;
   cursor: pointer;
+  margin-left: 5px;
 
   &__input {
     width: $unit * 1.25 + 1px;
@@ -53,6 +54,7 @@
     justify-content: flex-end;
     align-items: center;
     gap: $unit * 0.5;
+    margin-left: 0px;
 
     #{$base}__text {
       margin-bottom: 0;

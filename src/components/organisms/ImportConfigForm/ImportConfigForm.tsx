@@ -164,6 +164,12 @@ export default function ImportConfigForm(props: ImportConfigFormProps) {
                 value={formState.ignoreDescriptionPattern}
                 onChange={onInputChange}
               />
+              <Checkbox
+                name="alterBalance"
+                title="Alter balance value"
+                onChange={onInputChange}
+                value={toCheckState(formState.alterBalance)}
+              />
             </div>
           </section>
           <section>

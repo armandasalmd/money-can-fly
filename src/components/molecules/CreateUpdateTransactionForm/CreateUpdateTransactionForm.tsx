@@ -3,14 +3,14 @@ import classNames from "classnames";
 import { RecoilState, useRecoilState } from "recoil";
 import { Article, Bank, Bookmark } from "phosphor-react";
 
-import { Input, Select, DatePicker, Message } from "@atoms/index";
+import { Input, Select, DatePicker, Message, Checkbox } from "@atoms/index";
 import { CurrencyInput } from "@molecules/index";
 import { bankNamesPreset, categotyPreset } from "@utils/SelectItems";
-import { FieldErrors, Money, Transaction } from "@utils/Types";
+import { FieldErrors, Money, Transaction, TransactionWithOptions } from "@utils/Types";
 import { usePreferences } from "@context/index";
 
 export interface CreateUpdateTransactionFormProps {
-  atom: RecoilState<Transaction>;
+  atom: RecoilState<TransactionWithOptions>;
   fieldErrors: FieldErrors<Transaction>;
 }
 
@@ -30,7 +30,7 @@ export default function CreateUpdateTransactionForm(props: CreateUpdateTransacti
     return null;
   }
 
-  function inputChange(value: string | Money | Date, name: string) {
+  function inputChange(value: string | Money | Date | boolean, name: string) {
     if (name === "money") {
       const money = value as Money;
       setFormState({
@@ -96,6 +96,15 @@ export default function CreateUpdateTransactionForm(props: CreateUpdateTransacti
           onChange={inputChange}
         />
         <DatePicker required title="Execution date" name="date" onSelect={inputChange} value={formState.date} />
+      </div>
+      <div className="tForm__item">
+        <Checkbox
+          name="alterBalance"
+          value={formState.alterBalance === true ? "checked" : "unchecked"}
+          title="Alter balance value"
+          horizontal
+          onChange={inputChange}
+          />
       </div>
     </div>
   );

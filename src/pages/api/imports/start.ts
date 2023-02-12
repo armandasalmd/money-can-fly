@@ -1,10 +1,12 @@
 import constants from "@server/utils/Constants";
 import { Currency, TransactionBank } from "@utils/Types";
-import { IsDefined, IsIn, IsOptional, IsString } from "class-validator";
+import { IsBoolean, IsDefined, IsIn, IsOptional, IsString } from "class-validator";
 import { validatedApiRoute } from "@server/core";
 import { ImportManager } from "@server/managers";
 
 export class StartImportRequest{
+  @IsBoolean()
+  alterBalance: boolean;
   @IsDefined()
   @IsString()
   csvData: string;

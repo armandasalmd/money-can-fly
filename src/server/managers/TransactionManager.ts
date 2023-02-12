@@ -30,10 +30,10 @@ export class TransactionManager {
 
     const [commonValue] = await Promise.all([
       CurrencyRateManager.getInstance().convert(request.amount, request.currency, "USD", date),
-      this.balanceManager.CommitMoney({
+      request.alterBalance ? this.balanceManager.CommitMoney({
         amount: request.amount,
         currency: request.currency,
-      })
+      }) : Promise.resolve(true),
     ]);
 
     const document = await TransactionModel.create({
@@ -67,13 +67,15 @@ export class TransactionManager {
       request.amount = -request.amount;
     }
 
-    const uncommit = this.balanceManager.CommitMoney({
-      amount: -document.amount,
-      currency: document.currency,
-    });
+    if (request.alterBalance) {
+      const uncommit = this.balanceManager.CommitMoney({
+        amount: -document.amount,
+        currency: document.currency,
+      });
+      
+      if (!uncommit) return null;
+    }
     
-    if (!uncommit) return null;
-
     document.amount =
       constants.negativeCategories.includes(request.category) && request.amount > 0
         ? -request.amount
@@ -88,10 +90,10 @@ export class TransactionManager {
 
     await Promise.all([
       document.save(),
-      this.balanceManager.CommitMoney({
+      request.alterBalance ? this.balanceManager.CommitMoney({
         amount: request.amount,
         currency: request.currency,
-      })
+      }) : Promise.resolve(true),
     ]);
 
     return document.toJSON<ITransactionModel>() as ITransactionModel;

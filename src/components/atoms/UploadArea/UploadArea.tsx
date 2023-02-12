@@ -26,14 +26,24 @@ export default function UploadArea(props: UploadAreaProps) {
   const [files, setFiles] = useState<FileState>({});
   const [warning, setWarning] = useState("");
 
+  function handleFileDrop(e: React.DragEvent<HTMLDivElement>) {
+    handleDragOver(e);
+    handleNewFileUpload(e.dataTransfer.files);
+  }
+
+  function handleDragOver(e: React.DragEvent<HTMLDivElement>) {
+    e.preventDefault();
+    e.stopPropagation();
+  }
+
   function onClick() {
     fileInputRef.current?.click();
   }
 
-  function handleNewFileUpload(e: React.ChangeEvent<HTMLInputElement>) {
-    const newFiles = Array.from(fileInputRef.current?.files);
+  function handleNewFileUpload(fileList: FileList) {
+    const newFiles = props.multiple ? Array.from(fileList) : [fileList[0]];
 
-    if (!newFiles) return;
+    if (!newFiles || newFiles.some(o => !o)) return;
 
     const hasInvalidFiles = newFiles.some((file) => file.type.match(props.accept) === null);
 
@@ -76,12 +86,12 @@ export default function UploadArea(props: UploadAreaProps) {
 
   function onSubmit() {
     callIfFunction(props.onSubmit, files);
-    setFiles({})
+    setFiles({});
   }
 
   return (
     <div className={classes}>
-      <div className="uploadArea__box" onClick={onClick}>
+      <div className="uploadArea__box" onClick={onClick} onDrop={handleFileDrop} onDragOver={handleDragOver}>
         <div className="uploadArea__content">
           <div className="uploadArea__icon">
             <FileArrowUp size={48} weight="duotone" color="var(--color-information)" />
@@ -94,7 +104,7 @@ export default function UploadArea(props: UploadAreaProps) {
           </p>
         </div>
         <input
-          onChange={handleNewFileUpload}
+          onChange={() => handleNewFileUpload(fileInputRef.current?.files)}
           multiple={props.multiple}
           accept={props.accept}
           type="file"

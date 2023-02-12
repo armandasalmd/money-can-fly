@@ -12,7 +12,7 @@ import {
   pagedTransactionsState,
 } from "@recoil/transactions/atoms";
 import { publish } from "@utils/Events";
-import { FieldErrors, Transaction } from "@utils/Types";
+import { FieldErrors, Transaction, TransactionWithOptions } from "@utils/Types";
 import constants from "@server/utils/Constants";
 
 export default function TransactionsBody() {
@@ -51,7 +51,8 @@ export default function TransactionsBody() {
       ...transaction,
       date: new Date(transaction.date),
       dateUpdated: new Date(),
-      amount: Math.abs(transaction.amount)
+      amount: Math.abs(transaction.amount),
+      alterBalance: true
     });
     setAddDrawerOpen(true);
   }
@@ -60,7 +61,7 @@ export default function TransactionsBody() {
     setAddDrawerOpen(true);
   }
 
-  function onSubmitSave(transaction: Transaction) {
+  function onSubmitSave(transaction: TransactionWithOptions) {
     const updateFn = !!transaction._id ? apiUpdate : apiCreate;
 
     setSaving(true);
@@ -78,7 +79,7 @@ export default function TransactionsBody() {
     });
   }
 
-  function postUpdate(transaction: Transaction) {
+  function postUpdate(transaction: TransactionWithOptions) {
     const itemIdx = displayState.displayedItems.findIndex((t) => t._id === transaction._id)
           
     if (itemIdx > -1) {
@@ -96,7 +97,7 @@ export default function TransactionsBody() {
     }
   }
 
-  async function apiCreate(transaction: Transaction): Promise<boolean> {
+  async function apiCreate(transaction: TransactionWithOptions): Promise<boolean> {
     const response = await fetch("/api/transactions/create", {
       method: "POST",
       body: JSON.stringify(transaction),
@@ -113,7 +114,7 @@ export default function TransactionsBody() {
     return !!data._id;
   }
 
-  async function apiUpdate(transaction: Transaction): Promise<boolean> {
+  async function apiUpdate(transaction: TransactionWithOptions): Promise<boolean> {
     const response = await fetch("/api/transactions/update", {
       method: "PATCH",
       body: JSON.stringify({
