@@ -90,7 +90,7 @@ $themeLightClass: ".theme--light";
   --card-shadow: #{$shadowDefaultDark};
   --dropdown-shadow: #{$shadowDefaultDark};
   --popup-shadow: #{$shadowPopupDark};
-  --color-popup-border: #{rgba($colorErrorDark, 0.5)};
+  --color-popup-border: var(--color-border);
 
   color-scheme: dark;
   background-color: #151517;

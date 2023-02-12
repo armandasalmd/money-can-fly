@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { MoonStars, Sun, SignOut, User, Faders } from "phosphor-react";
 
 import { useAuth, usePreferences } from "@context/index";
-import { Button, Logo } from "@atoms/index";
+import { Button, Logo, PopConfirm } from "@atoms/index";
 import { PreferencesDrawer } from "@components/templates";
 import Constants from "@utils/Constants";
 
@@ -71,10 +71,11 @@ export default function Navbar(props: NavbarProps) {
             tooltip="Toggle theme"
           />
           <Button tall icon={Faders} onClick={() => setPreferencesOpen(true)} tooltip="App settings" />
-          <Button tall icon={User}>
-            {displayName}
-          </Button>
-          <Button tall icon={SignOut} onClick={handleLogout} tooltip="Logout" />
+          <PopConfirm icon={SignOut} description="" title="Do you want to logout?" onConfirm={handleLogout} placement="bottomRight" >
+            <Button tall icon={User}>
+              {displayName}
+            </Button>
+          </PopConfirm>
         </div>
       </div>
       <PreferencesDrawer open={preferencesOpen} onClose={setPreferencesOpen} />

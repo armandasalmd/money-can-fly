@@ -41,7 +41,7 @@ export default function InsightsCollection(props: InsightsCollectionProps) {
       <Insight loading={loading} title="Budget remaining" color={overspent ? "error" : "success"}>
         <h1>
           {amountForDisplay(data.budgetRemaining)}
-          {!loading && <span>left until {format(data.budgetResetDate, "LLL do")}</span>}
+          {!loading && <span>left until {data.budgetResetDate && format(data.budgetResetDate, "LLL do")}</span>}
         </h1>
         {!loading && !overspent && (
           <label>

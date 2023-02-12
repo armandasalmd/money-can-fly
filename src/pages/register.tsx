@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useRouter } from "next/router";
 
 import { useAuth } from "@context/index";
@@ -10,7 +10,7 @@ import AuthPage, {
 } from "@templates/AuthPage/AuthPage";
 
 export default function Register() {
-  const { user, register } = useAuth();
+  const { register } = useAuth();
   const router = useRouter();
   const [error, setError] = useState<string | null>(null);
   const pushPath = Constants.navbarLinks.dashboard.path || "/";
@@ -42,18 +42,17 @@ export default function Register() {
 
   async function handleSubmit(state: FormInputState) {
     try {
-      await register(state.email.value, state.password.value);
-      router.push(pushPath);
+      if (await register(state.email.value, state.password.value)) {
+        router.push(pushPath);
+      } else {
+        setError("Server error. Try refreshing the page.");
+      }
     } catch (error) {
-      setError("Check your details and try again");
+      const [,message, errorType] = error.message.match(Constants.firebaseErrorRegex);
+
+      setError(Constants.firebaseAuthErrors[errorType] + ". " + message + "." || "Unknown error");
     }
   }
-
-  useEffect(() => {
-    if (user) {
-      router.push(pushPath);
-    }
-  }, [router, user, pushPath]);
 
   return (
     <AuthPage

@@ -46,7 +46,7 @@ const constants = {
     ],
     investmentEventTypes: ["deposit", "adjustment", "withdrawal", "created"],
   },
-  sessionMaxAge: 24 * 60 * 60000 * 3, // 3 days
+  sessionMaxAge: 259200, // number in seconds (3days)
 };
 
 export default constants;
