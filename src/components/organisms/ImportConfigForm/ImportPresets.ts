@@ -1,6 +1,7 @@
 import { ImportPresetType, TransactionBank, Currency } from "@utils/Types";
 
 export interface ImportFormState {
+  alterBalance: boolean;
   bank: TransactionBank;
   ignoreDescriptionPattern: string;
   defaultCurrency: Currency,
@@ -23,6 +24,7 @@ export interface ImportPreset {
 const customImportPreset: ImportPreset = {
   type: "custom",
   formState: {
+    alterBalance: true,
     bank: "cash",
     ignoreDescriptionPattern: "",
     defaultCurrency: "USD",
@@ -41,6 +43,7 @@ const customImportPreset: ImportPreset = {
 const barclaysImportPreset: ImportPreset = {
   type: "barclays",
   formState: {
+    alterBalance: true,
     bank: "barclays",
     ignoreDescriptionPattern: "BARCLAYS",
     defaultCurrency: "GBP",
@@ -57,6 +60,7 @@ const barclaysImportPreset: ImportPreset = {
 const revolutImportPreset: ImportPreset = {
   type: "revolut",
   formState: {
+    alterBalance: true,
     bank: "revolut",
     ignoreDescriptionPattern: "Cash at",
     defaultCurrency: "EUR",

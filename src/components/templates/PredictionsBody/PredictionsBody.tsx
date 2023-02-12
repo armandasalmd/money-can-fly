@@ -12,8 +12,11 @@ import { yearsPreset } from "@utils/SelectItems";
 import {
   editorChartToolState,
   chartToolState,
+  monthPredictionFormState,
+  getDefaultWeekPredictions,
 } from "@recoil/predictions/atoms";
 import { subscribe, unsubscribe } from "@utils/Events";
+import { getDateRange } from "@utils/Global";
 
 function getCardHeader(p: MonthPrediction, editorChartOverride: boolean): HeaderProps {
   if (editorChartOverride) {
@@ -58,6 +61,22 @@ export default function PredictionsBody() {
   const editorChartTool = useRecoilValue(editorChartToolState);
   const [chartTool, setChartTool] = useRecoilState(chartToolState);
   const displayEditorChart = editorChartTool !== null;
+  const [formState, setFormState] = useRecoilState(monthPredictionFormState);
+
+  const copyAction: CardHeaderAction = {
+    text: "Copy",
+    onClick: () => {
+      const d = getDefaultWeekPredictions();
+      const weekPredCopy = chartTool.predictions.map((o, index) => ({ ...o, label: d[index].label }));
+
+      setFormState({
+        ...formState,
+        predictions: weekPredCopy
+      });
+    },
+    type: "default",
+    tooltip: "Copy selected values to the form ->",
+  }
 
   const deleteAction: CardHeaderAction = {
     text: "Delete",
@@ -149,7 +168,7 @@ export default function PredictionsBody() {
         <Card
           noDivider
           header={getCardHeader(chartTool, displayEditorChart)}
-        headerActions={chartTool && !displayEditorChart ? [deleteAction] : undefined}
+          headerActions={chartTool && !displayEditorChart ? [copyAction, deleteAction] : undefined}
         >
           {(chartTool || displayEditorChart) && (
             <WeeklyPredictionsChart prediction={displayEditorChart ? editorChartTool : chartTool} />

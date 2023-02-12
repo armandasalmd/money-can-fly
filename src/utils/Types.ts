@@ -71,6 +71,10 @@ export interface Transaction extends Money {
   isActive: boolean;
 }
 
+export interface TransactionWithOptions extends Transaction {
+  alterBalance?: boolean;
+}
+
 export interface Import {
   _id: string;
   date: string;

@@ -1,6 +1,6 @@
 import { atom, selector } from "recoil";
 
-import { Transaction, TransactionForm } from "@utils/Types";
+import { Transaction, TransactionForm, TransactionWithOptions } from "@utils/Types";
 import { dateFromNow } from "@utils/Global";
 import { IRecoilPaginationState } from "@hooks/useRecoilPagination";
 import constants from "@utils/Constants";
@@ -37,7 +37,7 @@ export const filterFormState = atom<TransactionForm>({
   }
 });
 
-export const addEditTransactionState = atom<Transaction>({
+export const addEditTransactionState = atom<TransactionWithOptions>({
   key: "addEditTransaction",
   default: {
     amount: 0,
@@ -48,6 +48,7 @@ export const addEditTransactionState = atom<Transaction>({
     isActive: true,
     source: "cash",
     dateUpdated: new Date(),
+    alterBalance: true
   }
 });
 
