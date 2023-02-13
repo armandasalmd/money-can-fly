@@ -68,6 +68,7 @@ export class InvestmentsManager {
       description,
       source: "cash",
       isInvestment: true,
+      alterBalance: true
     });
   }
 

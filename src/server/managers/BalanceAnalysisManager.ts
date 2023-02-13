@@ -126,6 +126,7 @@ export class BalanceAnalysisManager {
         $match: {
           userUID: user.userUID,
           isActive: true,
+          isInvestment: false,
           date: { $gte: range.from, $lte: this.now },
         },
       },
