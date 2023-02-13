@@ -33,6 +33,9 @@ export class CreateTransactionRequest implements Money {
 
 export default validatedApiRoute("POST", CreateTransactionRequest, async (request, response, user) => {
   const manager = new TransactionManager(user);
+
+  if (request.body.alterBalance === undefined) request.body.alterBalance = true;
+
   const result = await manager.CreateTransaction(request.body);
 
   return response.status(200).json(result);

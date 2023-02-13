@@ -24,7 +24,7 @@ export default function CreateInvestmentDrawer(props: CreateInvestmentDrawerProp
   const [moneyError, setMoneyError] = useState("");
   const [date, setDate] = useState(new Date());
   const [dateError, setDateError] = useState("");
-  const [subtract, setSubtract] = useState(false);
+  const [subtract, setSubtract] = useState(true);
 
   function submit() {
     let valid = true;
@@ -71,7 +71,7 @@ export default function CreateInvestmentDrawer(props: CreateInvestmentDrawerProp
     setTitleError("");
     setMoney(defaultMoney(defaultCurrency));
     setMoneyError("");
-    setSubtract(false);
+    setSubtract(true);
     setDate(new Date());
     setDateError("");
     props.onClose(true);
