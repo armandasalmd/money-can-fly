@@ -1,7 +1,7 @@
 # MoneyCanFly - NextJs project
 
-[MoneyCanFly link](https://money-can-fly.vercel.app/). Use preview account to have fun
-> Username: preview@preview.com
+[MoneyCanFly link](https://money-can-fly.vercel.app/). Use preview account to have fun (Currently not setup, waiting for issue to be closed [#31](https://github.com/armandasalmd/money-can-fly/issues/31))
+> Username: preview@preview.com (Soon)
 > 
 > Password: preview
 
