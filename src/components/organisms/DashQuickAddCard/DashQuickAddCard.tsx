@@ -7,11 +7,12 @@ import { Button, Card, CardHeaderAction, Input, Select } from "@atoms/index";
 import { CurrencyInput } from "@molecules/index";
 import constants from "@utils/Constants";
 import { bankNamesPreset, categotyPreset } from "@utils/SelectItems";
-import { Category, Currency, DisplaySections, Money, Transaction, TransactionBank } from "@utils/Types";
+import { Category, Currency, DisplaySections, Money, TransactionBank } from "@utils/Types";
 import { publish } from "@utils/Events";
 import { filterFormState, balanceChartDateRange } from "@recoil/dashboard/atoms";
 import { useDashboardData } from "@hooks/index";
 import { usePreferences } from "@context/PreferencesContext";
+import { CreateTransactionRequest } from "@endpoint/transactions/create";
 
 function getDefaultState(currenct: Currency): QuickAddFormState {
   return {
@@ -77,8 +78,6 @@ export default function DashQuickAddCard() {
       currency: state.currency,
       description: state.description,
       date: new Date(),
-      dateUpdated: new Date(),
-      isActive: true,
     }).then((success) => {
       if (success) {
         setState(getDefaultState(defaultCurrency));
@@ -91,7 +90,7 @@ export default function DashQuickAddCard() {
     });
   }
 
-  async function apiCreate(transaction: Transaction): Promise<boolean> {
+  async function apiCreate(transaction: CreateTransactionRequest): Promise<boolean> {
     const response = await fetch("/api/transactions/create", {
       method: "POST",
       body: JSON.stringify(transaction),

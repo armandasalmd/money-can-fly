@@ -87,7 +87,7 @@ export default function CreateInvestmentDrawer(props: CreateInvestmentDrawerProp
           <Checkbox
             value={subtract ? "checked" : "unchecked"}
             onChange={setSubtract}
-            title="Subtract deposit amount from cash balance"
+            title="Link to a new transaction"
             horizontal
           />
         </div>

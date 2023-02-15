@@ -69,6 +69,8 @@ export interface Transaction extends Money {
   description: string;
   source: TransactionBank;
   isActive: boolean;
+  isInvestment?: boolean;
+  investmentEventType?: InvestmentEventType;
 }
 
 export interface TransactionWithOptions extends Transaction {

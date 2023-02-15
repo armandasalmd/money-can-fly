@@ -80,9 +80,10 @@ export class BalanceAnalysisManager {
 
     const labels = this.MakeLabels();
 
-    const [invDataset, totalWorthDataset] = await Promise.all([
-      this.CalculateInvestmentsDataset(investments),
-      this.CalculateTotalWorthDataset(user, dateRange),
+    const invDataset = await this.CalculateInvestmentsDataset(investments);
+
+    const [totalWorthDataset] = await Promise.all([
+      this.CalculateTotalWorthDataset(user, dateRange, invDataset),
       this.PopulatePredictionPoints(user, dateRange),
     ]);
 
@@ -116,7 +117,7 @@ export class BalanceAnalysisManager {
     return projectionDataset;
   }
 
-  private async CalculateTotalWorthDataset(user: CookieUser, range: DateRange): Promise<number[]> {
+  private async CalculateTotalWorthDataset(user: CookieUser, range: DateRange, investmentDataset: number[]): Promise<number[]> {
     // Scenario 1: range is in the future
     if (this.now <= range.from) return Array(this.dateBreakpoints.length).fill(NaN);
     // Scenario 2: range is in the past, or intersects with now
@@ -126,8 +127,11 @@ export class BalanceAnalysisManager {
         $match: {
           userUID: user.userUID,
           isActive: true,
-          isInvestment: false,
           date: { $gte: range.from, $lte: this.now },
+          $or: [
+            { isInvestment: false },
+            { investmentEventType: "adjustment" },
+          ]
         },
       },
       {

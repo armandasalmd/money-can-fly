@@ -31,6 +31,10 @@ export const TransactionSchema = new Schema<ITransactionModel>({
     required: false,
     default: false,
   },
+  investmentEventType: {
+    type: String,
+    required: false,
+  },
   source: {
     type: String,
     required: true,

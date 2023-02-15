@@ -48,21 +48,23 @@ export default function TransactionFullListItem(props: TransactionFullListItemPr
           <p>Updated {toDisplayDate(props.transaction.dateUpdated || props.transaction.date, undefined, 30)}</p>
         </div>
       </div>
-      <div className="tFullListItem__actions">
-        <div className="tFullListItem__action" onClick={() => props.onSelect(props.transaction)}>
-          <Checkbox value={props.selected ? "checked" : "unchecked"} />
+      {props.transaction.isInvestment !== true && (
+        <div className="tFullListItem__actions">
+          <div className="tFullListItem__action" onClick={() => props.onSelect(props.transaction)}>
+            <Checkbox value={props.selected ? "checked" : "unchecked"} />
+          </div>
+          <div
+            title={props.transaction?.isActive ? "Active" : "Inactive"}
+            className="tFullListItem__action"
+            onClick={() => props.onToggleActive(props.transaction)}
+          >
+            {createElement(props.transaction?.isActive ? Eye : EyeClosed, iconOptions)}
+          </div>
+          <div className="tFullListItem__action" onClick={() => props.onEdit(props.transaction)}>
+            {createElement(PencilSimple, iconOptions)}
+          </div>
         </div>
-        <div
-          title={props.transaction?.isActive ? "Active" : "Inactive"}
-          className="tFullListItem__action"
-          onClick={() => props.onToggleActive(props.transaction)}
-        >
-          {createElement(props.transaction?.isActive ? Eye : EyeClosed, iconOptions)}
-        </div>
-        <div className="tFullListItem__action" onClick={() => props.onEdit(props.transaction)}>
-          {createElement(PencilSimple, iconOptions)}
-        </div>
-      </div>
+      )}
     </div>
   );
 }

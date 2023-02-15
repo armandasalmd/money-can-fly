@@ -1,4 +1,4 @@
-import { FilterQuery } from "mongoose";
+import { FilterQuery, ObjectId } from "mongoose";
 
 import { CreateTransactionRequest } from "@endpoint/transactions/create";
 import { UpdateTransactionRequest } from "@endpoint/transactions/update";
@@ -10,8 +10,10 @@ import { escapeRegExp } from "@server/utils/Global";
 import constants from "@server/utils/Constants";
 import { Currency, Money } from "@utils/Types";
 
-interface MoneyWithId extends Money {
+interface DeleteManyTransaction extends Money {
   id: string;
+  isActive: boolean;
+  description: string;
 }
 
 export class TransactionManager {
@@ -48,6 +50,7 @@ export class TransactionManager {
       isActive: true,
       isImported: false,
       isInvestment: request.isInvestment === undefined ? false : request.isInvestment,
+      investmentEventType: request.investmentEventType,
       usdValueWhenExecuted: commonValue,
       importId: null,
     });
@@ -99,10 +102,12 @@ export class TransactionManager {
     return document.toJSON<ITransactionModel>() as ITransactionModel;
   }
 
-  private async DeleteManyAndUncommit(filter: FilterQuery<ITransactionModel>): Promise<string[]> {
-    const moneyList: MoneyWithId[] = await TransactionModel.find(filter, {
+  private async DeleteManyAndUncommit(filter: FilterQuery<ITransactionModel>, alterBalance = true): Promise<string[]> {
+    const moneyList: DeleteManyTransaction[] = await TransactionModel.find(filter, {
       amount: 1,
-      currency: 1
+      currency: 1,
+      description: 1,
+      isActive: 1,
     });
 
     const totalCurrencyReversed = moneyList.reduce((acc, cur) => {
@@ -110,7 +115,9 @@ export class TransactionManager {
         acc[cur.currency] = 0;
       }
 
-      acc[cur.currency] -= cur.amount;
+      if (cur.isActive && !constants.calibartionTerms.includes(cur.description.toLowerCase())) {
+        acc[cur.currency] -= cur.amount;
+      }
 
       return acc;
     }, {});
@@ -122,7 +129,7 @@ export class TransactionManager {
 
     const deleted = await TransactionModel.deleteMany(filter);
 
-    if (deleted.deletedCount !== 0) {
+    if (deleted.deletedCount !== 0 && alterBalance) {
       for (const money of totalCurrency) {
         if (money.amount === 0) continue;
 
@@ -133,13 +140,13 @@ export class TransactionManager {
     return moneyList.map((money) => money.id);
   }
 
-  public BulkDeleteTransactions(ids: string[]): Promise<string[]> {
+  public BulkDeleteTransactions(ids: (string | ObjectId)[], alterBalance = true): Promise<string[]> {
     return this.DeleteManyAndUncommit({
       userUID: this.user.userUID,
       _id: {
         $in: ids,
       },
-    });
+    }, alterBalance);
   }
 
   public async SetActive(id: string, active: boolean): Promise<boolean> {
@@ -281,6 +288,31 @@ export class TransactionManager {
     }
 
     return true;
+  }
+
+  public async ConvertInvestmentTransactionToTrend(ids: (string | ObjectId)[]) {
+    if (!ids || ids.length === 0) return;
+    
+    const transactions = await TransactionModel.find({
+      userUID: this.user.userUID,
+      isInvestment: true,
+      _id: {
+        $in: ids,
+      },
+    });
+
+    for (const transaction of transactions) {
+      transaction.category = transaction.amount > 0 ? "trendUp" : "trendDown";
+      transaction.isInvestment = false;
+
+      await Promise.all([
+        this.balanceManager.CommitMoney({
+          amount: transaction.amount,
+          currency: transaction.currency,
+        }),
+        transaction.save(),
+      ]);
+    }
   }
 
   public async UndoImport(importId: string): Promise<number> {

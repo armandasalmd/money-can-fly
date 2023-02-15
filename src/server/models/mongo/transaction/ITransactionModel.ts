@@ -1,6 +1,6 @@
 import { ObjectId } from "mongoose";
 import { BaseModel } from "../BaseModel";
-import { Category, TransactionBank, Money, Currency } from "@utils/Types";
+import { Category, TransactionBank, Money, Currency, InvestmentEventType } from "@utils/Types";
 
 export interface ITransactionModel extends BaseModel, Money {
   category: Category;
@@ -10,6 +10,7 @@ export interface ITransactionModel extends BaseModel, Money {
   isActive: boolean;
   isImported: boolean;
   isInvestment: boolean;
+  investmentEventType?: InvestmentEventType;
   source: TransactionBank;
   usdValueWhenExecuted: number;
   currency: Currency;

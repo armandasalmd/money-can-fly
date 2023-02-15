@@ -10,7 +10,7 @@ import { IconComponentType } from "@utils/Types";
 export type PopConfirmPlacement = "bottomLeft" | "bottomCenter" | "bottomRight" | "topCenter" | "topLeft" | "topRight";
 
 export interface PopConfirmProps extends PropsWithChildren {
-  onConfirm(): void;
+  onConfirm?(): void;
   placement: PopConfirmPlacement;
   title?: string;
   cancelButtonProps?: ButtonProps;
@@ -40,9 +40,10 @@ export default function PopConfirm(props: PopConfirmProps) {
   }
 
   const popup = (
-    <div className={`popConfirm__popup popup popup--${props.placement}`} ref={popupRef} style={{
-      top: 48
-    }}>
+    <div
+      className={`popConfirm__popup popup popup--${props.placement}`}
+      ref={popupRef}
+    >
       {createElement(props.icon || WarningCircle, {
         className: "popup__icon",
         size: 20,
@@ -53,11 +54,13 @@ export default function PopConfirm(props: PopConfirmProps) {
       {props.description && <p className="popup__description">{props.description}</p>}
       <div className="popup__actions">
         <Button {...props.cancelButtonProps} onClick={onCancel} wrapContent small>
-          No
+          {props.cancelText || "No"}
         </Button>
-        <Button {...props.okButtonProps} onClick={onConfirm} wrapContent small type="danger">
-          Yes
-        </Button>
+        {props.onConfirm && (
+          <Button {...props.okButtonProps} onClick={onConfirm} wrapContent small type="danger">
+            {props.okText || "Yes"}
+          </Button>
+        )}
       </div>
     </div>
   );
@@ -66,7 +69,7 @@ export default function PopConfirm(props: PopConfirmProps) {
     if (!targetRef.current || !popupRef.current) return;
 
     const targetPos = targetRef.current.getBoundingClientRect();
-    
+
     if (placement.startsWith("bottom")) {
       const top = targetPos.top + targetPos.height + 8;
 
@@ -100,7 +103,6 @@ export default function PopConfirm(props: PopConfirmProps) {
       popupRef.current.style.bottom = `${bottom}px`;
       popupRef.current.style.top = "unset";
     }
-    
   }
 
   useEffect(() => {
