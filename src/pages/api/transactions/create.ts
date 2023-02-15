@@ -1,5 +1,5 @@
 import { IsIn, IsDateString, IsString, MinLength, IsNumber, IsPositive, IsOptional, IsBoolean } from "class-validator";
-import { Currency, Category, TransactionBank, Money } from "@utils/Types";
+import { Currency, Category, TransactionBank, Money, InvestmentEventType } from "@utils/Types";
 import { validatedApiRoute } from "@server/core";
 import constants from "@server/utils/Constants";
 import { TransactionManager } from "@server/managers";
@@ -15,7 +15,7 @@ export class CreateTransactionRequest implements Money {
   @IsIn(constants.allowed.categories)
   category: Category;
   @IsDateString()
-  date: string;
+  date: string | Date;
   @IsString()
   @MinLength(1, {
     message: "Enter description",
@@ -26,6 +26,9 @@ export class CreateTransactionRequest implements Money {
   @IsOptional()
   @IsBoolean()
   isInvestment?: boolean;
+  @IsOptional()
+  @IsString()
+  investmentEventType?: InvestmentEventType;
   @IsOptional()
   @IsBoolean()
   alterBalance?: boolean;

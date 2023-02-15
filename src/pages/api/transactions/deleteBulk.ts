@@ -11,8 +11,7 @@ export class DeleteBulkTransactionsRequest {
 }
 
 export default validatedApiRoute("DELETE", DeleteBulkTransactionsRequest, async (request, response, user) => {
-  const manager = new TransactionManager(user);
-  const deletedIds = await manager.BulkDeleteTransactions(request.body.ids);
+  const deletedIds = await new TransactionManager(user).BulkDeleteTransactions(request.body.ids);
 
   return response.status(200).json({ success: true, deletedIds });
 });

@@ -13,12 +13,12 @@ export interface TransactionItemProps {
 
 export default function TransactionItem(props: TransactionItemProps) {
   const { transaction: t } = props;
-  const isPositive = t.amount >= 0;
+  const deleteIcon = <Trash className="tItem__delete" size={24} color="var(--shade40)" />;
 
   return (
     <div
       className={classNames("tItem", {
-        "tItem--positive": isPositive,
+        "tItem--positive": t.amount >= 0,
         "tItem--investment": t.category === "investments",
       })}
     >
@@ -28,9 +28,27 @@ export default function TransactionItem(props: TransactionItemProps) {
         <p className="tItem__subtitle">{format(t.date, "yyyy-MM-dd • HH:mm")}</p>
       </div>
       <h3 className="tItem__amount">{amountForDisplay(t)}</h3>
-      <PopConfirm description={`Delete ${t.description}`} placement="topRight" onConfirm={() => props.onDelete?.(t._id)}>
-        <Trash className="tItem__delete" size={24} color="var(--shade40)"/>
-      </PopConfirm>
+      {t.isInvestment === true && (
+        <PopConfirm
+          description="Delete associated investment event to pop this transaction"
+          placement="topRight"
+          cancelText="Ok"
+          title="Cannot delete"
+        >
+          {deleteIcon}
+        </PopConfirm>
+      )}
+      {t.isInvestment !== true && (
+        <PopConfirm
+          description={`Delete ${t.description}`}
+          placement="topRight"
+          onConfirm={() => props.onDelete?.(t._id)}
+          cancelText="Cancel"
+          okText="Delete"
+        >
+          {deleteIcon}
+        </PopConfirm>
+      )}
     </div>
   );
 }

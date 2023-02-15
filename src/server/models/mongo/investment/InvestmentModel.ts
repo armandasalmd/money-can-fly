@@ -17,6 +17,11 @@ export const InvestmentEventSchema = new Schema<IInvestmentEventModel>({
     type: String,
     required: true,
   },
+  transaction: {
+    type: Schema.Types.ObjectId,
+    ref: "transaction",
+    required: false,
+  },
 });
 
 export const InvestmentSchema = new Schema<IInvestmentModel>({

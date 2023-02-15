@@ -96,6 +96,7 @@ export default function PreferencesDrawer(props: PreferencesDrawerProps) {
 
     resetState();
     setChanged(false);
+    setMessage("");
   }
 
   const saveButton = (

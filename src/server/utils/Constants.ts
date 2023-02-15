@@ -1,4 +1,5 @@
 const constants = {
+  calibartionTerms: ["calibration", "calibrate", "calibrated", "calibrating"],
   positiveCategories: ["deposits", "trendUp", "salary"],
   neutralCategories: ["investments"],
   negativeCategories: [

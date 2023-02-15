@@ -1,8 +1,8 @@
 import { CookieUser } from "@server/core";
-import { Category, CreateInvestmentEvent, Currency, Investment, Money } from "@utils/Types";
+import { Category, CreateInvestmentEvent, Currency, Investment, InvestmentEventType, Money } from "@utils/Types";
 import { amountForDisplay } from "@utils/Currency";
 import { InvestmentModel, InvestmentDocument, IInvestmentEventModel } from "@server/models";
-import { TransactionManager, PreferencesManager, CurrencyRateManager } from "@server/managers";
+import { TransactionManager, CurrencyRateManager } from "@server/managers";
 import { CreateInvestmentRequest } from "@endpoint/investments/create";
 import { InvestmentEventDocument } from "@server/models/mongo/investment/InvestmentModel";
 import { capitalise } from "@utils/Global";
@@ -55,12 +55,14 @@ export class InvestmentsManager {
     money: Money,
     user: CookieUser,
     description: string,
+    investmentEventType: InvestmentEventType,
     category: Category = "investments",
-    date: Date = new Date()
-  ): Promise<void> {
+    date: Date = new Date(),
+    alterBalance: boolean = true
+  ): Promise<string | undefined> {
     if (money.amount === 0) return;
 
-    await new TransactionManager(user).CreateTransaction({
+    return (await new TransactionManager(user).CreateTransaction({
       amount: money.amount,
       currency: money.currency,
       category,
@@ -68,11 +70,28 @@ export class InvestmentsManager {
       description,
       source: "cash",
       isInvestment: true,
-      alterBalance: true
-    });
+      investmentEventType,
+      alterBalance
+    }))._id;
   }
 
   public async CreateInvestment(user: CookieUser, request: CreateInvestmentRequest): Promise<Investment> {
+    let transactionId: string;
+    
+    if (request.subtractFromBalance) {
+      transactionId = await this.SubmitCashTransaction(
+        {
+          amount: request.initialDeposit.amount * -1,
+          currency: request.initialDeposit.currency,
+        },
+        user,
+        `Investment ${request.title}`,
+        "created",
+        "investments",
+        request.startDate
+      );
+    }
+    
     const newInvestment = new InvestmentModel({
       title: request.title,
       dateModified: new Date(),
@@ -83,6 +102,7 @@ export class InvestmentsManager {
           type: "created",
           valueChange: request.initialDeposit,
           title: "Investment created",
+          transaction: transactionId
         },
       ],
       userUID: user.userUID,
@@ -92,17 +112,6 @@ export class InvestmentsManager {
     const result: Investment = savedInvestment.toJSON();
 
     result.currentValue = request.initialDeposit;
-
-    if (request.subtractFromBalance) {
-      request.initialDeposit.amount *= -1;
-      await this.SubmitCashTransaction(
-        request.initialDeposit,
-        user,
-        `Investment ${request.title}`,
-        "investments",
-        request.startDate
-      );
-    }
 
     return result;
   }
@@ -114,10 +123,15 @@ export class InvestmentsManager {
       return false;
     }
 
-    const clientModel: Investment = await this.ToInvestment(investment);
+    const transactionsToDelete = investment.timelineEvents.filter(o => o?.type !== "adjustment").map(o => o.transaction);
+    const adjustmentTransactions = investment.timelineEvents.filter(o => o?.type === "adjustment").map(o => o.transaction);    
+    const transactionManager = new TransactionManager(user);
 
-    await this.SubmitCashTransaction(clientModel.currentValue, user, `Deleted investment ${clientModel.title}`);
-    await investment.delete();
+    await Promise.all([
+      transactionManager.BulkDeleteTransactions(transactionsToDelete),
+      transactionManager.ConvertInvestmentTransactionToTrend(adjustmentTransactions),
+      investment.delete()
+    ]);
 
     return true;
   }
@@ -148,17 +162,12 @@ export class InvestmentsManager {
       investment.timelineEvents = investment.timelineEvents.filter((x: InvestmentEventDocument) => x.id !== eventId);
       investment.dateModified = new Date();
 
-      await this.SubmitCashTransaction(
-        {
-          amount: toBeDeleted.valueChange.amount,
-          currency: toBeDeleted.valueChange.currency,
-        },
-        user,
-        `Deleted investment event ${capitalise(toBeDeleted.type)}`,
-        "investments",
-      );
+      const transactionManager = new TransactionManager(user);
 
-      await investment.save();
+      await Promise.all([
+        transactionManager.BulkDeleteTransactions([toBeDeleted.transaction], toBeDeleted.type !== "adjustment"),
+        investment.save()
+      ]);
 
       return true;
     }
@@ -168,6 +177,8 @@ export class InvestmentsManager {
 
   public async AddEvent(user: CookieUser, investmentId: string, event: CreateInvestmentEvent): Promise<string> {
     const investment = await InvestmentModel.findById(investmentId);
+
+    event.eventDate = new Date(event.eventDate);
 
     if (investment == null || investment.userUID !== user.userUID || event.type == "created") {
       return "Investment not found";
@@ -215,29 +226,35 @@ export class InvestmentsManager {
         break;
     }
 
+    let transactionId: string;
+    if (event.updateBalance) {
+      const message = event.updateNote || `${capitalise(event.type)} event`;
+
+      transactionId = await this.SubmitCashTransaction(
+        {
+          amount: event.type === "adjustment" ? event.valueChange.amount : -event.valueChange.amount,
+          currency: event.valueChange.currency,
+        },
+        user,
+        `[${investment.title}] ${message}`,
+        event.type,
+        undefined,
+        event.eventDate,
+        event.type !== "adjustment"
+      );
+    }
+
     const newEvent: IInvestmentEventModel = {
-      eventDate: new Date(event.eventDate),
+      eventDate: event.eventDate,
       title,
       type: event.type,
       valueChange: event.valueChange,
+      transaction: transactionId
     };
 
     investment.timelineEvents.push(newEvent);
     investment.timelineEvents.sort((a, b) => a.eventDate.getTime() - b.eventDate.getTime());
     investment.dateModified = new Date();
-
-    if (event.updateBalance && event.type !== "adjustment") {
-      const message = event.updateNote || `${capitalise(event.type)} event`;
-
-      await this.SubmitCashTransaction(
-        {
-          amount: event.valueChange.amount * -1,
-          currency: event.valueChange.currency,
-        },
-        user,
-        `[${investment.title}] ${message}`
-      );
-    }
 
     const savedInvestment = await investment.save();
 

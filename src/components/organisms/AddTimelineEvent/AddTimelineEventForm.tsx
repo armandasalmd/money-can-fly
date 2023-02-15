@@ -61,7 +61,7 @@ export default function AddTimelineEventForm(props: AddTimelineEventFormProps) {
       {props.eventType !== "adjustment" && (
         <Checkbox
           horizontal
-          title="Make changes to cash balance"
+          title="Link to a new transaction"
           value={props.data.updateBalance ? "checked" : "unchecked"}
           onChange={onCheckChange}
         />
