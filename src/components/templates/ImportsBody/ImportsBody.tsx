@@ -85,7 +85,7 @@ export default function ImportsBody(props: ImportsBodyProps) {
           multiple={false}
           accept=".csv"
           name="importFile"
-          maxFileSizeInMb={3}
+          maxFileSizeInMb={1}
           onSubmit={onSubmitFile}
           submitButtonText="Go to next step"
         />

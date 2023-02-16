@@ -32,10 +32,12 @@ export class TransactionManager {
 
     const [commonValue] = await Promise.all([
       CurrencyRateManager.getInstance().convert(request.amount, request.currency, "USD", date),
-      request.alterBalance ? this.balanceManager.CommitMoney({
-        amount: request.amount,
-        currency: request.currency,
-      }) : Promise.resolve(true),
+      request.alterBalance
+        ? this.balanceManager.CommitMoney({
+            amount: request.amount,
+            currency: request.currency,
+          })
+        : Promise.resolve(true),
     ]);
 
     const document = await TransactionModel.create({
@@ -61,7 +63,7 @@ export class TransactionManager {
   public async UpdateTransaction(request: UpdateTransactionRequest): Promise<ITransactionModel> {
     const date = new Date(request.date);
     const document = await TransactionModel.findById(request.id);
-    
+
     if (!document || document.userUID !== this.user.userUID) {
       return null;
     }
@@ -75,34 +77,39 @@ export class TransactionManager {
         amount: -document.amount,
         currency: document.currency,
       });
-      
+
       if (!uncommit) return null;
     }
-    
+
     document.amount =
-      constants.negativeCategories.includes(request.category) && request.amount > 0
-        ? -request.amount
-        : request.amount;
+      constants.negativeCategories.includes(request.category) && request.amount > 0 ? -request.amount : request.amount;
     document.category = request.category;
     document.currency = request.currency;
     document.date = date;
     document.dateUpdated = new Date();
     document.description = request.description;
     document.source = request.source;
-    document.usdValueWhenExecuted = await CurrencyRateManager.getInstance().convert(request.amount, request.currency, "USD", date);
+    document.usdValueWhenExecuted = await CurrencyRateManager.getInstance().convert(
+      request.amount,
+      request.currency,
+      "USD",
+      date
+    );
 
     await Promise.all([
       document.save(),
-      request.alterBalance ? this.balanceManager.CommitMoney({
-        amount: request.amount,
-        currency: request.currency,
-      }) : Promise.resolve(true),
+      request.alterBalance
+        ? this.balanceManager.CommitMoney({
+            amount: request.amount,
+            currency: request.currency,
+          })
+        : Promise.resolve(true),
     ]);
 
     return document.toJSON<ITransactionModel>() as ITransactionModel;
   }
 
-  private async DeleteManyAndUncommit(filter: FilterQuery<ITransactionModel>, alterBalance = true): Promise<string[]> {
+  public async DeleteManyAndUncommit(filter: FilterQuery<ITransactionModel>, alterBalance = true): Promise<string[]> {
     const moneyList: DeleteManyTransaction[] = await TransactionModel.find(filter, {
       amount: 1,
       currency: 1,
@@ -141,12 +148,15 @@ export class TransactionManager {
   }
 
   public BulkDeleteTransactions(ids: (string | ObjectId)[], alterBalance = true): Promise<string[]> {
-    return this.DeleteManyAndUncommit({
-      userUID: this.user.userUID,
-      _id: {
-        $in: ids,
+    return this.DeleteManyAndUncommit(
+      {
+        userUID: this.user.userUID,
+        _id: {
+          $in: ids,
+        },
       },
-    }, alterBalance);
+      alterBalance
+    );
   }
 
   public async SetActive(id: string, active: boolean): Promise<boolean> {
@@ -157,7 +167,7 @@ export class TransactionManager {
 
     item.isActive = active;
     item.dateUpdated = new Date();
-    
+
     const [saveResult] = await Promise.all([
       item.save(),
       this.balanceManager.CommitMoney({
@@ -171,7 +181,7 @@ export class TransactionManager {
 
   public async Search(request: SearchRequest): Promise<SearchResponse> {
     const query: FilterQuery<TransactionDocument> = {
-      userUID: this.user.userUID
+      userUID: this.user.userUID,
     };
 
     if (request.category) {
@@ -242,57 +252,34 @@ export class TransactionManager {
     };
   }
 
-  public async ImportSearch(importName: string, firstN: number): Promise<ITransactionModel[]> {
-    const results = await TransactionModel.find(
-      {
-        userUID: this.user.userUID,
-        isImported: true,
-        source: importName,
-      },
-      {
-        date: 1,
-        description: 1,
-        amount: 1,
-      }
-    )
+  public async ImportSearch(filter: FilterQuery<ITransactionModel>, firstN: number): Promise<ITransactionModel[]> {
+    const results = await TransactionModel.find(filter, {
+      date: 1,
+      description: 1,
+      amount: 1,
+    })
       .sort({
-        date: -1,
+        date: 1,
       })
       .limit(firstN);
 
     return results || [];
   }
 
-  public async BulkInsert(transactions: ITransactionModel[]): Promise<boolean> {
-    const newTransactions: TransactionDocument[] = await TransactionModel.insertMany(transactions);
+  public async BulkInsert(transactions: ITransactionModel[], alterBalance: boolean): Promise<boolean> {
+    if (!Array.isArray(transactions) || transactions.length === 0) return false;
 
-    // The rest is for commiting the balance changes
-    const total = transactions.reduce((acc, cur) => {
-      if (!acc[cur.currency]) acc[cur.currency] = 0;
-      acc[cur.currency] += cur.amount;
+    const [insertResult, commitSuccess] = await Promise.all([
+      TransactionModel.insertMany(transactions),
+      alterBalance ? this.balanceManager.CommitMixedMoneyList(transactions) : Promise.resolve(true),
+    ]);
 
-      return acc;
-    }, {});
-
-    const totalCurrency = Object.keys(total).map<Money>((currency) => ({
-      amount: total[currency],
-      currency: currency as Currency,
-    }));
-
-    if (newTransactions?.length > 0) {
-      for (const money of totalCurrency) {
-        if (money.amount === 0) continue;
-
-        if (!await this.balanceManager.CommitMoney(money)) return false;
-      }
-    }
-
-    return true;
+    return insertResult.length > 0 && commitSuccess;
   }
 
   public async ConvertInvestmentTransactionToTrend(ids: (string | ObjectId)[]) {
     if (!ids || ids.length === 0) return;
-    
+
     const transactions = await TransactionModel.find({
       userUID: this.user.userUID,
       isInvestment: true,
@@ -313,13 +300,5 @@ export class TransactionManager {
         transaction.save(),
       ]);
     }
-  }
-
-  public async UndoImport(importId: string): Promise<number> {
-    return (await this.DeleteManyAndUncommit({
-      userUID: this.user.userUID,
-      isImported: true,
-      importId,
-    })).length;
   }
 }

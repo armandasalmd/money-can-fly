@@ -62,6 +62,23 @@ export class BalanceManager {
     return update.modifiedCount > 0;
   }
 
+  public async CommitMixedMoneyList(moneyList: Money[]): Promise<boolean> {
+    if (!moneyList || !Array.isArray(moneyList)) return false;
+
+    const update = await UserBalanceModel.updateOne({
+      userUID: this.user.userUID,
+    }, {
+      $inc: moneyList.reduce((prev, curr) => {
+        const key = `balances.${curr.currency}.amount`;
+        prev[key] = prev[key] ? prev[key] + curr.amount : curr.amount;
+
+        return prev;
+      }, {} as any),
+    }, { upsert: true });
+
+    return update.modifiedCount > 0;
+  }
+
   public async GetBalanceSummary(currency: Currency): Promise<Money> {
     const balances = await this.GetBalances();
     const rateManager = CurrencyRateManager.getInstance();

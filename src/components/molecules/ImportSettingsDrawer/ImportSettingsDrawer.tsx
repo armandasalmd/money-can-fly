@@ -138,7 +138,7 @@ export default function ImportSettingsDrawer(props: ImportSettingsDrawerProps) {
                 values={state.categoryFallbacks[category] || []}
                 editable
                 onChange={onChangeCallback(onCategoryTermsChange)}
-                emptyTitle="No ignore terms"
+                emptyTitle="No category terms"
                 placeholder="Enter a term"
               />
             )}

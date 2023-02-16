@@ -36,3 +36,18 @@
     }
   }
 }
+
+.tagList {
+  $base: &;
+
+  &--vertical {
+    #{$base}__tags {
+      display: flex;
+      flex-direction: column;
+
+      .tag {
+        width: fit-content;
+      }
+    }
+  }
+}

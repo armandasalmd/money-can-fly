@@ -5,6 +5,10 @@
   padding: $unit * 0.5 $unit * 0.75;
   border-bottom: $defaultBorder;
 
+  &__details {
+    cursor: pointer;
+  }
+
   &__title {
     font-size: 1.1rem;
     font-weight: 500;

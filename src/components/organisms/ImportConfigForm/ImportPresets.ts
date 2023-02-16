@@ -26,7 +26,7 @@ const customImportPreset: ImportPreset = {
   formState: {
     alterBalance: true,
     bank: "cash",
-    ignoreDescriptionPattern: "",
+    ignoreDescriptionPattern: "Empty",
     defaultCurrency: "USD",
     categoryColumn: "",
     hasCurrencyColumn: false,
@@ -40,12 +40,31 @@ const customImportPreset: ImportPreset = {
   },
 };
 
+const testImportPreset: ImportPreset = {
+  type: "test",
+  formState: {
+    alterBalance: true,
+    bank: "cash",
+    ignoreDescriptionPattern: "Empty",
+    defaultCurrency: "EUR",
+    categoryColumn: "category",
+    hasCurrencyColumn: true,
+    hasTransactionFeeColumn: true,
+    hasCategoryColumn: true,
+    transactionDateColumn: "date",
+    descriptionColumn: "description",
+    amountColumn: "sum",
+    currencyColumn: "curr",
+    transactionFeeColumn: "fee",
+  },
+};
+
 const barclaysImportPreset: ImportPreset = {
   type: "barclays",
   formState: {
     alterBalance: true,
     bank: "barclays",
-    ignoreDescriptionPattern: "BARCLAYS",
+    ignoreDescriptionPattern: "BARCLAYS,Empty",
     defaultCurrency: "GBP",
     categoryColumn: "",
     hasCurrencyColumn: false,
@@ -62,7 +81,7 @@ const revolutImportPreset: ImportPreset = {
   formState: {
     alterBalance: true,
     bank: "revolut",
-    ignoreDescriptionPattern: "Cash at",
+    ignoreDescriptionPattern: "Cash at,Empty",
     defaultCurrency: "EUR",
     categoryColumn: "",
     hasCurrencyColumn: true,
@@ -81,6 +100,7 @@ type ImportPresetCollection = {
 }
 
 const importPresets: ImportPresetCollection = {
+  "test": testImportPreset,
   "custom": customImportPreset,
   "barclays": barclaysImportPreset,
   "revolut": revolutImportPreset,

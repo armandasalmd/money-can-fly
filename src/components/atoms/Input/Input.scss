@@ -102,14 +102,15 @@
 
   &--white {
     input {
-      background-color: rgba(mix($shade0, $shade100, 90%), 65%);
+      background-color: rgba(mix($shade0, $shade100, 82%), 65%);
 
       &::placeholder {
-        color: var(--shade40);
+        color: var(--shade50);
       }
 
       &:focus {
         @include focusOutline(rgba($colorPrimary, 65%));
+        background-color: rgba(mix($shade0, $shade100, 82%), 40%);
       }
     }
   }

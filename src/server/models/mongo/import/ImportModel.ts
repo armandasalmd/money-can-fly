@@ -2,6 +2,11 @@ import { Schema, model, Document, models, Model } from "mongoose";
 import { IImportModel } from "./IImportModel";
 
 const ImportSchema = new Schema<IImportModel>({
+  balanceWasAltered: {
+    type: Boolean,
+    required: false,
+    default: true
+  },
   userUID: {
     type: String,
     required: true,
@@ -22,7 +27,11 @@ const ImportSchema = new Schema<IImportModel>({
   source: {
     type: String,
     required: true,
-  }
+  },
+  logs: {
+    type: String,
+    required: false,
+  },
 });
 
 export interface ImportDocument extends IImportModel, Document {}

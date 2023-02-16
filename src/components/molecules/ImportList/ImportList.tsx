@@ -9,11 +9,12 @@ export interface ImportListProps {
   showEmpty: boolean;
   onLoadMore: () => void;
   onUndo: (id: string) => void;
+  onClick?: (item: Import) => void;
 }
 
 export default function ImportList(props: ImportListProps) {
   let items = props.items.map((item) => (
-    <ImportItem key={item._id} {...item} onUndo={props.onUndo} />
+    <ImportItem key={item._id} {...item} onUndo={props.onUndo} onClick={() => props.onClick(item)} />
   ));
 
   if (props.showSkeletons) {

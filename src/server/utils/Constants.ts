@@ -48,6 +48,9 @@ const constants = {
     investmentEventTypes: ["deposit", "adjustment", "withdrawal", "created"],
   },
   sessionMaxAge: 259200, // number in seconds (3days)
+  importBatchSize: 500,
+  importDuplicateSearchLimit: 2500,
+  importLogsLimit: 200
 };
 
 export default constants;

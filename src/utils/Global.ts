@@ -112,3 +112,11 @@ export function getDateRange(periodStart: Date = new Date()): DateRange {
 export function getPeriodNow(): DateRange {
   return getDateRange();
 }
+
+export function getImportTitle(item: {source: string, date: string | Date}): string {
+  if (!item) return "";
+  return `${capitalise(item?.source)} - ${format(
+    typeof item.date === "string" ? new Date(item.date) : item.date,
+    "dd/MM/yyyy HH:mm"
+  )}`;
+}

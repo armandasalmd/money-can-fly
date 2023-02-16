@@ -1,9 +1,10 @@
-import { ImportList } from "@molecules/index";
-import { toDisplayDate } from "@utils/Global";
+import { ImportList, TagList } from "@molecules/index";
+import { getImportTitle, toDisplayDate } from "@utils/Global";
 import { Import } from "@utils/Types";
 import { useEffect, useState } from "react";
 import useSWRInfinite from "swr/infinite";
-import { Message } from "@atoms/index";
+import { Drawer, Message } from "@atoms/index";
+import { ReadLogsResponse } from "@endpoint/imports/readLogs";
 
 const fetcher = (url: string) =>
   fetch(url)
@@ -23,6 +24,7 @@ export default function ImportSidebar(props: ImportSidebarProps) {
     (index) => `/api/imports/read?skip=${index * PAGE_SIZE}&take=${PAGE_SIZE}`,
     fetcher
   );
+  const [importLogsData, setImportLogsData] = useState<ReadLogsResponse | null>(null);
 
   function onLoadMore() {
     setSize(size + 1);
@@ -38,7 +40,7 @@ export default function ImportSidebar(props: ImportSidebarProps) {
 
   const latestImport = imports[0];
   const latestImportDate = latestImport
-    ? `Last import ${toDisplayDate(latestImport.date)} • Total ${imports.length} imports`
+    ? `Last import ${toDisplayDate(latestImport.date)} • Showing ${imports.length} imports`
     : "No imports yet";
 
   function onUndo(id: string) {
@@ -54,6 +56,16 @@ export default function ImportSidebar(props: ImportSidebarProps) {
         if (data.success === true) {
           props.setRunningImportId(id);
           setMessage("Successfully triggered import undo.");
+        }
+      });
+  }
+
+  function onShowLogs(item: Import) {
+    fetch(`/api/imports/readLogs?importId=${item._id}`)
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.success === true) {
+          setImportLogsData(data.result);
         }
       });
   }
@@ -100,7 +112,17 @@ export default function ImportSidebar(props: ImportSidebarProps) {
         showLoadMore={!isEnd}
         showSkeletons={isLoadingMore}
         onLoadMore={onLoadMore}
+        onClick={onShowLogs}
       />
+      {
+        importLogsData !== null && (
+          <Drawer onClose={() => setImportLogsData(null)} open title="Import logs" subtitle={getImportTitle(importLogsData)}>
+            <p style={{marginBottom: 16}}>{importLogsData?.message}.{` Balance was ${importLogsData.balanceWasAltered ? "" : "not "}altered.`}</p>
+            <TagList emptyTitle="No process logs" vertical editable={false} values={importLogsData?.logs ?? []} />
+          </Drawer>
+        )
+      }
+      
     </>
   );
 }

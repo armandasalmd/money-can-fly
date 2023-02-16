@@ -1,6 +1,6 @@
 import { useState } from "react";
+import classNames from "classnames";
 import { Input, Tag } from "@atoms/index";
-
 interface TagListProps {
   title?: string;
   error?: string;
@@ -10,11 +10,13 @@ interface TagListProps {
   fixedWidth?: boolean;
   emptyTitle?: string;
   placeholder?: string;
-  // onAdd(value: string): void;
-  // onRemove?(value: string): void;
+  vertical?: boolean;
 }
 
 export default function TagList(props: TagListProps) {
+  const classes = classNames("tagList", {
+    "tagList--vertical": props.vertical,
+  });
   const [newValue, setNewValue] = useState("");
 
   function handleRemove(value: string) {
@@ -28,7 +30,7 @@ export default function TagList(props: TagListProps) {
   }
 
   return (
-    <div className="tagList">
+    <div className={classes}>
       {props.editable && <Input
         fixedWidth={props.fixedWidth}
         style={{ marginBottom: "0.65rem" }}
