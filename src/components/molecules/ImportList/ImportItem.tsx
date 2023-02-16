@@ -3,7 +3,7 @@ import { format } from "date-fns";
 import { HourglassMedium, CheckSquare, XSquare, ClockCounterClockwise } from "phosphor-react";
 
 import { Import, ImportState } from "@utils/Types";
-import { capitalise } from "@utils/Global";
+import { capitalise, callIfFunction, getImportTitle } from "@utils/Global";
 import { Button, PopConfirm } from "@atoms/index";
 
 type ImportMapper = {
@@ -26,6 +26,7 @@ const colorDict: ImportMapper = {
 
 interface ImportItemProps extends Import {
   onUndo: (id: string) => void;
+  onClick?: () => void;
 }
 
 export default function ImportItem(props: ImportItemProps) {
@@ -50,11 +51,8 @@ export default function ImportItem(props: ImportItemProps) {
 
   return (
     <div className="iItem">
-      <div className="iItem__details">
-        <h5 className="iItem__title">{`${capitalise(props.source)} - ${format(
-          new Date(props.date),
-          "dd/MM/yyyy HH:mm"
-        )}`}</h5>
+      <div className="iItem__details" onClick={() => callIfFunction(props.onClick)}>
+        <h5 className="iItem__title">{getImportTitle(props)}</h5>
         <p className="iItem__subtitle">{props.message}</p>
       </div>
       <div className="iItem__right">

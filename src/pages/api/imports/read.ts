@@ -19,8 +19,7 @@ export default validatedApiRoute("GET", ReadImportsRequest, async (request, resp
   const skip = parseInt(request.query.skip as string);
   const take = parseInt(request.query.take as string);
   
-  const importManager = new ImportManager(user);
-  const result = await importManager.ReadImports(skip, take);
+  const result = await new ImportManager(user).ReadImports(skip, take);
 
   return response.status(200).json({
     success: true,

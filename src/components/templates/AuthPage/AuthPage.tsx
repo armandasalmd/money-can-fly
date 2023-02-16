@@ -126,7 +126,7 @@ export default function AuthPage(props: AuthFormProps) {
       <Image
         className="auth__background"
         alt="login-background"
-        src="/images/unsplash/sunset.jpg"
+        src="/images/unsplash/tree-tops.jpg"
         layout="fill"
       />
       <div className="auth__container">
@@ -155,7 +155,7 @@ export default function AuthPage(props: AuthFormProps) {
             </div>
           </div>
           <div className="auth__footer">
-            <p className="auth__footerText">&copy; 2021 Armandas Barkauskas</p>
+            <p className="auth__footerText">&copy; 2023 Armandas Barkauskas</p>
           </div>
         </div>
       </div>

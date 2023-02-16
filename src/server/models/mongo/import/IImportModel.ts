@@ -6,4 +6,6 @@ export interface IImportModel extends BaseModel {
   source: TransactionBank;
   message: string;
   importState: ImportState;
+  balanceWasAltered?: boolean;
+  logs?: string;
 }

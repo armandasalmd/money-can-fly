@@ -2,7 +2,7 @@ import constants from "@server/utils/Constants";
 import { Currency, TransactionBank } from "@utils/Types";
 import { IsBoolean, IsDefined, IsIn, IsOptional, IsString } from "class-validator";
 import { validatedApiRoute } from "@server/core";
-import { ImportManager } from "@server/managers";
+import { ImportProcessManager } from "@server/managers/importProcess";
 
 export class StartImportRequest{
   @IsBoolean()
@@ -45,8 +45,7 @@ export default validatedApiRoute("POST", StartImportRequest, async (request, res
   // middleware cannot handle big payloads in body
   if (!user) return response.status(401).json({ success: false, message: "Unauthorized" });
 
-  const importManager = new ImportManager(user);
-  const newImport = await importManager.RunImportBackgroundProcess(request.body);
+  const newImport = await new ImportProcessManager(user, request.body).StartProcess();
 
-  return response.status(200).json({ success: true, import: newImport });
+  return response.status(200).json({ success: !!newImport, import: newImport });
 });

@@ -3,6 +3,7 @@ import classNames from "classnames";
 
 import { Size, Category } from "@utils/Types";
 import AllCategories from "./TransactionCategories";
+import { capitalise } from "@utils/Global";
 
 export interface CategoryIconProps {
   category: Category;
@@ -25,7 +26,7 @@ export default function CategoryIcon(props: CategoryIconProps) {
   const hexTransparency = "40"; // 25% transparency
 
   return (
-    <div className={classes} style={{backgroundColor: categoryMeta.color + hexTransparency}}>
+    <div className={classes} title={capitalise(props.category)} style={{backgroundColor: categoryMeta.color + hexTransparency}}>
       {createElement(categoryMeta.icon, {
         className: "categoryIcon__icon",
         color: categoryMeta.color,
