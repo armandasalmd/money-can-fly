@@ -32,7 +32,7 @@ h4,
 h5 {
   margin: 0;
   padding: 0;
-  color: var(--color-text);
+  color: var(--color-text) default;
   font-family: $specialFont;
   font-weight: 600;
 }
@@ -44,7 +44,7 @@ div {
   font-size: 16px;
   font-family: $defaultFont;
   font-weight: 400;
-  color: var(--color-text);
+  color: var(--color-text) default;
 }
 
 ::-webkit-scrollbar-track {
