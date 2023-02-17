@@ -32,7 +32,6 @@ export class ImportProcessManager extends BaseImportProcessManager {
   private AddLog(log: string) {
     if (this.logs.length >= constants.importLogsLimit) {
       if (!this.logLimitReached) {
-        this.logs.push("Import logs limit reached. Truncating...");
         this.logLimitReached = true;
       }
       if (log.match("failed")) {
@@ -43,6 +42,11 @@ export class ImportProcessManager extends BaseImportProcessManager {
     }
 
     this.logs.push(log);
+  }
+
+  private GetLogs() {
+    if (this.logLimitReached) this.logs.push("Import logs limit reached. Truncating...");
+    return this.logs;
   }
 
   private BinaryFindFirstDateOccurenceId(a: ITransactionModel[], targetTime: number) {
@@ -363,7 +367,7 @@ export class ImportProcessManager extends BaseImportProcessManager {
   private async UpdateState(state: ImportState, message: string): Promise<void> {
     this.importModel.message = message;
     this.importModel.importState = state;
-    this.importModel.logs = this.logs.join("\n");
+    this.importModel.logs = this.GetLogs().join("\n");
 
     await this.importModel.save();
   }
