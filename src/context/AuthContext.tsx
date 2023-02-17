@@ -31,7 +31,6 @@ export function AuthContextProvider({ children }) {
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      console.log(user);
       if (user) {
         // If firebase user exists but api token is expired, re-login to api
         if (AuthUtils.isApiTokenExpired()) {          
