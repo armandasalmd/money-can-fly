@@ -35,6 +35,10 @@ export class ImportProcessManager extends BaseImportProcessManager {
         this.logs.push("Import logs limit reached. Truncating...");
         this.logLimitReached = true;
       }
+      if (log.match("failed")) {
+        this.logs.shift();
+        this.logs.push(log);
+      }
       return;
     }
 
@@ -307,6 +311,11 @@ export class ImportProcessManager extends BaseImportProcessManager {
         } ${row.transactionDate === null ? "date" : ""}`
       );
       return "failed";
+    }
+
+    if (row.amount === 0) {
+      this.AddLog(`Row ${row.rowId} skipped - amount is 0`);
+      return "skipped";
     }
 
     if (row.description.length === 0) row.description = "No description";
