@@ -35,14 +35,17 @@ export function AuthContextProvider({ children }) {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       
-      if (!user || AuthUtils.isApiTokenExpired()) {
+      if (user || AuthUtils.isApiTokenExpired()) {
         if (!AuthUtils.apiLoginInProgress()) {
           AuthUtils.clearApiExpiry();
-          setLoading(true);
           loginToApi(user).then((success) => {
             setUser(success ? user : null);
           });
         }
+      }
+
+      if (!user) {
+        logout();
       }
 
       setLoading(false);
@@ -52,8 +55,9 @@ export function AuthContextProvider({ children }) {
   }, []);
 
   async function loginToApi(user: User): Promise<boolean> {
+    if (!user) return true;
+
     AuthUtils.setApiLoginInProgress(true);
-    
     const token = await user.getIdToken(true);
 
     const response = await fetch("/api/auth/login", {
@@ -99,8 +103,12 @@ export function AuthContextProvider({ children }) {
   }
 
   async function logout() {
+    AuthUtils.clearApiExpiry();
+    
+    AuthUtils.setApiLoginInProgress(true);
     const response = await fetch("/api/auth/logout");
     const data = await response.json();
+    AuthUtils.setApiLoginInProgress(false);
 
     if (data?.success === true) {
       setUser(null);
