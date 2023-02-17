@@ -6,6 +6,7 @@ import {
   type User,
   type UserCredential,
 } from "firebase/auth";
+import { useRouter } from "next/router";
 import { auth } from "../../firebase";
 import AuthUtils from "@utils/Auth";
 
@@ -28,6 +29,7 @@ export const useAuth = () => useContext<UseAuthProps>(AuthContext);
 export function AuthContextProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     AuthUtils.setApiLoginInProgress(false);
@@ -35,14 +37,18 @@ export function AuthContextProvider({ children }) {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       
-      if (!user || AuthUtils.isApiTokenExpired()) {
+      if (user || AuthUtils.isApiTokenExpired()) {
         if (!AuthUtils.apiLoginInProgress()) {
           AuthUtils.clearApiExpiry();
-          setLoading(true);
           loginToApi(user).then((success) => {
             setUser(success ? user : null);
           });
         }
+      }
+
+      if (!user) {
+        router.push("/login");
+        logout();
       }
 
       setLoading(false);
@@ -52,8 +58,9 @@ export function AuthContextProvider({ children }) {
   }, []);
 
   async function loginToApi(user: User): Promise<boolean> {
+    if (!user) return true;
+
     AuthUtils.setApiLoginInProgress(true);
-    
     const token = await user.getIdToken(true);
 
     const response = await fetch("/api/auth/login", {
@@ -99,8 +106,12 @@ export function AuthContextProvider({ children }) {
   }
 
   async function logout() {
+    AuthUtils.clearApiExpiry();
+    
+    AuthUtils.setApiLoginInProgress(true);
     const response = await fetch("/api/auth/logout");
     const data = await response.json();
+    AuthUtils.setApiLoginInProgress(false);
 
     if (data?.success === true) {
       setUser(null);
