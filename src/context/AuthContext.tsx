@@ -6,6 +6,7 @@ import {
   type User,
   type UserCredential,
 } from "firebase/auth";
+import { useRouter } from "next/router";
 import { auth } from "../../firebase";
 import AuthUtils from "@utils/Auth";
 
@@ -28,6 +29,7 @@ export const useAuth = () => useContext<UseAuthProps>(AuthContext);
 export function AuthContextProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
   useEffect(() => {
     AuthUtils.setApiLoginInProgress(false);
@@ -45,6 +47,7 @@ export function AuthContextProvider({ children }) {
       }
 
       if (!user) {
+        router.push("/login");
         logout();
       }
 
