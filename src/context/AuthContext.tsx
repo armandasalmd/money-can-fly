@@ -30,19 +30,19 @@ export function AuthContextProvider({ children }) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    AuthUtils.setApiLoginInProgress(false);
+
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        // If firebase user exists but api token is expired, re-login to api
-        if (AuthUtils.isApiTokenExpired()) {          
+      setUser(user);
+      
+      if (!user || AuthUtils.isApiTokenExpired()) {
+        if (!AuthUtils.apiLoginInProgress()) {
+          AuthUtils.clearApiExpiry();
+          setLoading(true);
           loginToApi(user).then((success) => {
             setUser(success ? user : null);
           });
-        } else {
-          setUser(user);
         }
-      } else {
-        setUser(null);
-        AuthUtils.clearApiExpiry();
       }
 
       setLoading(false);
@@ -53,7 +53,7 @@ export function AuthContextProvider({ children }) {
 
   async function loginToApi(user: User): Promise<boolean> {
     AuthUtils.setApiLoginInProgress(true);
-
+    
     const token = await user.getIdToken(true);
 
     const response = await fetch("/api/auth/login", {
@@ -65,7 +65,7 @@ export function AuthContextProvider({ children }) {
     });
     const data = await response.json();
     
-    AuthUtils.setApiLoginInProgress(true);
+    AuthUtils.setApiLoginInProgress(false);
 
     if (data?.success === true && data.user?.exp) {
       AuthUtils.setApiExpiry(data.user.exp);

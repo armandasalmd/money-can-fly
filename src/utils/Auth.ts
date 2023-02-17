@@ -13,7 +13,7 @@ const AuthUtils = {
       const currentDate = new Date();
       return expiryDateObj <= currentDate;
     }
-    return null;
+    return true;
   },
   apiLoginInProgress: () => {
     return localStorage.getItem("apiLoginInProgress") === "true";

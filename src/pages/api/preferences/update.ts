@@ -9,7 +9,7 @@ type BalancesMap = {
   [key in Currency]: number;
 }
 
-const breakpointsErrorMessage = "Value must be between 6 and 16";
+const breakpointsErrorMessage = "Value must be between 6 and 24";
 
 export class UpdatePreferencesRequest {
   @IsIn(constants.allowed.currencies)
@@ -25,7 +25,7 @@ export class UpdatePreferencesRequest {
   @Min(6, {
     message: breakpointsErrorMessage,
   })
-  @Max(16, {
+  @Max(24, {
     message: breakpointsErrorMessage,
   })
   balanceChartBreakpoints: number;
