@@ -117,7 +117,7 @@ export default function ImportSidebar(props: ImportSidebarProps) {
       {
         importLogsData !== null && (
           <Drawer onClose={() => setImportLogsData(null)} open title="Import logs" subtitle={getImportTitle(importLogsData)}>
-            <p style={{marginBottom: 16}}>{importLogsData?.message}.{` Balance was ${importLogsData.balanceWasAltered ? "" : "not "}altered.`}</p>
+            <p className="text" style={{marginBottom: 16}}>{importLogsData?.message}.{` Balance was ${importLogsData.balanceWasAltered ? "" : "not "}altered.`}</p>
             <TagList emptyTitle="No process logs" vertical editable={false} values={importLogsData?.logs ?? []} />
           </Drawer>
         )

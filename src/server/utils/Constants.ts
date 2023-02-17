@@ -50,7 +50,7 @@ const constants = {
   sessionMaxAge: 259200, // number in seconds (3days)
   importBatchSize: 500,
   importDuplicateSearchLimit: 2500,
-  importLogsLimit: 200
+  importLogsLimit: 250
 };
 
 export default constants;
