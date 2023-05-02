@@ -72,17 +72,14 @@ export class TransactionManager {
       request.amount = -request.amount;
     }
 
-    if (request.alterBalance) {
-      const uncommit = this.balanceManager.CommitMoney({
-        amount: -document.amount,
-        currency: document.currency,
-      });
+    const commitList = request.alterBalance ? [{
+      amount: -document.amount,
+      currency: document.currency,
+    }] : []; // Uncommit old value
 
-      if (!uncommit) return null;
-    }
+    const positiveAmount = request.amount > 0 ? request.amount : -request.amount;
 
-    document.amount =
-      constants.negativeCategories.includes(request.category) && request.amount > 0 ? -request.amount : request.amount;
+    document.amount = constants.negativeCategories.includes(request.category) ? -positiveAmount : positiveAmount;
     document.category = request.category;
     document.currency = request.currency;
     document.date = date;
@@ -90,20 +87,22 @@ export class TransactionManager {
     document.description = request.description;
     document.source = request.source;
     document.usdValueWhenExecuted = await CurrencyRateManager.getInstance().convert(
-      request.amount,
-      request.currency,
+      document.amount,
+      document.currency,
       "USD",
       date
     );
 
+    if (request.alterBalance) {
+      commitList.push({
+        amount: document.amount,
+        currency: document.currency,
+      });
+    }
+
     await Promise.all([
       document.save(),
-      request.alterBalance
-        ? this.balanceManager.CommitMoney({
-            amount: request.amount,
-            currency: request.currency,
-          })
-        : Promise.resolve(true),
+      this.balanceManager.CommitMixedMoneyList(commitList),
     ]);
 
     return document.toJSON<ITransactionModel>() as ITransactionModel;

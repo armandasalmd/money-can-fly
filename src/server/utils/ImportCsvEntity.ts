@@ -47,7 +47,8 @@ export class ImportCsvEntity {
     });
 
     for (let i = 1; i < lines.length; i++) {
-      this.rows.push({ values: lines[i].replace("\r", "").split(",") });
+      // Splits by , but ignores commas inside quotes
+      this.rows.push({ values: lines[i].replaceAll("\r", "").split(new RegExp(`,(?=(?:[^"]*"[^"]*")*[^"]*$)`)) });
     }
   }
 
@@ -108,9 +109,17 @@ export class ImportCsvEntity {
       case "string":
         return rawValue;
       case "number": {
-        const parsedValue = parseFloat(rawValue);
+        let parsedValue = parseFloat(rawValue);
 
-        return isNaN(parsedValue) ? null : parsedValue;
+        if (isNaN(parsedValue)) {
+          parsedValue = parseFloat(rawValue.replaceAll(/"|,/g, ""));
+
+          if (isNaN(parsedValue)) {
+            return null;
+          }
+        }
+
+        return parsedValue;
       }
       case "date": {
         let parsedDate = new Date(rawValue.replace(/([0-9]+)\/([0-9]+)/,'$2/$1'));

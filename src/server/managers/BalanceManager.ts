@@ -50,7 +50,7 @@ export class BalanceManager {
 
   public async CommitMoney(money: Money): Promise<boolean> {
     if (money === null || typeof money !== "object") return false;
-
+    
     const update = await UserBalanceModel.updateOne({
       userUID: this.user.userUID,
     }, {
@@ -64,6 +64,7 @@ export class BalanceManager {
 
   public async CommitMixedMoneyList(moneyList: Money[]): Promise<boolean> {
     if (!moneyList || !Array.isArray(moneyList)) return false;
+    if (moneyList.length === 0) return true;
 
     const update = await UserBalanceModel.updateOne({
       userUID: this.user.userUID,

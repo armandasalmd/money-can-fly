@@ -30,7 +30,7 @@ export default function InsightsCollection(props: InsightsCollectionProps) {
           {amountForDisplay(data.totalWorth)}
           <span>/ {amountForDisplay(data.availableBalance)}</span>
         </h1>
-        <label>{amountForDisplay(data.spentInLastWeek)} spent in last 7 days</label>
+        <label>{amountForDisplay(data.spentInLastWeek)} spent in last 30 days</label>
       </Insight>
       <Insight loading={loading} title="Previous month's profit" color="warning">
         <h1>{amountForDisplay(data.lastMonthProfit)}</h1>

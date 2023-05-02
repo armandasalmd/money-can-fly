@@ -172,6 +172,7 @@ export default function PreferencesDrawer(props: PreferencesDrawerProps) {
           name="monthlyBudgetStartDay"
           onSelect={(date, name) => onInputChange(date.getDate(), name)}
           value={monthlyBudgetStartDay}
+          goToToday
         />
         <h3>Cash balance</h3>
         {currencyBalanceInputs}
@@ -182,6 +183,7 @@ export default function PreferencesDrawer(props: PreferencesDrawerProps) {
           name="forecastPivotDate"
           onSelect={onInputChange}
           value={state.forecastPivotDate}
+          goToToday
         />
         <CurrencyInput
           disableCurrencyChange

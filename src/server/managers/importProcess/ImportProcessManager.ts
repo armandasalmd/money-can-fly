@@ -104,7 +104,7 @@ export class ImportProcessManager extends BaseImportProcessManager {
       return terms?.some((term: string | RegExp) => term instanceof RegExp && term.test(description)) ?? false;
     });
 
-    return (category && (category[0] as Category)) || "other";
+    return (category && (category[0] as Category)) || null;
   }
 
   private HasDuplicate(row: ImportRow): boolean {
@@ -188,7 +188,7 @@ export class ImportProcessManager extends BaseImportProcessManager {
   private StepCleanupBarclaysDescription(rows: ImportRow[]) {
     rows?.forEach((row) => {
       if (row && row.description)
-        row.description = capitalise(row.description.replace(/ON.*$/, "").trim().toLowerCase());
+        row.description = capitalise(row.description.replace(/ ON.*$/, "").trim().toLowerCase());
     });
   }
 
@@ -330,13 +330,15 @@ export class ImportProcessManager extends BaseImportProcessManager {
         return "skipped";
       }
 
+      const defaultCategory: Category = row.amount < 0 ? "other" : "trendUp";
+
       if (!this.options.categoryColumn || !row.category) {
-        row.category = this.GetFallbackCategory(row.description);
+        row.category = this.GetFallbackCategory(row.description) || defaultCategory;
       } else {
         row.category = row.category.toLowerCase();
 
         if (!constants.allowed.categories.includes(row.category) || row.category === "other") {
-          row.category = this.GetFallbackCategory(row.description);
+          row.category = this.GetFallbackCategory(row.description) || defaultCategory;
         }
       }
 

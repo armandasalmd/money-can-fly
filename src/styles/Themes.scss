@@ -99,6 +99,10 @@ $themeLightClass: ".theme--light";
     color: #{$colorTextLight};
   }
 
+  select {
+    background-color: var(--bg-select-menu);
+  }
+
   .invertColors {
     filter: invert(0.8) hue-rotate(160deg) saturate(2);
   }
