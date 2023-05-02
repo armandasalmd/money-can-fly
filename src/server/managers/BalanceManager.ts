@@ -50,7 +50,7 @@ export class BalanceManager {
 
   public async CommitMoney(money: Money): Promise<boolean> {
     if (money === null || typeof money !== "object") return false;
-    console.log("CMM", money);
+    
     const update = await UserBalanceModel.updateOne({
       userUID: this.user.userUID,
     }, {
