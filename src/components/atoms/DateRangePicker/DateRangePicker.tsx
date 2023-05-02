@@ -1,5 +1,6 @@
 import { useState, useRef } from "react";
 import classNames from "classnames";
+import { addYears } from "date-fns";
 import { Calendar as CalendarIcon } from "phosphor-react";
 import { DayPicker, DateRange, DayPickerRangeProps } from "react-day-picker";
 import { useOutsideClick } from "@hooks/index";
@@ -32,6 +33,7 @@ function toReadDate(day: DateRange | undefined) {
 }
 
 export default function DatePickerRange(props: DatePickerRangeProps) {
+  const now = new Date();
   const thisRef = useRef(null);
   const [show, setShow] = useState(false);
   const [datePeriod, setDatePeriod] = useState<DateRange | undefined>(
@@ -71,6 +73,9 @@ export default function DatePickerRange(props: DatePickerRangeProps) {
         {show && (
           <DayPicker
             className="dateRangePicker__picker"
+            fromYear={addYears(now, -6).getFullYear()}
+            toYear={addYears(now, 6).getFullYear()}
+            captionLayout="dropdown"
             mode="range"
             {...props.options}
             onSelect={onDatePeriodChange}

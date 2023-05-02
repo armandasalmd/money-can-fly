@@ -2,7 +2,7 @@ import classNames from "classnames";
 import { useState, useRef } from "react";
 import { Calendar } from "phosphor-react";
 import { DayPicker } from "react-day-picker";
-import format from "date-fns/format";
+import { format, isSameMonth, addYears } from "date-fns";
 
 import { Button } from "@atoms/index";
 import { useOutsideClick } from "@hooks/index";
@@ -16,6 +16,7 @@ export interface DatePickerProps {
   required?: boolean;
   value: Date | undefined;
   error?: string;
+  goToToday?: boolean;
 }
 
 export default function DatePicker(props: DatePickerProps) {
@@ -23,6 +24,9 @@ export default function DatePicker(props: DatePickerProps) {
   const buttonRef = useRef(null);
   const [show, setShow] = useState(false);
   const placeholder = props.placeholder || "Select a date";
+  const now = new Date();
+
+  const [month, setMonth] = useState<Date>(props.value || now);
 
   useOutsideClick(thisRef, () => setShow(false), buttonRef);
 
@@ -34,6 +38,12 @@ export default function DatePicker(props: DatePickerProps) {
     setShow(false);
     callIfFunction(props.onSelect, day, props.name);
   }
+
+  let footer = props.goToToday ? (
+    <Button wrapContent small disabled={isSameMonth(now, month)} onClick={() => setMonth(now)}>
+      Go to today
+    </Button>
+  ) : undefined;
 
   return (
     <div
@@ -50,10 +60,16 @@ export default function DatePicker(props: DatePickerProps) {
         {show && (
           <DayPicker
             className="datePicker__picker"
+            captionLayout="dropdown"
+            fromYear={addYears(now, -6).getFullYear()}
+            toYear={addYears(now, 6).getFullYear()}
             mode="single"
+            onMonthChange={setMonth}
+            month={month}
             selected={props.value}
             onSelect={onDayClick}
             defaultMonth={props.value || new Date()}
+            footer={footer}
           />
         )}
       </div>
