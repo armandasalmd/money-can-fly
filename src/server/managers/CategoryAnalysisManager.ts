@@ -6,6 +6,7 @@ import { capitalise } from "@utils/Global";
 import { CurrencyRateManager } from "./CurrencyRateManager";
 import { addMonths, endOfMonth, format } from "date-fns";
 import { round } from "@server/utils/Global";
+import { amountForDisplay } from "@utils/Currency";
 
 interface ICategorySummary {
   _id: string;
@@ -49,8 +50,11 @@ export class CategoryAnalysisManager {
     return {
       chartLabels: labels,
       averageSpendingDataset: avgValues,
-      cardDescription: `Statistics for ${format(new Date(dateRange.from), "MMMM yyyy")} in ${this.defaultCurrency}`,
-      categorySpendingDataset: values,
+      cardDescription: `${format(new Date(dateRange.from), "MMMM yyyy")} period / Money spent ${amountForDisplay({
+        amount: round(values.reduce((a, b) => a + b, 0)),
+        currency: this.defaultCurrency,
+      })}`,
+      categorySpendingDataset:  values,
     };
   }
 

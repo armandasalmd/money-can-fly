@@ -76,5 +76,7 @@ export default function BalanceComparisonChart(props: BalanceComparisonChartProp
       },
     ],
   };
-  return <Chart height="100px" className="invertColors" type="bar" data={data as any} />;
+  return <Chart height={360} className="invertColors" type="bar" data={data as any} options={{
+    maintainAspectRatio: false
+  }} />;
 }

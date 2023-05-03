@@ -1,13 +1,6 @@
 import classNames from "classnames";
 import { callIfFunction } from "@utils/Global";
-
-export interface TabItemProps {
-  active?: boolean;
-  text: string;
-  id: string;
-  onClick?(id: string): void;
-  children: any;
-}
+import { TabItemProps } from "./TabItemProps";
 
 export default function TabItem(props: TabItemProps) {
   const classes = classNames("tabItem", {

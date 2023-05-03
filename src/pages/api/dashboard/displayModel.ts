@@ -7,6 +7,7 @@ import {
   CategoryAnalysisManager,
   BalanceManager,
 } from "@server/managers";
+import { InvestmentChartManager } from "@server/managers/InvestmentChartManager";
 import { BalanceAnalysisModel, CategoryAnalysisModel, InsightsModel, InvestmentsModel } from "@server/models";
 import { DateRange, DisplaySections } from "@utils/Types";
 import { IsArray, IsIn, IsNotEmptyObject, IsOptional, isDateString } from "class-validator";
@@ -68,6 +69,7 @@ export default validatedApiRoute("POST", DisplayModelRequest, async (request, re
     result.investments = {
       totalValue: investmentsValue,
       investments,
+      profitChart: await new InvestmentChartManager(prefs.defaultCurrency).CalculateProfitChart(investments)
     };
   }
 

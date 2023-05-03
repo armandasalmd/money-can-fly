@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { ArrowClockwise } from "phosphor-react";
 
 import CategoryChart from "./CategoryChart";
 import { Card, DatePeriodSelect } from "@atoms/index";
@@ -6,7 +7,6 @@ import { getPeriodNow } from "@utils/Global";
 import { DateRange, DisplaySections } from "@utils/Types";
 import { useDashboardData } from "@hooks/index";
 import { CategoryAnalysisModel } from "@server/models";
-import { ArrowClockwise } from "phosphor-react";
 
 export default function DashCategorySpendingCard() {
   const { data, mutate } = useDashboardData<CategoryAnalysisModel>(DisplaySections.CategoryAnalysis);

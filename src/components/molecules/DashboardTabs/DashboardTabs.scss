@@ -1,0 +1,18 @@
+.dashboardTabs {
+  &__actions, &__tabs {
+    display: flex;
+    gap: $unit * 0.33;
+  }
+
+  &__heading {
+    @extend %cardBase;
+    
+    display: flex;
+    justify-content: space-between;
+    padding: $unit * 0.33;
+    margin-bottom: $unit * 0.75;
+    position: sticky;
+    top: $unit * 0.33;
+    z-index: 1;
+  }
+}

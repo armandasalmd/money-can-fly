@@ -1,30 +1,25 @@
 import React, { ReactElement, PropsWithChildren, ReactNode } from "react";
-import classNames from "classnames";
-import { TabItemProps } from "@components/atoms";
+import { ButtonProps, TabItemProps } from "@components/atoms";
 
 type ReactTabItemProps = PropsWithChildren<TabItemProps>;
 
-interface TabsProps {
+interface DashboardTabsProps {
+  actionButtons?: ReactElement<ButtonProps>[];
   children: ReactElement<ReactTabItemProps>[];
-  spaceEvenly?: boolean;
   onTabChange?(id: string): void;
   tabId: string;
 }
 
-export default function Tabs(props: TabsProps) {
-  const classes = classNames("tabs", {
-    "tabs--spaceEvenly": props.spaceEvenly,
-  });
-
+export default function DashboardTabs(props: DashboardTabsProps) {
   let activeContainer: ReactNode = null;
 
   const tabItemsWithClick: ReactElement[] = [];
 
   React.Children.forEach(props.children, (element) => {
     if (!React.isValidElement(element)) return;
-
+    
     const tabProps: ReactTabItemProps = element.props;
-
+    
     if (tabProps.id === props.tabId) {
       activeContainer = tabProps.children;
     }
@@ -33,16 +28,21 @@ export default function Tabs(props: TabsProps) {
       React.cloneElement(element, {
         onClick: props.onTabChange,
         key: tabProps.id,
-        active: props.tabId === tabProps.id,
+        active: tabProps.id === props.tabId,
         ...tabProps,
       })
     );
   });
 
   return (
-    <div className={classes}>
-      <div className="tabs__heading">{tabItemsWithClick}</div>
-      <div className="tabs__content">{activeContainer}</div>
+    <div className="dashboardTabs">
+      <div className="dashboardTabs__heading">
+        <div className="dashboardTabs__tabs">
+          {tabItemsWithClick}
+        </div>
+        <div className="dashboardTabs__actions">{props.actionButtons}</div>
+      </div>
+      <div className="dashboardTabs__content">{activeContainer}</div>
     </div>
   );
 }

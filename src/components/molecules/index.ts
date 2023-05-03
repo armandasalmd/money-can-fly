@@ -1,8 +1,10 @@
+export { default as AddEditTransactionDrawer } from "./AddEditTransactionDrawer/AddEditTransactionDrawer";
 export { default as BorrowList } from "./BorrowList/BorrowList";
 export { default as CreateInvestmentDrawer } from "./CreateInvestmentDrawer/CreateInvestmentDrawer";
 export { default as CreateUpdatePredictionForm } from "./CreateUpdatePredictionForm/CreateUpdatePredictionForm";
 export { default as CreateUpdateTransactionForm } from "./CreateUpdateTransactionForm/CreateUpdateTransactionForm";
 export { default as CurrencyInput } from "./CurrencyInput/CurrencyInput";
+export { default as DashboardTabs } from "./DashboardTabs/DashboardTabs";
 export { default as ImportSettingsDrawer } from "./ImportSettingsDrawer/ImportSettingsDrawer";
 export { default as ImportList } from "./ImportList/ImportList";
 export { default as InsightsCollection } from "./InsightsCollection/InsightsCollection";
