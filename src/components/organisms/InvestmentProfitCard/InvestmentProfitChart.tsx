@@ -2,7 +2,7 @@ import { Line } from "react-chartjs-2";
 import { Empty } from "@atoms/index";
 import { InvestmentProfitChart } from "@server/models/display/Investments";
 
-export default (props: InvestmentProfitChart) => {
+export default function Component(props: InvestmentProfitChart) {
   if (!props || !props.labels || props.labels.length === 0) {
     return <Empty />;
   }

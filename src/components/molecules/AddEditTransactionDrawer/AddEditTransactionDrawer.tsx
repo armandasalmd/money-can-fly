@@ -14,7 +14,7 @@ interface AddEditTransactionDrawerProps {
   postSave?: (transaction: TransactionWithOptions, isAdd: boolean) => void;
 }
 
-export default (props: AddEditTransactionDrawerProps) => {
+export default function Component(props: AddEditTransactionDrawerProps) {
   const [fieldErrors, setFieldErrors] = useState<FieldErrors<Transaction>>({});
   const [saving, setSaving] = useState(false);
   const transactionInEdit = useRecoilValue(addEditTransactionState);
