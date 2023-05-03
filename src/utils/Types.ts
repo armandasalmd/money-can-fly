@@ -5,7 +5,7 @@ export enum DisplaySections {
   BalanceAnalysis = "balanceAnalysis",
   CategoryAnalysis = "categoryAnalysis",
   Insights = "insights",
-  Investments = "investments",
+  Investments = "investments"
 }
 
 export type DateRange = {

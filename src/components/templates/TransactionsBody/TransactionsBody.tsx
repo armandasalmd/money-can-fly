@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useRecoilState, useRecoilValue, useResetRecoilState } from "recoil";
-import { FilePlus, TrashSimple, NoteBlank, FloppyDiskBack } from "phosphor-react";
+import { FilePlus, TrashSimple, NoteBlank } from "phosphor-react";
 
-import { Button, Drawer } from "@atoms/index";
-import { TransactionFullList, TransactionSearchForm, CreateUpdateTransactionForm } from "@molecules/index";
+import { Button } from "@atoms/index";
+import { TransactionFullList, TransactionSearchForm, AddEditTransactionDrawer } from "@molecules/index";
 import {
   addEditTransactionState,
   selectedTransactionsState,
@@ -12,7 +12,7 @@ import {
   pagedTransactionsState,
 } from "@recoil/transactions/atoms";
 import { publish } from "@utils/Events";
-import { FieldErrors, Transaction, TransactionWithOptions } from "@utils/Types";
+import { Transaction, TransactionWithOptions } from "@utils/Types";
 import constants from "@server/utils/Constants";
 
 export default function TransactionsBody() {
@@ -20,11 +20,9 @@ export default function TransactionsBody() {
   const [selectedTransactions, setSelectedTransactions] = useRecoilState(selectedTransactionsState);
   const resetFilters = useResetRecoilState(filterFormState);
   const paginationLabel = useRecoilValue(paginationLabelState);
-  const [saving, setSaving] = useState(false);
-  const [fieldErrors, setFieldErrors] = useState<FieldErrors<Transaction>>({});
+  const filterForm = useRecoilValue(filterFormState);
 
-  const [transactionInEdit, setTransactionInEdit] = useRecoilState(addEditTransactionState);
-  const resetTransactionInEdit = useResetRecoilState(addEditTransactionState);
+  const [_, setTransactionInEdit] = useRecoilState(addEditTransactionState);
   const [displayState, setDisplayState] = useRecoilState(pagedTransactionsState);
 
   function onDelete() {
@@ -52,7 +50,7 @@ export default function TransactionsBody() {
       date: new Date(transaction.date),
       dateUpdated: new Date(),
       amount: Math.abs(transaction.amount),
-      alterBalance: true
+      alterBalance: true,
     });
     setAddDrawerOpen(true);
   }
@@ -61,27 +59,13 @@ export default function TransactionsBody() {
     setAddDrawerOpen(true);
   }
 
-  function onSubmitSave(transaction: TransactionWithOptions) {
-    const updateFn = !!transaction._id ? apiUpdate : apiCreate;
-
-    setSaving(true);
-
-    updateFn(transaction).then((success) => {
-      if (success) {
-        if (!transaction._id) {
-          publish("mutateTransactions", selectedTransactions);
-        } else {
-          postUpdate(transaction);
-        }
-        setAddDrawerOpen(false);
-      }
-      setSaving(false);
-    });
+  function postSave(transaction: TransactionWithOptions, isAdd: boolean) {
+    return isAdd ? publish("mutateTransactions", filterForm) : postUpdate(transaction);
   }
 
   function postUpdate(transaction: TransactionWithOptions) {
-    const itemIdx = displayState.displayedItems.findIndex((t) => t._id === transaction._id)
-          
+    const itemIdx = displayState.displayedItems.findIndex((t) => t._id === transaction._id);
+
     if (itemIdx > -1) {
       const newItems = [...displayState.displayedItems];
 
@@ -95,43 +79,6 @@ export default function TransactionsBody() {
         displayedItems: newItems,
       });
     }
-  }
-
-  async function apiCreate(transaction: TransactionWithOptions): Promise<boolean> {
-    const response = await fetch("/api/transactions/create", {
-      method: "POST",
-      body: JSON.stringify(transaction),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const data = await response.json();
-    
-    if (data.fieldErrors) {
-      setFieldErrors(data.fieldErrors);
-    }
-    
-    return !!data._id;
-  }
-
-  async function apiUpdate(transaction: TransactionWithOptions): Promise<boolean> {
-    const response = await fetch("/api/transactions/update", {
-      method: "PATCH",
-      body: JSON.stringify({
-        ...transaction,
-        id: transaction._id,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const data = await response.json();
-
-    if (data.fieldErrors) {
-      setFieldErrors(data.fieldErrors);
-    }
-
-    return !!data._id;
   }
 
   function scrollListToTop() {
@@ -153,13 +100,6 @@ export default function TransactionsBody() {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  useEffect(() => {
-    if (addDrawerOpen === false) {
-      resetTransactionInEdit();
-      setFieldErrors({});
-    }
-  }, [addDrawerOpen, resetTransactionInEdit]);
 
   return (
     <div className="transactionsBody">
@@ -205,20 +145,7 @@ export default function TransactionsBody() {
           setSelectedTransactions={setSelectedTransactions}
         />
       </div>
-      <Drawer
-        open={addDrawerOpen}
-        onClose={setAddDrawerOpen}
-        title={transactionInEdit?._id ? "Edit transaction" : "Create transaction"}
-        subtitle={transactionInEdit?._id ? `ID : ${transactionInEdit?._id}` : "All fields are required"}
-        extra={
-          <Button disabled={saving} type="primary" icon={FloppyDiskBack} onClick={() => onSubmitSave(transactionInEdit)}>
-            {saving ? "Saving..." : "Save"}
-          </Button>
-        }
-        destroyOnClose
-      >
-        <CreateUpdateTransactionForm atom={addEditTransactionState} fieldErrors={fieldErrors} />
-      </Drawer>
+      <AddEditTransactionDrawer open={addDrawerOpen} setOpen={setAddDrawerOpen} postSave={postSave} />
     </div>
   );
 }

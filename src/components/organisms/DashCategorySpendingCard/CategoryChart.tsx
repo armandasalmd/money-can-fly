@@ -22,16 +22,6 @@ ChartJS.register(
 import { Empty } from "@atoms/index";
 import { CategoryAnalysisModel } from "@server/models";
 
-const options = {
-  indexAxis: "y" as const,
-  responsive: true,
-  plugins: {
-    legend: {
-      position: "top" as const,
-    },
-  }
-};
-
 interface CategoryChartProps {
   apiModel: CategoryAnalysisModel;
 }
@@ -61,5 +51,7 @@ export default function CategoryChart(props: CategoryChartProps) {
     ],
   };
 
-  return <Bar className="invertColors" height={264} options={options} data={data} />;
+  return <Bar className="invertColors" height={360} data={data} options={{
+    maintainAspectRatio: false
+  }} />;
 }

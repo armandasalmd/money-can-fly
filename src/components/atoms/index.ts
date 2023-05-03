@@ -20,5 +20,7 @@ export { default as SelectMenu } from "./Select/SelectMenu";
 export { default as SidebarHeader, type SidebarHeaderProps } from "./SidebarHeader/SidebarHeader";
 export { default as SkeletonItem } from "./SkeletonItem/SkeletonItem";
 export { default as UploadArea, type FileState } from "./UploadArea/UploadArea";
-export { default as TabItem, type TabItemProps } from "./TabItem/TabItem";
+export { default as TabItem } from "./TabItem/TabItem";
+export { default as DashboardTabItem } from "./TabItem/DashboardTabItem";
+export { type TabItemProps } from "./TabItem/TabItemProps";
 export { default as Tag } from "./Tag/Tag";

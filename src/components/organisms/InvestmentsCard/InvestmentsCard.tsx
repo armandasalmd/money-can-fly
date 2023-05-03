@@ -65,7 +65,7 @@ export default function InvestmentsCard() {
       headerActions={[
         {
           text: "Add investment",
-          type: "easy",
+          type: "primary",
           onClick: () => setCreateDrawerOpen(true),
         }
       ]}
