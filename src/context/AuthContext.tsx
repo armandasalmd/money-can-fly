@@ -55,7 +55,7 @@ export function AuthContextProvider({ children }) {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [router]);
 
   async function loginToApi(user: User): Promise<boolean> {
     if (!user) return true;
