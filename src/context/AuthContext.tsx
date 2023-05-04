@@ -55,7 +55,8 @@ export function AuthContextProvider({ children }) {
     });
 
     return () => unsubscribe();
-  }, [router]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   async function loginToApi(user: User): Promise<boolean> {
     if (!user) return true;
