@@ -9,6 +9,7 @@ import { SelectItem } from "@utils/SelectItems";
 
 export interface SelectProps {
   className?: string;
+  clearable?: boolean;
   disabled?: boolean;
   icon?: IconComponentType;
   items: SelectItem[];
@@ -45,7 +46,7 @@ export default function Select(props: SelectProps) {
   );
 
   const onChange: ItemSelectHandler = (value, label, e) => {
-    e.target.blur(); // remove focus
+    if (e) e.target.blur(); // remove focus
     setIsOpen(false);
     if (props.disabled !== true) {
       callIfFunction(props.onChange, value, props.name);
@@ -60,13 +61,18 @@ export default function Select(props: SelectProps) {
       className: "select__icon",
     });
 
-  const selectedLabel = props.items.find(function (item) {
+  const selectedLabel = props.items?.find(function (item) {
     return item.value === props.value;
   })?.label;
 
+  const clearable = props.clearable && !props.required && props.value;
+
   return (
     <div className={classes} ref={thisRef}>
-      {props.title && <p className="select__title">{props.title}</p>}
+      {(props.title || clearable) && <div className="select__heading">
+        {props.title && <p className="select__title">{props.title}</p>}
+        {clearable && <p className="select__actionText" onClick={(e) => onChange("", notSelectedItem.label, null)}>Clear</p>}
+      </div>}
       <div
         className="select__input"
         onClick={(e) => {

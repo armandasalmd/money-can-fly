@@ -8,7 +8,7 @@ import { IconComponentType } from "@utils/Types";
 
 export interface CardHeaderAction {
   icon?: IconComponentType;
-  text: string;
+  text?: string;
   onClick?(): void;
   type: ButtonType;
   tooltip?: string;

@@ -26,6 +26,7 @@ export class ImportManager {
       date: 1,
       balanceWasAltered: 1,
       source: 1,
+      fileName: 1
     });
 
     return importItem ? {
@@ -34,6 +35,7 @@ export class ImportManager {
       date: importItem.date,
       balanceWasAltered: importItem.balanceWasAltered,
       source: importItem.source,
+      fileName: importItem.fileName
     } : null;
   }
 

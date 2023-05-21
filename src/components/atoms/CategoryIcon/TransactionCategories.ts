@@ -92,7 +92,7 @@ const transactionCategories: TransactionCategories = {
   bills: {
     color: "#3F51B5",
     icon: Tag,
-    name: "Utility bills",
+    name: "Bills",
   },
   gifts: {
     color: "#E91E63",

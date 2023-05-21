@@ -2,11 +2,12 @@ import { useState } from "react";
 import { ArrowClockwise } from "phosphor-react";
 
 import CategoryChart from "./CategoryChart";
-import { Card, DatePeriodSelect } from "@atoms/index";
+import { Card, DatePeriodSelect, Info } from "@atoms/index";
 import { getPeriodNow } from "@utils/Global";
-import { DateRange, DisplaySections } from "@utils/Types";
+import { Category, DateRange, DisplaySections } from "@utils/Types";
 import { useDashboardData } from "@hooks/index";
 import { CategoryAnalysisModel } from "@server/models";
+import { publish } from "@utils/Events";
 
 export default function DashCategorySpendingCard() {
   const { data, mutate } = useDashboardData<CategoryAnalysisModel>(DisplaySections.CategoryAnalysis);
@@ -23,6 +24,13 @@ export default function DashCategorySpendingCard() {
     mutate([], {
       categoryAnalysisDateRange: range
     }).then(() => setReloading(false));
+  }
+
+  function onCaterogyClick(category: Category) {
+    publish("transactionSearchFormSubmit", {
+      category,
+      dateRange: dateRange
+    });
   }
 
   return (
@@ -44,8 +52,9 @@ export default function DashCategorySpendingCard() {
       noDivider
     >
       <div className="dashCategories__chart">
-        <CategoryChart apiModel={data} />
+        <CategoryChart apiModel={data} onCaterogyClick={onCaterogyClick} />
       </div>
+      <Info>Click on the bar to reveal its transactions</Info>
       <div className="dashCategories__filters">
         <DatePeriodSelect
           monthsAhead={0}

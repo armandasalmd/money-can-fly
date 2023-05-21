@@ -13,24 +13,6 @@
       margin-bottom: $unit * 0.5;
     }
   }
-
-  &__footer {
-    #{$base}__info {
-      display: flex;
-      align-items: center;
-      gap: $halfUnit;
-      margin-bottom: $unit;
-
-      .icon {
-        min-width: 20px;
-      }
-
-      span {
-        font-size: 0.9rem;
-        color: var(--shade40);
-      }
-    }
-  }
 }
 
 .addEventForm {

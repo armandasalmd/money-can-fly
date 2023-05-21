@@ -24,8 +24,21 @@
     color: var(--shade50);
   }
 
-  &__title {
+  &__title, &__actionText {
     @extend %inputTitle;
+    display: inline-block;
+  }
+
+  &__actionText {
+    margin-right: 6px;
+    cursor: pointer;
+    color: var(--shade40);
+    user-select: none;
+  }
+
+  &__heading {
+    display: flex;
+    justify-content: space-between;
   }
 
   &__inputMain {

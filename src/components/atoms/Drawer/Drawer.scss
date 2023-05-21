@@ -13,7 +13,12 @@
     right: 0;
     bottom: 0;
     background-color: var(--bg-mask);
-    z-index: 2;
+    z-index: 3;
+  }
+
+  &__loader {
+    @extend %loaderBackgroundFill;
+    z-index: 1;
   }
 
   &__card {

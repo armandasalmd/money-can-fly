@@ -1,6 +1,7 @@
 import { useState } from "react";
 import classNames from "classnames";
-import { Input, Tag } from "@atoms/index";
+import { Input, Tag, TagType } from "@atoms/index";
+
 interface TagListProps {
   title?: string;
   error?: string;
@@ -11,6 +12,7 @@ interface TagListProps {
   emptyTitle?: string;
   placeholder?: string;
   vertical?: boolean;
+  type?: TagType;
 }
 
 export default function TagList(props: TagListProps) {
@@ -45,7 +47,7 @@ export default function TagList(props: TagListProps) {
       <div className="tagList__tags">
         {Array.isArray(props.values) &&
           props.values.map((value, index) => (
-            <Tag key={index} closable={props.editable} onClose={handleRemove}>
+            <Tag type={props.type} key={index} closable={props.editable} onClose={handleRemove}>
               {value}
             </Tag>
           ))}

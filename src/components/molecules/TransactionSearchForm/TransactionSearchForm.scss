@@ -1,8 +1,6 @@
 .tSearchForm {
   $base: &;
 
-  padding: $unit * 0.75;
-
   &__actions {
     display: flex;
     justify-content: flex-end;

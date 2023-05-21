@@ -5,7 +5,8 @@ import {
   DashCategorySpendingCard,
   DashChartCard,
   InvestmentsCard,
-  InvestmentProfitCard
+  InvestmentProfitCard,
+  SpendingAnalyticsCard
 } from "@organisms/index";
 import { publish } from "@utils/Events";
 
@@ -31,7 +32,7 @@ export default function DashboardBody() {
             <DashCategorySpendingCard />
           </DashboardTabItem>
           <DashboardTabItem id="spending" text="Spending chart">
-            <p>Spending chart</p>
+            <SpendingAnalyticsCard />
           </DashboardTabItem>
           <DashboardTabItem id="investments" text="Investments">
             <div className="dashboardBody__columns">

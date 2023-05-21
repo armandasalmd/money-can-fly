@@ -4,7 +4,7 @@ import { X } from "phosphor-react";
 
 import { useOutsideClick } from "@hooks/index";
 import { iconOptions } from "@utils/Global";
-import { Message } from "@atoms/index";
+import { Message, Loader } from "@atoms/index";
 
 type DrawerSize = "default" | "large" | "small";
 
@@ -19,6 +19,7 @@ export interface DrawerProps extends PropsWithChildren {
   subtitle?: string;
   error?: string;
   noPadding?: boolean;
+  loading?: boolean;
 }
 
 export default function Drawer(props: DrawerProps) {
@@ -83,6 +84,7 @@ export default function Drawer(props: DrawerProps) {
     <div className={classes}>
       <div className="drawer__mask"></div>
       <div className="drawer__card" ref={cardRef}>
+        {props.loading && <Loader className="drawer__loader" color="secondary" /> }
         <div className="drawer__header">
           <div className="drawer__closeIcon" onClick={close}>
             <X {...iconOptions} />

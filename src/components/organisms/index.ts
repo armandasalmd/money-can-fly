@@ -7,4 +7,5 @@ export { default as InvestmentProfitCard } from "./InvestmentProfitCard/Investme
 export { default as InvestmentsCard } from "./InvestmentsCard/InvestmentsCard";
 export { default as InvestmentTimeline } from "./InvestmentTimeline/InvestmentTimeline";
 export { default as SetPredictionSidebar } from "./SetPredictionSidebar/SetPredictionSidebar";
+export { default as SpendingAnalyticsCard } from "./SpendingAnalyticsCard/SpendingAnalyticsCard";
 export { default as TransactionSidebar } from "./TransactionSidebar/TransactionSidebar";

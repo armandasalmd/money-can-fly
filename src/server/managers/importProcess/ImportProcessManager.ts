@@ -77,6 +77,7 @@ export class ImportProcessManager extends BaseImportProcessManager {
       importState: "running",
       transactions: [],
       userUID: this.user.userUID,
+      fileName: this.options.csvFileName
     });
 
     await this.importModel.save();

@@ -1,10 +1,10 @@
-import { DateRange } from "react-day-picker";
+import { format, formatISO, addMonths} from "date-fns";
+
 import { Select, SelectProps } from "@atoms/index";
 import { SelectItem } from "@utils/SelectItems";
-import { callIfFunction, getDateRange } from "@utils/Global";
-import format from "date-fns/format";
-import formatISO from "date-fns/formatISO";
-import addMonths from "date-fns/addMonths";
+import { callIfFunction, getDateRange, getUTCNow } from "@utils/Global";
+import { DateRange } from "@utils/Types";
+
 
 const TODAY_SUFFIX = " (now)";
 
@@ -31,8 +31,7 @@ function generateSelectItems(
   monthsAhead: number,
   monthsBehind: number
 ): SelectItem[] {
-  const now = new Date();
-  const periodNow = new Date(now.getFullYear(), now.getMonth(), 1);
+  const periodNow = getUTCNow(1);
   const items: SelectItem[] = [];
 
   for (let i = monthsAhead; i >= 1; i--) {
@@ -60,6 +59,8 @@ function generateSelectItems(
 }
 
 function stringToDateRange(value: string): DateRange {
+  if (!value) return null;
+
   const [from, to] = value.split("~");
 
   return {
@@ -83,7 +84,6 @@ export default function DatePeriodSelect(props: DatePeriodSelectProps) {
     >
       <Select
         {...rest}
-        required
         items={items}
         onChange={onChange}
         value={dateRangeToString(value)}

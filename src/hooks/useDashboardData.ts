@@ -1,10 +1,11 @@
-import { useEffect, useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import { useRecoilState } from "recoil";
 import { add } from "date-fns";
 
 import { dashboardData } from "@recoil/dashboard/atoms";
 import { DisplaySections, InvestmentEvent } from "@utils/Types";
 import { DisplayModelResponse } from "@endpoint/dashboard/displayModel";
+import { getDateRange } from "@utils/Global";
 
 function transformDates(data: Partial<DisplayModelResponse>) {
   if (!data) return;
@@ -39,7 +40,7 @@ export default function useDashboardData<T>(section?: DisplaySections) {
         if (section !== undefined && !sections.includes(section)) {
           sections.push(section);
         }
-        
+
         const response = await fetch("/api/dashboard/displayModel", {
           method: "POST",
           headers: {
@@ -47,7 +48,7 @@ export default function useDashboardData<T>(section?: DisplaySections) {
           },
           body: JSON.stringify({
             ...body,
-            sections
+            sections,
           }),
         });
 
@@ -63,7 +64,7 @@ export default function useDashboardData<T>(section?: DisplaySections) {
         console.error(e);
       }
     },
-    [section, data, setData]
+    [section, data, setData],
   );
 
   useEffect(() => {
@@ -87,9 +88,14 @@ export default function useDashboardData<T>(section?: DisplaySections) {
           from,
           to,
         },
+        spendingChartRanges: [
+          getDateRange(undefined, -2),
+          getDateRange(undefined, -1),
+          getDateRange(),
+        ],
       });
     }
-    
+
     return () => {
       // Settimeout somehow prevents the hook from being called twice
       // As this endpoint is expensive, its worth using this hack

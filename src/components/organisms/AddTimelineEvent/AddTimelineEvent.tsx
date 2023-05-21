@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
-import { Check, Info } from "phosphor-react";
+import { Check } from "phosphor-react";
 
 import AddTimelineEventForm from "./AddTimelineEventForm";
-import { Button, KeyValue } from "@atoms/index";
+import { Button, KeyValue, Info } from "@atoms/index";
 import { amountForDisplay } from "@utils/Currency";
-import { iconOptions } from "@utils/Global";
 import { CreateInvestmentEvent, InvestmentEventType, Money } from "@utils/Types";
 import { usePreferences } from "@context/index";
 
@@ -67,10 +66,7 @@ export default function AddTimelineEvent(props: AddTimelineEventProps) {
       </div>
       <AddTimelineEventForm data={data} setData={setData} eventType={props.eventType} />
       <div className="addEvent__footer">
-        <div className="addEvent__info">
-          <Info className="icon" {...iconOptions} />
-          <span>{infoMessages[props.eventType]}</span>
-        </div>
+        <Info>{infoMessages[props.eventType]}</Info>
         <Button
           centerText
           type="primary"
