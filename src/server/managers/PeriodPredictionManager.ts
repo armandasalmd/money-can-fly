@@ -3,7 +3,7 @@ import { CookieUser } from "@server/core";
 import { SetPeriodRequest } from "@endpoint/predictions/setPeriod";
 import { Money, MonthPrediction } from "@utils/Types";
 
-interface ITotalChangeAggregateResult extends Money {
+interface ITotalSpendingResult extends Money {
   monthDate: Date;
 } 
 
@@ -55,8 +55,8 @@ export class PeriodPredictionManager {
     };
   }
 
-  public async GetTotalSpending(months: Date[]): Promise<ITotalChangeAggregateResult[]> {
-    return await PeriodPredictionModel.aggregate<ITotalChangeAggregateResult>([
+  public async GetTotalSpending(months: Date[]): Promise<ITotalSpendingResult[]> {
+    return await PeriodPredictionModel.aggregate<ITotalSpendingResult>([
       {
         $match: { 
           userUID: this.user.userUID,
