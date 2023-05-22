@@ -123,7 +123,7 @@ export class InsightsManager {
 
   private GetBudgetDaysLeft(resetDate: Date): number {
     const date = new Date();
-    date.setHours(0, 0, 0, 0);
+    date.setUTCHours(0, 0, 0, 0);
 
     return Math.round((resetDate.getTime() - date.getTime()) / 86400000);
   }
@@ -131,7 +131,7 @@ export class InsightsManager {
   private GetBugdetResetDate(prefs: IUserPreferencesModel): Date {
     let date = new Date();
     date.setDate(prefs.monthlyBudgetStartDay);
-    date.setHours(0, 0, 0, 0);
+    date.setUTCHours(0, 0, 0, 0);
 
     return date.getDate() >= prefs.monthlyBudgetStartDay ? add(date, { months: 1 }) : date;
   }

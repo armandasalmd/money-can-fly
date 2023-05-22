@@ -8,7 +8,7 @@ import {
 } from "@server/models";
 import { DateRange, Investment, Money } from "@utils/Types";
 import { round, splitDateIntoEqualIntervals } from "@server/utils/Global";
-import { format, differenceInDays, min, max, isWithinInterval } from "date-fns";
+import { format, differenceInDays, min, max, isWithinInterval, addWeeks } from "date-fns";
 import { CurrencyRateManager } from "./CurrencyRateManager";
 import { amountForDisplay } from "@utils/Currency";
 
@@ -230,9 +230,9 @@ export class BalanceAnalysisManager {
     const from = min(requiredDates);
     const to = max(requiredDates);
 
-    from.setHours(0, 0, 0, 0);
+    from.setUTCHours(0, 0, 0, 0);
     from.setDate(1);
-    to.setHours(0, 0, 0, 0);
+    to.setUTCHours(0, 0, 0, 0);
     to.setDate(1);
 
     const periodPredictions: IPeriodPredictionModel[] = await PeriodPredictionModel.find({
@@ -271,7 +271,7 @@ export class BalanceAnalysisManager {
       this.predictionPoints[0].pivotedTotal = this.prefs.forecastPivotValue;
       pivotIndex = 0;
     } else {
-      return this.predictionPoints.forEach((o) => (o.pivotedTotal = NaN));
+      return;
     }
 
     for (let i = pivotIndex + 1; i < this.predictionPoints.length; i++) {
@@ -302,10 +302,7 @@ export class BalanceAnalysisManager {
   }
 
   private GetWeeksDate(week: number, monthDate: Date): Date {
-    const date = new Date(monthDate);
-    date.setDate(1);
-    date.setDate(date.getDate() + (week - 1) * 7);
-    return date;
+    return week > 1 ? addWeeks(monthDate, week - 1) : monthDate;
   }
 
   private MakeLabels(): string[] {

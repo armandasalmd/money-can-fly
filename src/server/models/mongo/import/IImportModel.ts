@@ -8,4 +8,5 @@ export interface IImportModel extends BaseModel {
   importState: ImportState;
   balanceWasAltered?: boolean;
   logs?: string;
+  fileName: string;
 }

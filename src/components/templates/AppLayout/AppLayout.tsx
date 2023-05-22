@@ -4,6 +4,10 @@ import { Navbar } from "@molecules/index";
 import SidebarHeader, { SidebarHeaderProps } from "@atoms/SidebarHeader/SidebarHeader";
 
 interface AppLayoutProps extends PropsWithChildren {
+  // overflow: scroll (instead of auto) fixes spending chart entry animation
+  // https://github.com/chartjs/Chart.js/issues/10342
+  // Fix: We enable this only in Dashboard page
+  alwaysScroll?: boolean;
   header?: SidebarHeaderProps;
 }
 
@@ -15,6 +19,7 @@ const AppLayout = (props: AppLayoutProps) => {
   });
   
   const classes = classNames("app", {
+    "app--alwaysScroll": props.alwaysScroll,
     "app--noHeader": !props.header,
   });
 

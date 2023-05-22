@@ -1,30 +1,6 @@
-import {
-  Chart as ChartJS,
-  LinearScale,
-  Filler,
-  BarElement,
-  PointElement,
-  LineElement,
-  Legend,
-  Tooltip,
-  LineController,
-  BarController,
-} from "chart.js";
 import { Chart } from "react-chartjs-2";
 import { BalanceAnalysisModel } from "@server/models";
 import { Empty } from "@atoms/index";
-
-ChartJS.register(
-  LinearScale,
-  BarElement,
-  PointElement,
-  LineElement,
-  Legend,
-  Tooltip,
-  Filler,
-  LineController,
-  BarController
-);
 
 interface BalanceComparisonChartProps {
   apiModel: BalanceAnalysisModel;
@@ -44,7 +20,7 @@ export default function BalanceComparisonChart(props: BalanceComparisonChartProp
         borderColor: "rgb(19, 121, 168)",
         borderWidth: 2,
         cubicInterpolationMode: "monotone",
-        data: props.apiModel.totalWorthDataset,
+        data: props.apiModel.totalWorthDataset
       },
       {
         type: "line" as const,
@@ -72,7 +48,9 @@ export default function BalanceComparisonChart(props: BalanceComparisonChartProp
         borderWidth: 2,
         cubicInterpolationMode: "monotone",
         data: props.apiModel.investmentsDataset,
-        fill: "origin"
+        fill: "origin",
+        pointStyle: "triangle",
+        pointRadius: 6
       },
     ],
   };

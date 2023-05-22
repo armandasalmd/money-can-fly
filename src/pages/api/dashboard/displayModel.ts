@@ -1,3 +1,5 @@
+import { IsArray, IsIn, IsNotEmptyObject, IsOptional, isDateString } from "class-validator";
+
 import { validatedApiRoute } from "@server/core";
 import {
   InvestmentsManager,
@@ -6,11 +8,11 @@ import {
   BalanceAnalysisManager,
   CategoryAnalysisManager,
   BalanceManager,
+  InvestmentChartManager,
+  SpendingAnalysisManager
 } from "@server/managers";
-import { InvestmentChartManager } from "@server/managers/InvestmentChartManager";
-import { BalanceAnalysisModel, CategoryAnalysisModel, InsightsModel, InvestmentsModel } from "@server/models";
+import { BalanceAnalysisModel, CategoryAnalysisModel, InsightsModel, InvestmentsModel, SpendingAnalysisModel } from "@server/models";
 import { DateRange, DisplaySections } from "@utils/Types";
-import { IsArray, IsIn, IsNotEmptyObject, IsOptional, isDateString } from "class-validator";
 
 export class DisplayModelRequest {
   @IsArray()
@@ -28,6 +30,8 @@ export class DisplayModelRequest {
     nullable: true,
   })
   categoryAnalysisDateRange: Required<DateRange>;
+  @IsOptional()
+  spendingChartRanges: Required<DateRange>[];
 }
 
 export class DisplayModelResponse {
@@ -35,6 +39,7 @@ export class DisplayModelResponse {
   categoryAnalysis: CategoryAnalysisModel;
   insights: InsightsModel;
   investments: InvestmentsModel;
+  spendingAnalysis: SpendingAnalysisModel;
 }
 
 export default validatedApiRoute("POST", DisplayModelRequest, async (request, response, user) => {
@@ -111,6 +116,13 @@ export default validatedApiRoute("POST", DisplayModelRequest, async (request, re
       user,
       body.categoryAnalysisDateRange
     );
+  }
+
+  /**
+   * SpendingAnalysis section
+   */
+  if (sections.includes(DisplaySections.SpendingAnalysis)) {
+    result.spendingAnalysis = await new SpendingAnalysisManager(user, prefs).Calculate(body.spendingChartRanges);
   }
 
   return response.status(200).json(result);

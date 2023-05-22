@@ -14,7 +14,7 @@ export function splitDateIntoEqualIntervals(start: Date, end: Date, numberOfInte
 
   for (let i = 1; i < numberOfIntervals; i++) {
     const d = new Date(start.getTime() + i * intervalLength);
-    if (endOfDay) d.setHours(23, 59, 59, 999);
+    if (endOfDay) d.setUTCHours(23, 59, 59, 999);
     intervals.push(d);
   }
 

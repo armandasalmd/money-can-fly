@@ -1,0 +1,18 @@
+.spendingChart {
+  $base: &;
+
+  &__content {
+    display: flex;
+    flex-direction: column;
+
+    #{$base}__chart {
+      margin-bottom: $halfUnit;
+      flex: 1;
+    }
+
+    #{$base}__filters {
+      display: flex;
+      gap: $unit;
+    }
+  }
+}

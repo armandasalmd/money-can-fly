@@ -5,7 +5,7 @@ const ImportSchema = new Schema<IImportModel>({
   balanceWasAltered: {
     type: Boolean,
     required: false,
-    default: true
+    default: true,
   },
   userUID: {
     type: String,
@@ -31,6 +31,10 @@ const ImportSchema = new Schema<IImportModel>({
   logs: {
     type: String,
     required: false,
+  },
+  fileName: {
+    type: String,
+    required: true,
   },
 });
 

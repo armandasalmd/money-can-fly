@@ -1,5 +1,5 @@
 import { IconProps } from "phosphor-react";
-import { add, differenceInDays, format } from "date-fns";
+import { add, differenceInDays, format, startOfMonth } from "date-fns";
 import { CheckState, DateRange } from "./Types";
 
 export function toCheckState(value: boolean | null): CheckState {
@@ -97,12 +97,19 @@ export const iconOptions: IconProps = {
   color: "var(--shade40)",
 };
 
-export function getDateRange(periodStart: Date = new Date()): DateRange {
-  const periodStartRaw = new Date(periodStart.getFullYear(), periodStart.getMonth(), 1);
+export function getDateRange(periodStart: Date = new Date(), monthsToAdd: number = 0): DateRange {
+  if (monthsToAdd !== 0) {
+    periodStart = add(periodStart, {
+      months: monthsToAdd
+    });
+  }
+  
+  periodStart.setUTCDate(1);
+  periodStart.setUTCHours(0,0,0,0);
 
   return {
-    from: periodStartRaw,
-    to: add(periodStartRaw, {
+    from: periodStart,
+    to: add(periodStart, {
       months: 1,
       days: -1,
     })
@@ -119,4 +126,15 @@ export function getImportTitle(item: {source: string, date: string | Date}): str
     typeof item.date === "string" ? new Date(item.date) : item.date,
     "dd/MM/yyyy HH:mm"
   )}`;
+}
+
+export function getUTCNow(overrideDay?: number): Date {
+  const now = new Date();
+  now.setUTCHours(0,0,0,0);
+  if (overrideDay) now.setUTCDate(overrideDay);
+  return now;
+}
+
+export function getLast<T>(array: T[]): T {
+  return Array.isArray(array) ? array[array.length - 1] : null;
 }

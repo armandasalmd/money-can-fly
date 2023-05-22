@@ -39,6 +39,7 @@ const constants = {
     transactionStatusFilters: ["active", "inactive"],
     amountFilters: [
       "incomeOnly",
+      "spendingOnly",
       "moreThan10Spent",
       "moreThan25Spent",
       "moreThan50Spent",

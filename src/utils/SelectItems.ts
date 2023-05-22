@@ -19,13 +19,13 @@ const bankNamesSelect: SelectItemsObject<TransactionBank> = {
   cash: "Cash",
 };
 
-const currencySelect: SelectItemsObject<Currency> = {
+export const currencySelect: SelectItemsObject<Currency> = {
   USD: "USD",
   EUR: "EUR",
   GBP: "GBP",
 };
 
-const transactionStatusFilterSelect: SelectItemsObject<TransactionStatusFilter> = {
+export const transactionStatusFilterSelect: SelectItemsObject<TransactionStatusFilter> = {
   active: "Active",
   inactive: "Inactive",
 };
@@ -35,8 +35,9 @@ const sortSelect: SelectItemsObject<Sort> = {
   desc: "Descending",
 };
 
-const amountFilterSelect: SelectItemsObject<AmountFilter> = {
+export const amountFilterSelect: SelectItemsObject<AmountFilter> = {
   incomeOnly: "Income only",
+  spendingOnly: "Spending only",
   moreThan10Spent: ">10 spent",
   moreThan25Spent: ">25 spent",
   moreThan50Spent: ">50 spent",
@@ -60,6 +61,11 @@ export const categotyPreset: SelectItem[] = Object.keys(Categories).map((
   label: Categories[key].name,
   value: key,
 }));
+
+export const searchCategoryPreset: SelectItem[] = [{
+  label: "Not investment",
+  value: "notInvestments"
+}, ...categotyPreset];
 
 export const yearsPreset = toSelectItems(yearSelect);
 export const amountFilterPreset = toSelectItems(amountFilterSelect);

@@ -1,7 +1,10 @@
 .tSidebar {
-  height: 100%;
-
-  &__divider {
+  &__filterSection {
     border-bottom: $defaultBorder;
+    padding: $unit * 0.5 $unit * 0.75;
+    position: sticky;
+    top: 0;
+    background: var(--bg-navbar);
+    z-index: 2;
   }
 }

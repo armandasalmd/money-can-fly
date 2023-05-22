@@ -20,7 +20,7 @@ export default function TransactionList(props: TransactionListProps) {
   }
 
   if (props.showSkeletons) {
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < 14; i++) {
       items.push(<SkeletonItem borderTop key={i} template="transaction" />);
     }
   }

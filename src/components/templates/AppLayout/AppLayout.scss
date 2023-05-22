@@ -35,6 +35,10 @@
     overflow-y: auto;
   }
 
+  &--alwaysScroll &__content {
+    overflow-y: scroll;
+  }
+  
   &--noHeader {
     #{$base}__navbar {
       grid-column: 1 / span 2;

@@ -50,10 +50,10 @@ export class CategoryAnalysisManager {
     return {
       chartLabels: labels,
       averageSpendingDataset: avgValues,
-      cardDescription: `${format(new Date(dateRange.from), "MMMM yyyy")} period / Money spent ${amountForDisplay({
+      cardDescription: `Money spent ${amountForDisplay({
         amount: round(values.reduce((a, b) => a + b, 0)),
         currency: this.defaultCurrency,
-      })}`,
+      })} (${format(new Date(dateRange.from), "MMMM yyyy")})`,
       categorySpendingDataset:  values,
     };
   }

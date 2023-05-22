@@ -5,16 +5,24 @@ import classNames from "classnames";
 import { IconComponentType } from "@utils/Types";
 import { iconOptions } from "@utils/Global";
 
+export type TagType = "default" | "easy";
+
 interface TagProps extends PropsWithChildren {
   closable?: boolean;
   closeIcon?: IconComponentType;
-  onClose?(value: string): void;
   disabled?: boolean;
+  onClose?(value: string): void;
+  type?: TagType;
 }
 
 export default function Tag(props: TagProps) {
   return (
-    <div className={classNames("tag", props.disabled && "tag--disabled")}>
+    <div
+      className={classNames("tag", {
+        "tag--disabled": props.disabled,
+        "tag--easy": props.type === "easy",
+      })}
+    >
       <span>{props.children}</span>
       {props.closable === true &&
         createElement(props.closeIcon || X, {

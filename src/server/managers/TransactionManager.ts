@@ -184,7 +184,11 @@ export class TransactionManager {
     };
 
     if (request.category) {
-      query.category = request.category;
+      if (request.category === "notInvestments") {
+        query.isInvestment = false;
+      } else {
+        query.category = request.category;
+      }
     }
 
     if (request.currency) {
@@ -212,6 +216,9 @@ export class TransactionManager {
       switch (request.amountFilter) {
         case "incomeOnly":
           query.amount = { $gt: 0 };
+          break;
+        case "spendingOnly":
+          query.amount = { $lt: 0 };
           break;
         case "moreThan25Spent":
           query.amount = { $lt: -25 };

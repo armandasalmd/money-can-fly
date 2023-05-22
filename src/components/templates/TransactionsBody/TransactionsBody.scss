@@ -30,6 +30,10 @@
       padding-left: calc(#{$unit} + #{$extraSpaceX}) !important;
     }
   }
+
+  &__filterForm {
+    padding: $unit * 0.75;
+  }
   
   &__transactions {
     grid-column: 2;

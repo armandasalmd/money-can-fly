@@ -3,11 +3,12 @@ import classNames from "classnames";
 import useSWRInfinite from "swr/infinite";
 import { useRecoilValue, useRecoilState } from "recoil";
 
-import { TransactionSearchForm, TransactionList } from "@molecules/index";
+import { TransactionList } from "@molecules/index";
 import { filterFormState, transactionsCount, balanceChartDateRange } from "@recoil/dashboard/atoms";
 import { subscribe, unsubscribe } from "@utils/Events";
 import { DisplaySections, Transaction, TransactionForm } from "@utils/Types";
 import useDashboardData from "@hooks/useDashboardData";
+import FilterSection from "./FilterSection";
 
 const fetcher = (url: string, filters: TransactionForm, setTotal: (n: number) => void) => {
   const q = new URLSearchParams(url.substring(url.indexOf("?") + 1));
@@ -41,12 +42,13 @@ const PAGE_SIZE = 25;
 
 export interface TransactionSidebarProps {
   searchFormOpen: boolean;
+  setSearchFormOpen(open: boolean): void;
 }
 
 export default function TransactionSidebar(props: TransactionSidebarProps) {
   const classes = classNames("tSidebar", {});
   const thisRef = useRef<HTMLDivElement>(null);
-  const searchForm = useRecoilValue(filterFormState);
+  const [searchForm, setSearchForm] = useRecoilState(filterFormState);
   const [_, setTotalCount] = useRecoilState(transactionsCount);
   const { data, error, size, setSize, mutate } = useSWRInfinite<Transaction>(
     (index) => `/api/transactions/search?skip=${index * PAGE_SIZE}&take=${PAGE_SIZE}`,
@@ -85,8 +87,16 @@ export default function TransactionSidebar(props: TransactionSidebarProps) {
   }
 
   useEffect(() => {
-    function onFilter() {
-      mutate();
+    function onFilter(e: CustomEvent) {
+      if (typeof e?.detail === "object") {
+        setSearchForm({
+          ...searchForm,
+          ...e.detail
+        });
+        setTimeout(mutate);
+      } else {
+        mutate();
+      }
     }
 
     subscribe("transactionSearchFormSubmit", onFilter);
@@ -96,12 +106,7 @@ export default function TransactionSidebar(props: TransactionSidebarProps) {
 
   return (
     <div className={classes} ref={thisRef}>
-      {props.searchFormOpen && (
-        <>
-          <TransactionSearchForm />
-          <div className="tSidebar__divider"></div>
-        </>
-      )}
+      <FilterSection open={props.searchFormOpen} setOpen={props.setSearchFormOpen} />
       <TransactionList
         showLoadMore={!isEnd}
         showSkeletons={isLoading}

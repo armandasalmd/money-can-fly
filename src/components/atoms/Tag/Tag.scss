@@ -1,20 +1,19 @@
-
 .tag {
-  $gapSize: $unit * 0.4;
+  --bg-tag-easy: rgba(71, 110, 216, 0.18);
+  --bg-tag-easy-hover: rgba(71, 110, 216, 0.22);
+  --bg-tag-easy-outline: rgba(46, 84, 190, 0.4);
 
-  display: inline-flex;
+  display: flex;
   align-items: center;
+
   background-color: var(--color-neutral);
   min-height: $unit * 1.625; // 26px
   border-radius: $defaultBorderRadius * 0.5;
   padding: 0 $unit * 0.5;
-
-  margin-bottom: $gapSize;
-  margin-right: $gapSize;
   box-sizing: border-box;
+  color: var(--shade70);
 
   span {
-    color: var(--shade70);
     font-size: 1.05rem;
   }
 
@@ -30,15 +29,31 @@
   &--disabled {
     border: $disabledBorderStyle;
     user-select: none;
-    
+
     span {
       color: var(--shade30);
+    }
+  }
+
+  &--easy {
+    background: var(--bg-tag-easy);
+    color: var(--color-text-primary);
+
+    &:hover {
+      background-color: var(--bg-tag-easy-hover);
+      @include focusOutline(var(--bg-tag-easy-outline));
     }
   }
 }
 
 .tagList {
   $base: &;
+
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: $unit * 0.4;
+  }
 
   &--vertical {
     #{$base}__tags {
@@ -49,5 +64,13 @@
         width: fit-content;
       }
     }
+  }
+}
+
+#{$themeDarkClass} {
+  .tag {
+    --bg-tag-easy: rgba(92, 130, 234, 0.2);
+    --bg-tag-easy-hover: rgba(122, 152, 236, 0.3);
+    --bg-tag-easy-outline: rgba(122, 152, 236, 0.6);
   }
 }

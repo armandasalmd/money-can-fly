@@ -117,7 +117,7 @@ export default function TransactionsBody() {
         </div>
         <div>
           <div className="transactionsBody__filterForm">
-            <TransactionSearchForm showImportFilter />
+            <TransactionSearchForm showSubmitButton showImportFilter />
           </div>
         </div>
       </div>

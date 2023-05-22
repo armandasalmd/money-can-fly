@@ -5,7 +5,7 @@ import { useRecoilState } from "recoil";
 import { Button, Input, Select, DateRangePicker } from "@atoms/index";
 import {
   amountFilterPreset,
-  categotyPreset,
+  searchCategoryPreset,
   currencyPreset,
   SelectItem,
   transactionStatusPreset,
@@ -16,9 +16,13 @@ import { publish } from "@utils/Events";
 
 interface TransactionSearchFormProps {
   showImportFilter?: boolean;
+  showSubmitButton?: boolean;
 }
 
-const fetcher = (url: string) => fetch(url).then((res) => res.json()).then((res) => res.items);
+const fetcher = (url: string) =>
+  fetch(url)
+    .then((res) => res.json())
+    .then((res) => res.items);
 
 export default function TransactionSearchForm(props: TransactionSearchFormProps) {
   const [form, setForm] = useRecoilState(filterFormState);
@@ -36,7 +40,7 @@ export default function TransactionSearchForm(props: TransactionSearchFormProps)
   }
 
   function onSubmit() {
-    publish("transactionSearchFormSubmit", form);
+    publish("transactionSearchFormSubmit", null);
   }
 
   const pickerOptions: DayPickerRangeProps = {
@@ -50,7 +54,7 @@ export default function TransactionSearchForm(props: TransactionSearchFormProps)
       <div className="tSearchForm__inputs">
         <Select
           placeholder="All"
-          items={categotyPreset}
+          items={searchCategoryPreset}
           title="Category"
           value={form.category}
           name="category"
@@ -102,9 +106,11 @@ export default function TransactionSearchForm(props: TransactionSearchFormProps)
           onSubmit={onSubmit}
         />
       </div>
-      <Button icon={MagnifyingGlass} className="tSearchForm__button" centerText type="easy" onClick={onSubmit}>
-        Apply filters
-      </Button>
+      {props.showSubmitButton && (
+        <Button icon={MagnifyingGlass} className="tSearchForm__button" centerText type="easy" onClick={onSubmit}>
+          Apply filters
+        </Button>
+      )}
     </div>
   );
 }

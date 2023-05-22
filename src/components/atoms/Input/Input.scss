@@ -74,6 +74,10 @@
   &--error {
     input {
       background-color: var(--bg-input-error);
+
+      &::placeholder {
+        color: var(--color-error-outline);
+      }
     }
 
     input:focus {

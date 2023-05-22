@@ -5,7 +5,8 @@ export enum DisplaySections {
   BalanceAnalysis = "balanceAnalysis",
   CategoryAnalysis = "categoryAnalysis",
   Insights = "insights",
-  Investments = "investments"
+  Investments = "investments",
+  SpendingAnalysis = "spendingAnalysis"
 }
 
 export type DateRange = {
@@ -29,7 +30,7 @@ export type ImportState = "running" | "success" | "error" | "undo";
 export type TransactionBank = "barclays" | "revolut" | "cash";
 export type ImportPresetType = Exclude<TransactionBank, "cash"> | "custom";
 export type TransactionStatusFilter = "active" | "inactive";
-export type AmountFilter = "incomeOnly" | "moreThan10Spent" | "moreThan25Spent" | "moreThan50Spent" | "moreThan100Spent" | "moreThan250Spent";
+export type AmountFilter = "incomeOnly" | "spendingOnly" | "moreThan10Spent" | "moreThan25Spent" | "moreThan50Spent" | "moreThan100Spent" | "moreThan250Spent";
 export type InvestmentEventType = "deposit" | "adjustment" | "withdrawal" | "created";
 
 export type Category =
@@ -48,6 +49,8 @@ export type Category =
   | "investments"
   | "trendUp"
   | "trendDown";
+
+export type SearchCategory = Category | "notInvestments";
 
 export interface Money {
   amount: number;
@@ -103,7 +106,7 @@ export interface MonthPrediction {
 export interface TransactionForm {
   amountFilter?: AmountFilter;
   statusFilter?: TransactionStatusFilter;
-  category?: Category;
+  category?: SearchCategory;
   currency?: Currency;
   dateRange?: DateRange;
   searchTerm: string;

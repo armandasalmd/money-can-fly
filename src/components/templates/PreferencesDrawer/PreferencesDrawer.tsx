@@ -17,6 +17,7 @@ interface PreferencesDrawerProps {
 
 export default function PreferencesDrawer(props: PreferencesDrawerProps) {
   const [changed, setChanged] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [state, setState] = useRecoilState(preferencesState);
   const resetState = useResetRecoilState(preferencesState);
   const [message, setMessage] = useState("");
@@ -25,6 +26,7 @@ export default function PreferencesDrawer(props: PreferencesDrawerProps) {
   const { setDefaultCurrency } = usePreferences();
 
   function onSave() {
+    setLoading(true);
     fetch("/api/preferences/update", {
       method: "PUT",
       headers: {
@@ -57,7 +59,8 @@ export default function PreferencesDrawer(props: PreferencesDrawerProps) {
       .catch((_) => {
         setMessageType("error");
         setMessage("Error saving preferences");
-      });
+      })
+      .finally(() => setLoading(false));
   }
 
   function onBreakpointCountChange(value: string) {
@@ -97,10 +100,11 @@ export default function PreferencesDrawer(props: PreferencesDrawerProps) {
     resetState();
     setChanged(false);
     setMessage("");
+    setBreakpointCountError("");
   }
 
   const saveButton = (
-    <Button type={changed ? "primary" : "default"} disabled={!changed} onClick={onSave}>
+    <Button type={changed ? "primary" : "default"} disabled={!changed || loading} onClick={onSave}>
       Save
     </Button>
   );
@@ -129,24 +133,26 @@ export default function PreferencesDrawer(props: PreferencesDrawerProps) {
     }
 
     if (props.open) {
+      if (!loading) setLoading(true);
+
       fetchPreferences().then((res) => {
         res.forecastPivotDate = new Date(res.forecastPivotDate);
 
         setDefaultCurrency(res.defaultCurrency);
         setState(res);
-      });
+      }).finally(() => setLoading(false));
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.open, setState, setDefaultCurrency]);
 
   return (
-    <Drawer open={props.open} onClose={handleClose} title="Settings" size="small" extra={saveButton}>
+    <Drawer loading={loading} open={props.open} onClose={handleClose} title="Settings" size="small" extra={saveButton}>
       <div style={{ display: "flex", flexFlow: "column", gap: 16 }}>
         <Message colorType={messageType} counterMargin fadeIn messageStyle="bordered" onDismiss={() => setMessage("")}>
           {message}
         </Message>
         <h3>Preferences</h3>
         <Select
-          placeholder="All"
           required
           items={currencyPreset}
           title="Default currency"

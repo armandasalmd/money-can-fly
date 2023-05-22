@@ -4,7 +4,7 @@ import { validatedApiRoute } from "@server/core";
 import { TransactionManager } from "@server/managers";
 import constants from "@server/utils/Constants";
 import { ITransactionModel } from "@server/models";
-import { TransactionForm, Category, Currency, TransactionStatusFilter, AmountFilter, DateRange } from "@utils/Types";
+import { TransactionForm, Category, Currency, TransactionStatusFilter, AmountFilter, DateRange, SearchCategory } from "@utils/Types";
 
 const { allowed } = constants;
 
@@ -18,8 +18,8 @@ export class SearchRequest implements TransactionForm {
   statusFilter?: TransactionStatusFilter;
 
   @IsOptional()
-  @IsIn([...allowed.categories, ""])
-  category?: Category;
+  @IsIn([...allowed.categories, "notInvestments", ""])
+  category?: SearchCategory;
 
   @IsOptional()
   @IsIn([...allowed.currencies, ""])

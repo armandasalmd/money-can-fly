@@ -17,7 +17,7 @@ export default function Component(props: InvestmentProfitChart) {
         borderRadius: 2,
         cubicInterpolationMode: "monotone",
         data: props.values,
-        fill: {above: "rgba(153, 204, 0, 0.2)", below: "rgba(0, 0, 0, 0.2)", target: {value: 0}}
+        fill: {above: "rgba(153, 204, 0, 0.2)", below: "rgba(0, 0, 0, 0.1)", target: {value: 0}}
       }
     ],
   };

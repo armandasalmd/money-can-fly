@@ -1,15 +1,30 @@
 import { useState, useEffect } from "react";
 import { useRecoilValue, useResetRecoilState } from "recoil";
+import { Chart as ChartJS, CategoryScale, PointElement, LineElement, BarController, LinearScale, BarElement, Title, Tooltip, Legend, Filler, LineController } from "chart.js";
+import { Funnel } from "phosphor-react";
 
 import { SidebarHeaderProps } from "@atoms/index";
 import { TransactionSidebar } from "@organisms/index";
-import { AppLayout, DashboardBody } from "@templates/index";
 import { transactionsCount, selectedInvestment, dashboardData } from "@recoil/dashboard/atoms";
+import { AppLayout, DashboardBody } from "@templates/index";
+
+ChartJS.register(
+  PointElement,
+  BarController,
+  CategoryScale, 
+  LinearScale, 
+  BarElement, 
+  Title, 
+  Tooltip, 
+  Filler,
+  LineController,
+  LineElement,
+  Legend);
 
 export default function DashboardPage() {
-  const [searchFormOpen, setSearchFormOpen] = useState(true);
+  const [searchFormOpen, setSearchFormOpen] = useState(false);
   const count = useRecoilValue(transactionsCount);
-  
+
   const reset1 = useResetRecoilState(transactionsCount);
   const reset2 = useResetRecoilState(selectedInvestment);
   const reset3 = useResetRecoilState(dashboardData);
@@ -19,7 +34,7 @@ export default function DashboardPage() {
     subtitle: `${count} results in total`,
     actionButton: {
       children: "Filter",
-      type: searchFormOpen ? "easy" : "default",
+      icon: Funnel,
       wrapContent: true,
       tall: true,
       onClick: () => setSearchFormOpen(!searchFormOpen),
@@ -36,9 +51,9 @@ export default function DashboardPage() {
   }, []);
 
   return (
-    <AppLayout header={header}>
+    <AppLayout header={header} alwaysScroll>
       <AppLayout.Sidebar>
-        <TransactionSidebar searchFormOpen={searchFormOpen} />
+        <TransactionSidebar searchFormOpen={searchFormOpen} setSearchFormOpen={setSearchFormOpen} />
       </AppLayout.Sidebar>
       <AppLayout.Content>
         <DashboardBody />

@@ -1,0 +1,15 @@
+.info {
+  display: flex;
+  align-items: center;
+  gap: $halfUnit;
+  margin-bottom: $unit;
+
+  &__icon {
+    min-width: 20px;
+  }
+
+  span {
+    font-size: 0.9rem;
+    color: var(--shade40);
+  }
+}

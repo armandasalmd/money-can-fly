@@ -31,8 +31,6 @@ export default function DashChartCard() {
     }).then(() => setReloading(false));
   }
 
-  const isError = data?.errorMessage;
-
   useEffect(() => {
     function onCashBalanceChanged() {
       mutate([DisplaySections.Insights], {
@@ -48,7 +46,7 @@ export default function DashChartCard() {
   return (
     <Card
       loading={data === null || reloading}
-      error={isError}
+      error={data?.errorMessage}
       className="dashChart"
       header={{
         color: "info",
@@ -61,7 +59,6 @@ export default function DashChartCard() {
         text: "Refresh",
         type: "text"
       }]}
-      noHeaderSpacing={!isError}
       noDivider
     >
       <div className="dashChart__content">

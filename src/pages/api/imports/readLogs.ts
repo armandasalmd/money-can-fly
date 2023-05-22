@@ -13,6 +13,7 @@ export class ReadLogsResponse {
   date: Date;
   balanceWasAltered: boolean;
   source: string;
+  fileName: string;
 }
 
 export default validatedApiRoute("GET", ReadLogsRequest, async (request, response, user) => {

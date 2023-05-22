@@ -68,7 +68,7 @@ export class CurrencyRateManager {
 
   public async getRate(date: Date): Promise<ICurrencyRateModel> {
     const today = new Date();
-    today.setHours(0, 0, 0, 0);
+    today.setUTCHours(0, 0, 0, 0);
     if (date >= today) date = addDays(today, -1);
 
     const cached = await this.tryGetCachedRate(date);
