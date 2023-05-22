@@ -34,7 +34,7 @@ function createBudgetLimit(apiDatasets: MonthlySpendingDataset[]): ChartDataset 
 
 function createSpendingLine(apiData: MonthlySpendingDataset, index: number, offsetWithNaN: number): ChartDataset {
   if (index >= colors.datasets.length) {
-    data: [];
+    return { data: [] };
   } // out of range
 
   const data = Array(offsetWithNaN).fill(NaN);
@@ -66,7 +66,6 @@ function highlight(fromLabel: string, toLabel: string, datasetIndex: number): Ch
 
 // Note: this fixes the bug with +1 timezone difference
 function parseDate (iso: string) {
-  console.log(iso);
   if (!iso) return;
   const [year, month, day] = iso.split("T")[0].split("-");
   return new Date(parseInt(year), parseInt(month) - 1, parseInt(day));

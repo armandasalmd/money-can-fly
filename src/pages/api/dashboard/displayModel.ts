@@ -122,15 +122,7 @@ export default validatedApiRoute("POST", DisplayModelRequest, async (request, re
    * SpendingAnalysis section
    */
   if (sections.includes(DisplaySections.SpendingAnalysis)) {
-    if (body.spendingChartRanges) {
-      result.spendingAnalysis = await new SpendingAnalysisManager(user, prefs).Calculate(body.spendingChartRanges);
-    } else {
-      result.spendingAnalysis = {
-        cardDescription: "Try again...",
-        errorMessage: "Date ranges were not provided",
-        datasets: []
-      };
-    }
+    result.spendingAnalysis = await new SpendingAnalysisManager(user, prefs).Calculate(body.spendingChartRanges);
   }
 
   return response.status(200).json(result);
