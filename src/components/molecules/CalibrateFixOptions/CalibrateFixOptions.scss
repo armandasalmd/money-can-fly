@@ -1,0 +1,19 @@
+
+.calibrateFixOptions {
+  display: flex;
+  flex-direction: column;
+  gap: $unit;
+
+  &__title {
+    margin-bottom: $halfUnit;
+  }
+
+  &__emptyTag {
+    display: inline-flex;
+  }
+
+  &__options {
+    display: flex;
+    gap: $halfUnit;
+  }
+}

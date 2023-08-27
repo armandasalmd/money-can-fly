@@ -3,8 +3,7 @@ export function escapeRegExp(text: string) {
 }
 
 export function round(num: number, precision = 2) {
-  const factor = Math.pow(10, precision);
-  return Math.round(num * factor) / factor;
+  return parseFloat(num.toFixed(precision));
 }
 
 export function splitDateIntoEqualIntervals(start: Date, end: Date, numberOfIntervals: number, endOfDay = false) {

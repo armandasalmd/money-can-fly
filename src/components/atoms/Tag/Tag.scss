@@ -2,6 +2,12 @@
   --bg-tag-easy: rgba(71, 110, 216, 0.18);
   --bg-tag-easy-hover: rgba(71, 110, 216, 0.22);
   --bg-tag-easy-outline: rgba(46, 84, 190, 0.4);
+  --bg-tag-negative: #{mix($shade0, $colorError, 80%)};
+  --bg-tag-negative-hover: #{mix($shade0, $colorError, 90%)};
+  --bg-tag-positive: #{mix($shade0, $colorSuccess, 75%)};
+  --bg-tag-positive-hover: #{mix($shade0, $colorSuccess, 65%)};
+  --color-negative: #{$colorError};
+  --color-positive: #{$colorSuccess};
 
   display: flex;
   align-items: center;
@@ -44,6 +50,26 @@
       @include focusOutline(var(--bg-tag-easy-outline));
     }
   }
+
+  &--positive {
+    color: var(--color-positive);
+    background: var(--bg-tag-positive);
+
+    &:hover {
+      @include focusOutline(var(--color-success-outline));
+      background: var(--bg-tag-positive-hover);
+    }
+  }
+
+  &--negative {
+    color: var(--color-negative);
+    background: var(--bg-tag-negative);
+
+    &:hover {
+      @include focusOutline(var(--color-error-outline));
+      background: var(--bg-tag-negative-hover);
+    }
+  }
 }
 
 .tagList {
@@ -72,5 +98,12 @@
     --bg-tag-easy: rgba(92, 130, 234, 0.2);
     --bg-tag-easy-hover: rgba(122, 152, 236, 0.3);
     --bg-tag-easy-outline: rgba(122, 152, 236, 0.6);
+
+    --bg-tag-negative: #{mix($shade100, $colorError, 50%)};
+    --bg-tag-negative-hover: #{mix($shade100, $colorError, 40%)};
+    --bg-tag-positive: #{mix($shade100, $colorSuccess, 25%)};
+    --bg-tag-positive-hover: #{mix($shade100, $colorSuccess, 35%)};
+    --color-negative: #{mix($shade0, $colorError, 90%)};
+    --color-positive: #{mix($shade0, $colorSuccess, 75%)};
   }
 }

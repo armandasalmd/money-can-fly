@@ -56,8 +56,8 @@
   &--disabled {
     cursor: not-allowed;
     box-shadow: none !important;
-    color: var(--shade20);
-    background-color: var(--shade5);
+    color: var(--shade40) !important;
+    background-color: var(--shade5) !important;
     border: $disabledBorderStyle;
 
     &:hover {

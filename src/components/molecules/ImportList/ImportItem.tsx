@@ -1,9 +1,8 @@
 import { createElement } from "react";
-import { format } from "date-fns";
 import { HourglassMedium, CheckSquare, XSquare, ClockCounterClockwise } from "phosphor-react";
 
 import { Import, ImportState } from "@utils/Types";
-import { capitalise, callIfFunction, getImportTitle } from "@utils/Global";
+import { callIfFunction, getImportTitle } from "@utils/Global";
 import { Button, PopConfirm } from "@atoms/index";
 
 type ImportMapper = {

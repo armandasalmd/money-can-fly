@@ -1,6 +1,5 @@
 import { useCallback, useEffect } from "react";
 import { useRecoilState } from "recoil";
-import { add } from "date-fns";
 
 import { dashboardData } from "@recoil/dashboard/atoms";
 import { DisplaySections, InvestmentEvent } from "@utils/Types";
@@ -72,26 +71,15 @@ export default function useDashboardData<T>(section?: DisplaySections) {
       // eslint-disable-next-line
       initialized = true;
 
-      const now = new Date();
-      const from = new Date(now.getFullYear(), now.getMonth(), 1);
-      const to = add(from, {
-        months: 1,
-        days: -1,
-      });
+      const thisMonthRange = getDateRange();
 
       fetchSections(Object.values(DisplaySections), {
-        balanceAnalysisDateRange: {
-          from,
-          to,
-        },
-        categoryAnalysisDateRange: {
-          from,
-          to,
-        },
+        balanceAnalysisDateRange: thisMonthRange,
+        categoryAnalysisDateRange: thisMonthRange,
         spendingChartRanges: [
           getDateRange(undefined, -2),
           getDateRange(undefined, -1),
-          getDateRange(),
+          thisMonthRange
         ],
       });
     }

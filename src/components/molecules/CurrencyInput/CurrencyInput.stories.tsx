@@ -12,7 +12,7 @@ export default {
 function CurrencyInputWithState(props: CurrencyInputProps) {
   const [value, setValue] = useState<Money>({
     amount: 0,
-    currency: "USD",
+    currency: "USD"
   });
 
   return (

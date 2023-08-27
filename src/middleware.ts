@@ -16,6 +16,8 @@ export async function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
+    "/api/balance/:function*",
+    "/api/calibrate/:function*",
     "/api/dashboard/:function*",
     "/api/investments/:function*",
     "/api/investments/settings/:function*",

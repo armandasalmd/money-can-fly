@@ -38,7 +38,7 @@ export function parseCurrency(text: string, onlyPositive: boolean): number {
       text = (isNegative ? "-" : "") + text.replace("-", "");
     }
 
-    return parseFloat(text.replace(",", ".")) || NaN;
+    return parseFloat(text.replace(",", "."));
   }
 
   return NaN;

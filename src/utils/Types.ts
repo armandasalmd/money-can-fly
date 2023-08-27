@@ -19,6 +19,7 @@ export type IconComponentType = ForwardRefExoticComponent<
 >;
 
 export type ActionColor = "success" | "warning" | "error" | "info";
+export type CalibrationStatus = "unset" | "pass" | "fail";
 export type CheckState = "checked" | "unchecked" | "indeterminate";
 export type ColorType = "primary" | "secondary";
 export type Size = "small" | "medium" | "large";
@@ -32,6 +33,10 @@ export type ImportPresetType = Exclude<TransactionBank, "cash"> | "custom";
 export type TransactionStatusFilter = "active" | "inactive";
 export type AmountFilter = "incomeOnly" | "spendingOnly" | "moreThan10Spent" | "moreThan25Spent" | "moreThan50Spent" | "moreThan100Spent" | "moreThan250Spent";
 export type InvestmentEventType = "deposit" | "adjustment" | "withdrawal" | "created";
+
+export type Balances = {
+  [key in Currency]: Money;
+}
 
 export type Category =
   | "food"
@@ -62,6 +67,18 @@ export interface Borrowing {
   description: string;
   date?: string;
   money: Money;
+}
+
+export interface CalibrateCurrencyRow {
+  status: CalibrationStatus;
+  target: Money;
+  inApp: Money;
+}
+
+export interface ExchangeFix {
+  rateDate: Date;
+  from: Money;
+  to: Money;
 }
 
 export interface Transaction extends Money {

@@ -1,5 +1,5 @@
 import { IconProps } from "phosphor-react";
-import { add, differenceInDays, format, startOfMonth } from "date-fns";
+import { add, differenceInDays, format } from "date-fns";
 import { CheckState, DateRange } from "./Types";
 
 export function toCheckState(value: boolean | null): CheckState {

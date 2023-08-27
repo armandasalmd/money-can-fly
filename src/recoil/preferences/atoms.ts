@@ -1,11 +1,9 @@
 import { atom } from "recoil";
-import { Currency, Money } from "@utils/Types";
+import { Balances } from "@utils/Types";
 import { IUserPreferencesModel } from "@server/models";
 
 export interface PreferencesForm extends Omit<IUserPreferencesModel, "userUID"> {
-  balances: {
-    [key in Currency]: Money;
-  };
+  balances: Balances;
 }
 
 export const preferencesState = atom<PreferencesForm>({

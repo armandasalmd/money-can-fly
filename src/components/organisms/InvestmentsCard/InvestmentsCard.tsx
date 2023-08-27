@@ -28,7 +28,7 @@ export default function InvestmentsCard() {
     setCreateDrawerOpen(false);
 
     if (refresh) {
-      mutate([DisplaySections.Insights]);
+      // mutate([DisplaySections.Insights]);
       mutateOtherSections();
     }
   }
