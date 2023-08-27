@@ -1,5 +1,6 @@
 export * from "./BalanceAnalysisManager";
 export * from "./BalanceManager";
+export * from "./CalibrationManager";
 export * from "./CategoryAnalysisManager";
 export * from "./CurrencyRateManager";
 export * from "./ImportManager";

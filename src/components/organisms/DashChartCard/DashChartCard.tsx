@@ -1,19 +1,21 @@
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { DayPickerRangeProps } from "react-day-picker/dist/index";
+import { ArrowClockwise, Scales } from "phosphor-react";
 
 import { Card, DateRangePicker } from "@atoms/index";
+import { CalibrateDrawer } from "@organisms/index";
 import BalanceComparisonChart from "./BalanceComparisonChart";
 import { useDashboardData } from "@hooks/index";
 import { BalanceAnalysisModel } from "@server/models";
-import { DisplaySections, DateRange } from "@utils/Types";
-import { ArrowClockwise } from "phosphor-react";
 import { balanceChartDateRange } from "@recoil/dashboard/atoms";
+import { DisplaySections, DateRange } from "@utils/Types";
 import { subscribe, unsubscribe } from "@utils/Events";
 
 export default function DashChartCard() {
   const { data, mutate } = useDashboardData<BalanceAnalysisModel>(DisplaySections.BalanceAnalysis);
   const [reloading, setReloading] = useState(false);
+  const [calibrateOpen, setCalibrateOpen] = useState(false);
   const [dateRange, setDateRange] = useRecoilState(balanceChartDateRange);
 
   const pickerOptions: DayPickerRangeProps = {
@@ -54,6 +56,11 @@ export default function DashChartCard() {
         description: data?.cardDescription ?? "Loading...",
       }}
       headerActions={[{
+        icon: Scales,
+        onClick: () => setCalibrateOpen(true),
+        text: "Calibrate",
+        type: "text"
+      },{
         icon: ArrowClockwise,
         onClick: () => onChange(dateRange),
         text: "Refresh",
@@ -74,6 +81,7 @@ export default function DashChartCard() {
           />
         </div>
       </div>
+      <CalibrateDrawer open={calibrateOpen} setOpen={setCalibrateOpen} />
     </Card>
   );
 }

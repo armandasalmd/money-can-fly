@@ -1,7 +1,7 @@
 import { DateRange, Investment } from "@utils/Types";
 import { atom } from "recoil";
 import { DisplayModelResponse } from "@endpoint/dashboard/displayModel";
-import { getPeriodNow } from "@utils/Global";
+import { getDateRange, getPeriodNow } from "@utils/Global";
 
 export { filterFormState } from "@recoil/transactions/atoms";
 
@@ -23,4 +23,9 @@ export const dashboardData = atom<DisplayModelResponse>({
 export const balanceChartDateRange = atom<DateRange>({
   key: "balanceChartDateRange",
   default: getPeriodNow(),
+});
+
+export const spendingChartDateRanges = atom<DateRange[]>({
+  key: "spendingChartDateRanges",
+  default: [getDateRange(undefined, -2), getDateRange(undefined, -1), getDateRange()],
 });

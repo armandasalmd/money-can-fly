@@ -1,0 +1,34 @@
+
+.calibrateTable {
+  $base: &;
+  display: flex;
+  flex-direction: column;
+  gap: $halfUnit;
+  padding-top: $halfUnit;
+  border-top: $defaultBorder;
+  margin-left: -$unit;
+  margin-right: -$unit;
+
+  &__row {
+    display: grid;
+    grid-template-columns: auto 1fr 1fr 1fr;
+    gap: $unit;
+    border-bottom: $defaultBorder;
+    padding: 0 $unit $halfUnit $unit; // counter negative margin
+
+    #{$base}__cell {
+      display: flex;
+      align-items: center;
+
+      &--titledTag {
+        #{$base}__tagTitle {
+          @extend %inputTitle;
+          margin-left: 0;
+        }
+
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  }
+}

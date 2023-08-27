@@ -1,0 +1,15 @@
+.calibrateDrawer {
+  display: flex;
+  flex-direction: column;
+  gap: $unit;
+  height: 100%;
+
+  &__message {
+    margin: -$unit;
+    margin-bottom: 0;
+  }
+  
+  &__footer {
+    margin-top: auto;
+  }
+}

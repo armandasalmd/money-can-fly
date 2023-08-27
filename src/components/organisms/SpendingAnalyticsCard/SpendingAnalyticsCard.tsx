@@ -1,19 +1,20 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback } from "react";
+import { useRecoilState } from "recoil";
 import { ArrowClockwise, MagnifyingGlass } from "phosphor-react";
 import { format } from "date-fns";
 
 import SpendingChart from "./SpendingChart";
 import { Card, CardHeaderAction, DatePeriodSelect, Info } from "@atoms/index";
 import { DateRange, DisplaySections } from "@utils/Types";
-import { getDateRange } from "@utils/Global";
 import { useDashboardData } from "@hooks/index";
 import { SpendingAnalysisModel } from "@server/models";
 import { publish } from "@utils/Events";
+import { spendingChartDateRanges } from "@recoil/dashboard/atoms";
 
 export default function SpendingAnalyticsCard() {
   const { data, mutate } = useDashboardData<SpendingAnalysisModel>(DisplaySections.SpendingAnalysis);
   const [reloading, setReloading] = useState(false);
-  const [dateRanges, _setDateRanges] = useState<DateRange[]>([getDateRange(undefined, -2),getDateRange(undefined, -1), getDateRange()]);
+  const [dateRanges, _setDateRanges] = useRecoilState(spendingChartDateRanges);
 
   const updateDateRanges = useCallback(function update(dateRanges: DateRange[]) {
     _setDateRanges(dateRanges);
@@ -22,7 +23,7 @@ export default function SpendingAnalyticsCard() {
     mutate([DisplaySections.SpendingAnalysis], {
       spendingChartRanges: dateRanges
     }).then(() => setReloading(false));
-  }, [mutate]);
+  }, [mutate, _setDateRanges]);
 
   function searchTransactions(dateRange: DateRange) {
     if (dateRange) {

@@ -3,6 +3,7 @@ import { CookieUser } from "@server/core";
 import { Currency, Money } from "@utils/Types";
 import { CurrencyRateManager } from "./CurrencyRateManager";
 import constants from "@server/utils/Constants";
+import { round } from "@server/utils/Global";
 
 export class BalanceManager {
 
@@ -55,7 +56,7 @@ export class BalanceManager {
       userUID: this.user.userUID,
     }, {
       $inc: {
-        [`balances.${money.currency}.amount`]: money.amount,
+        [`balances.${money.currency}.amount`]: round(money.amount),
       },
     }, { upsert: true });
 
@@ -71,7 +72,7 @@ export class BalanceManager {
     }, {
       $inc: moneyList.reduce((prev, curr) => {
         const key = `balances.${curr.currency}.amount`;
-        prev[key] = prev[key] ? prev[key] + curr.amount : curr.amount;
+        prev[key] = round(prev[key] ? prev[key] + curr.amount : curr.amount);
 
         return prev;
       }, {} as any),
