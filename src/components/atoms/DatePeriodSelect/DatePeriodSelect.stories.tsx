@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Story, Meta } from "@storybook/react";
 
 import DatePeriodSelectRange, { DatePeriodSelectProps } from "./DatePeriodSelect";
-import { getPeriodNow } from "@utils/Global";
+import { getOneMonthRange } from "@utils/Date";
 import { DateRange } from "@utils/Types";
 
 export default {
@@ -12,7 +12,7 @@ export default {
 
 function DatePeriodSelectRangeWithState(props: DatePeriodSelectProps) {
   const [dateRange, setDateRange] = useState<DateRange | undefined>(
-    getPeriodNow()
+    getOneMonthRange()
   );
 
   return (

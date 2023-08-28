@@ -8,6 +8,7 @@ import { MonthPrediction } from "@utils/Types";
 import { SetPeriodRequest } from "@endpoint/predictions/setPeriod";
 import { monthPredictionFormState, editorChartToolState, chartToolState } from "@recoil/predictions/atoms";
 import { publish } from "@utils/Events";
+import { putRequest } from "@utils/Api";
 
 export default function SetPredictionSidebar() {
   const thisRef = useRef<HTMLDivElement>(null);
@@ -48,14 +49,7 @@ export default function SetPredictionSidebar() {
 
     setLoading(true);
 
-    fetch("/api/predictions/setPeriod", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(request),
-    })
-      .then((o) => o.json())
+    putRequest<any>("/api/predictions/setPeriod", request)
       .then((data) => {
         if (data.success) {
           setMessage("Prediction set sucessfully.");

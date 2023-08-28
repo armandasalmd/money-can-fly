@@ -6,7 +6,8 @@ import { IUserPreferencesModel, InsightsModel, TransactionModel, ImportModel, II
 import { Currency, Money } from "@utils/Types";
 import { CurrencyRateManager } from "./CurrencyRateManager";
 import { round } from "@server/utils/Global";
-import { capitalise, toDisplayDate } from "@utils/Global";
+import { capitalise } from "@utils/Global";
+import { toDisplayDate } from "@utils/Date";
 
 export class InsightsManager {
   private defaultCurrency: Currency;

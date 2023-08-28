@@ -7,6 +7,7 @@ import { importSettingsAtom } from "@recoil/imports/atoms";
 import { categotyPreset } from "@utils/SelectItems";
 import { Category } from "@utils/Types";
 import { capitalise } from "@utils/Global";
+import { getRequest, putRequest } from "@utils/Api";
 
 interface ImportSettingsDrawerProps {
   open: boolean;
@@ -44,17 +45,7 @@ export default function ImportSettingsDrawer(props: ImportSettingsDrawerProps) {
   function onSave() {
     if (!changed) return;
 
-    fetch("/api/imports/settings/update", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(state),
-    })
-      .then((res) => res.json())
-      .then((data) => {
-        setState(data);
-      });
+    putRequest("/api/imports/settings/update", state).then(setState);
     setChanged(false);
   }
 
@@ -81,12 +72,8 @@ export default function ImportSettingsDrawer(props: ImportSettingsDrawerProps) {
     ));
 
   useEffect(() => {
-    async function fetchSettings() {
-      await fetch("/api/imports/settings/read")
-        .then((res) => res.json())
-        .then((data) => {
-          setState(data);
-        });
+    function fetchSettings() {
+      getRequest("/api/imports/settings/read").then(setState);
     }
     // userUID === null indicates that section was not loaded yet
     // after loading, server will send valid userUID

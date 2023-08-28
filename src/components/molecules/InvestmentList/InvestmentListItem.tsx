@@ -1,5 +1,5 @@
 import { amountForDisplay } from "@utils/Currency";
-import { toDisplayDate } from "@utils/Global";
+import { toDisplayDate } from "@utils/Date";
 import { Investment } from "@utils/Types";
 import { AlignCenterVertical } from "phosphor-react";
 

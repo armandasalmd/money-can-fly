@@ -3,7 +3,7 @@ import { format } from "date-fns";
 
 import { IRecoilPaginationState } from "@hooks/useRecoilPagination";
 import { Transaction, TransactionForm, TransactionWithOptions } from "@utils/Types";
-import { dateFromNow } from "@utils/Global";
+import { dateFromNow } from "@utils/Date";
 import constants from "@utils/Constants";
 import { amountFilterSelect, transactionStatusFilterSelect, currencySelect, searchCategoryPreset } from "@utils/SelectItems";
 

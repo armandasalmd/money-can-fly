@@ -6,6 +6,7 @@ import { amountForDisplay } from "@utils/Currency";
 import { iconOptions } from "@utils/Global";
 import { ExchangeFix, Money } from "@utils/Types";
 import { ReactElement } from "react";
+import { postRequest } from "@utils/Api";
 
 interface CalibrateFixOptionsProps {
   fixes: AvailableFixesResponse;
@@ -32,25 +33,13 @@ export default function CalibrateFixOptions(props: CalibrateFixOptionsProps) {
   if (!props.fixes) return null;
 
   async function applyTrendFix(money: Money) {
-    const success = await fetch("/api/calibrate/applyTrendFix", {
-      method: "POST",
-      body: JSON.stringify(money),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }).then((o) => o.json());
+    const success = await postRequest<boolean>("/api/calibrate/applyTrendFix", money);
 
     if (success) props.postFixApplied();
   }
 
   async function applyExchangeFix(exchange: ExchangeFix) {
-    const success = await fetch("/api/calibrate/applyExchangeFix", {
-      method: "POST",
-      body: JSON.stringify(exchange),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }).then((o) => o.json());
+    const success = await postRequest<boolean>("/api/calibrate/applyExchangeFix", exchange);
 
     if (success) props.postFixApplied();
   }

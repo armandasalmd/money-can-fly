@@ -1,6 +1,6 @@
 import { createElement } from "react";
 import { CircleDashed, CheckCircle, XCircle } from "phosphor-react";
-import { CalibrationStatus, CalibrateCurrencyRow, Currency } from "@utils/Types";
+import { CalibrationStatus, CalibrateCurrencyRow } from "@utils/Types";
 
 import { KeyValue, Tag, TagType } from "@atoms/index";
 import { amountForDisplay } from "@utils/Currency";
@@ -10,17 +10,13 @@ interface ComponentProps {
   onClick?(currency: CalibrateCurrencyRow): void;
 }
 
-type CalibrationtMapper = {
-  [key in CalibrationStatus]: any;
-};
-
-const iconDict: CalibrationtMapper = {
+const iconDict: Record<CalibrationStatus, any> = {
   unset: CircleDashed,
   pass: CheckCircle,
   fail: XCircle,
 };
 
-const colorDict: CalibrationtMapper = {
+const colorDict: Record<CalibrationStatus, string> = {
   unset: "var(--shade30)",
   pass: "var(--color-success)",
   fail: "var(--color-error)",

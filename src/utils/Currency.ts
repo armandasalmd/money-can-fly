@@ -1,9 +1,9 @@
 import { Currency, Money, Transaction } from "./Types";
 
-const currencyLocales: { [key in Currency]: string } = {
+const currencyLocales: Record<Currency, string> = {
   USD: "en-US",
   EUR: "de-DE",
-  GBP: "en-GB",
+  GBP: "en-GB"
 };
 
 export function amountForDisplay(money: Money | Transaction): string {

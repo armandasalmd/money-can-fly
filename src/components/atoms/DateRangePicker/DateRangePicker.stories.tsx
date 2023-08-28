@@ -3,7 +3,7 @@ import { Story, Meta } from "@storybook/react";
 import { DateRange, DayPickerRangeProps } from "react-day-picker/dist/index";
 
 import DatePickerRange, { DatePickerRangeProps } from "./DateRangePicker";
-import { dateFromNow } from "@utils/Global";
+import { dateFromNow } from "@utils/Date";
 
 export default {
   title: "Atoms/DatePickerRange",

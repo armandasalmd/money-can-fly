@@ -9,34 +9,27 @@ import { subscribe, unsubscribe } from "@utils/Events";
 import { DisplaySections, Transaction, TransactionForm } from "@utils/Types";
 import useDashboardData from "@hooks/useDashboardData";
 import FilterSection from "./FilterSection";
+import { deleteRequest, postRequest } from "@utils/Api";
 
 const fetcher = (url: string, filters: TransactionForm, setTotal: (n: number) => void) => {
   const q = new URLSearchParams(url.substring(url.indexOf("?") + 1));
 
-  return fetch(url, {
-    method: "POST",
-    body: JSON.stringify({
-      ...filters,
-      skip: parseInt(q.get("skip")) || 0,
-      take: parseInt(q.get("take")) || 12,
-    }),
-    headers: {
-      "Content-Type": "application/json",
-    },
-  })
-    .then((res) => res.json())
-    .then((res) => {
-      setTotal(res.total);
+  return postRequest<any>(url, {
+    ...filters,
+    skip: parseInt(q.get("skip")) || 0,
+    take: parseInt(q.get("take")) || 12,
+  }).then((res) => {
+    setTotal(res.total);
 
-      if (Array.isArray(res.items)) {
-        return res.items.map((item: Transaction) => {
-          item.date = new Date(item.date);
-          return item;
-        });
-      } else {
-        return [];
-      }
-    });
+    if (Array.isArray(res.items)) {
+      return res.items.map((item: Transaction) => {
+        item.date = new Date(item.date);
+        return item;
+      });
+    } else {
+      return [];
+    }
+  });
 };
 const PAGE_SIZE = 25;
 
@@ -70,14 +63,8 @@ export default function TransactionSidebar(props: TransactionSidebarProps) {
   const isEnd = isEmpty || t.length < PAGE_SIZE || lastFetch?.length < PAGE_SIZE;
 
   function apiDeleteTransaction(id: string) {
-    fetch(`/api/transactions/deleteBulk`, {
-      method: "DELETE",
-      body: JSON.stringify({
-        ids: [id],
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
+    deleteRequest("/api/transactions/deleteBulk", {
+      ids: [id],
     }).then(() => {
       mutate();
       dashMutate([DisplaySections.BalanceAnalysis, DisplaySections.Insights], {
@@ -91,7 +78,7 @@ export default function TransactionSidebar(props: TransactionSidebarProps) {
       if (typeof e?.detail === "object") {
         setSearchForm({
           ...searchForm,
-          ...e.detail
+          ...e.detail,
         });
         setTimeout(mutate);
       } else {
@@ -107,13 +94,7 @@ export default function TransactionSidebar(props: TransactionSidebarProps) {
   return (
     <div className={classes} ref={thisRef}>
       <FilterSection open={props.searchFormOpen} setOpen={props.setSearchFormOpen} />
-      <TransactionList
-        showLoadMore={!isEnd}
-        showSkeletons={isLoading}
-        transactions={t}
-        onLoadMore={onLoadMore}
-        onDelete={apiDeleteTransaction}
-      />
+      <TransactionList showLoadMore={!isEnd} showSkeletons={isLoading} transactions={t} onLoadMore={onLoadMore} onDelete={apiDeleteTransaction} />
     </div>
   );
 }

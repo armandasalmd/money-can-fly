@@ -1,10 +1,13 @@
-import { ImportList, TagList } from "@molecules/index";
-import { getImportTitle, toDisplayDate } from "@utils/Global";
-import { Import } from "@utils/Types";
 import { useEffect, useState } from "react";
 import useSWRInfinite from "swr/infinite";
+
+import { ImportList, TagList } from "@molecules/index";
+import { toDisplayDate } from "@utils/Date";
+import { getImportTitle } from "@utils/Import";
+import { Import } from "@utils/Types";
 import { Drawer, Message } from "@atoms/index";
 import { ReadLogsResponse } from "@endpoint/imports/readLogs";
+import { deleteRequest, getRequest } from "@utils/Api";
 
 const fetcher = (url: string) =>
   fetch(url)
@@ -20,10 +23,7 @@ interface ImportSidebarProps {
 
 export default function ImportSidebar(props: ImportSidebarProps) {
   const [message, setMessage] = useState("");
-  const { data, error, size, setSize, mutate } = useSWRInfinite<Import>(
-    (index) => `/api/imports/read?skip=${index * PAGE_SIZE}&take=${PAGE_SIZE}`,
-    fetcher
-  );
+  const { data, error, size, setSize, mutate } = useSWRInfinite<Import>((index) => `/api/imports/read?skip=${index * PAGE_SIZE}&take=${PAGE_SIZE}`, fetcher);
   const [importLogsData, setImportLogsData] = useState<ReadLogsResponse | null>(null);
 
   function onLoadMore() {
@@ -39,35 +39,25 @@ export default function ImportSidebar(props: ImportSidebarProps) {
   const isEnd = isEmpty || imports.length < PAGE_SIZE || lastFetch?.length < PAGE_SIZE;
 
   const latestImport = imports[0];
-  const latestImportDate = latestImport
-    ? `Last import ${toDisplayDate(latestImport.date)} • Showing ${imports.length} imports`
-    : "No imports yet";
+  const latestImportDate = latestImport ? `Last import ${toDisplayDate(latestImport.date)} • Showing ${imports.length} imports` : "No imports yet";
 
-  function onUndo(id: string) {
-    fetch(`/api/imports/undo`, {
-      method: "DELETE",
-      body: JSON.stringify({ importId: id }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success === true) {
-          props.setRunningImportId(id);
-          setMessage("Successfully triggered import undo.");
-        }
-      });
+  function onUndo(importId: string) {
+    deleteRequest<any>("/api/imports/undo", { importId }).then((data) => {
+      if (data.success === true) {
+        props.setRunningImportId(importId);
+        setMessage("Successfully triggered import undo.");
+      }
+    });
   }
 
   function onShowLogs(item: Import) {
-    fetch(`/api/imports/readLogs?importId=${item._id}`)
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success === true) {
-          setImportLogsData(data.result);
-        }
-      });
+    getRequest<any>("/api/imports/readLogs", {
+      importId: item._id,
+    }).then((data) => {
+      if (data.success === true) {
+        setImportLogsData(data.result);
+      }
+    });
   }
 
   useEffect(() => {
@@ -114,17 +104,18 @@ export default function ImportSidebar(props: ImportSidebarProps) {
         onLoadMore={onLoadMore}
         onClick={onShowLogs}
       />
-      {
-        importLogsData !== null && (
-          <Drawer onClose={() => setImportLogsData(null)} open title="Import logs" subtitle={getImportTitle(importLogsData)}>
-            <p className="text" style={{marginBottom: 8}}>{`Balance was ${importLogsData.balanceWasAltered ? "" : "not "}altered`}</p>
-            <p className="text" style={{marginBottom: 8}}>File name {importLogsData.fileName || "unknown"}</p>
-            <p className="text" style={{marginBottom: 16}}>{importLogsData?.message}</p>
-            <TagList emptyTitle="No process logs" vertical editable={false} values={importLogsData?.logs ?? []} />
-          </Drawer>
-        )
-      }
-      
+      {importLogsData !== null && (
+        <Drawer onClose={() => setImportLogsData(null)} open title="Import logs" subtitle={getImportTitle(importLogsData)}>
+          <p className="text" style={{ marginBottom: 8 }}>{`Balance was ${importLogsData.balanceWasAltered ? "" : "not "}altered`}</p>
+          <p className="text" style={{ marginBottom: 8 }}>
+            File name {importLogsData.fileName || "unknown"}
+          </p>
+          <p className="text" style={{ marginBottom: 16 }}>
+            {importLogsData?.message}
+          </p>
+          <TagList emptyTitle="No process logs" vertical editable={false} values={importLogsData?.logs ?? []} />
+        </Drawer>
+      )}
     </>
   );
 }

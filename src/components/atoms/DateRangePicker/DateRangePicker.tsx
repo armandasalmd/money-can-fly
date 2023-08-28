@@ -3,11 +3,12 @@ import classNames from "classnames";
 import { addYears } from "date-fns";
 import { Calendar as CalendarIcon } from "phosphor-react";
 import { DayPicker, DateRange, DayPickerRangeProps } from "react-day-picker";
-import { useOutsideClick } from "@hooks/index";
 import "react-day-picker/dist/style.css";
 
+import { useOutsideClick } from "@hooks/index";
 import { Button, DatePeriodSelect } from "@atoms/index";
-import { callIfFunction, dateString, getPeriodNow } from "@utils/Global";
+import { callIfFunction } from "@utils/Global";
+import { shortDate, getOneMonthRange, toLocalDate, toUTCDate } from "@utils/Date";
 
 export interface DatePickerRangeProps {
   showIcon?: boolean;
@@ -25,10 +26,10 @@ function toReadDate(day: DateRange | undefined) {
     const _day = day as DateRange;
 
     return _day.to
-      ? dateString(_day.from) + " - " + dateString(_day.to)
-      : dateString(_day.from);
+      ? shortDate(_day.from) + " • " + shortDate(_day.to)
+      : shortDate(_day.from);
   } else if (day instanceof Date) {
-    return dateString(day);
+    return shortDate(day);
   }
 }
 
@@ -37,7 +38,7 @@ export default function DatePickerRange(props: DatePickerRangeProps) {
   const thisRef = useRef(null);
   const [show, setShow] = useState(false);
   const [datePeriod, setDatePeriod] = useState<DateRange | undefined>(
-    getPeriodNow()
+    getOneMonthRange()
   );
   const text = props.options.selected
     ? toReadDate(props.options.selected as DateRange)
@@ -54,6 +55,11 @@ export default function DatePickerRange(props: DatePickerRangeProps) {
   useOutsideClick(thisRef, () => setShow(false));
 
   function onDatePeriodChange(value: DateRange | undefined) {
+    if (value) {
+      value.from = toUTCDate(value.from);
+      value.to = toUTCDate(value.to);
+    }
+
     callIfFunction(props.options.onSelect, value);
     setDatePeriod(value);
   }
@@ -77,7 +83,11 @@ export default function DatePickerRange(props: DatePickerRangeProps) {
             toYear={addYears(now, 6).getFullYear()}
             captionLayout="dropdown"
             mode="range"
-            {...props.options}
+            selected={{
+              ...props.options,
+              from: toLocalDate(props.options?.selected?.from),
+              to: toLocalDate(props.options?.selected?.to)
+            }}
             onSelect={onDatePeriodChange}
           />
         )}

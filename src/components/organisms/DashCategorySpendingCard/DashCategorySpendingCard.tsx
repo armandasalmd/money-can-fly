@@ -3,7 +3,7 @@ import { ArrowClockwise } from "phosphor-react";
 
 import CategoryChart from "./CategoryChart";
 import { Card, DatePeriodSelect, Info } from "@atoms/index";
-import { getPeriodNow } from "@utils/Global";
+import { getOneMonthRange } from "@utils/Date";
 import { Category, DateRange, DisplaySections } from "@utils/Types";
 import { useDashboardData } from "@hooks/index";
 import { CategoryAnalysisModel } from "@server/models";
@@ -13,7 +13,7 @@ export default function DashCategorySpendingCard() {
   const { data, mutate } = useDashboardData<CategoryAnalysisModel>(DisplaySections.CategoryAnalysis);
   const [reloading, setReloading] = useState(false);
   const [dateRange, setDateRange] = useState<DateRange | undefined>(
-    getPeriodNow()
+    getOneMonthRange()
   );
 
   function onChange(range: DateRange) {

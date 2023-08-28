@@ -8,6 +8,7 @@ import { InvestmentEvent, Sort } from "@utils/Types";
 import { sortPreset } from "@utils/SelectItems";
 import { amountForDisplay } from "@utils/Currency";
 import { publish } from "@utils/Events";
+import { deleteRequest } from "@utils/Api";
 
 interface InvestmentTimelineProps {
   displayMessage: (message: string, messageType: MessageColor) => void;
@@ -18,16 +19,9 @@ export default function InvestmentTimeline(props: InvestmentTimelineProps) {
   const [investment, setInvestment] = useRecoilState(selectedInvestment);
 
   function onDelete(investmentEvent: InvestmentEvent) {
-    fetch("/api/investments/deleteEvent", {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        eventId: investmentEvent._id,
-      }),
+    deleteRequest<any>("/api/investments/deleteEvent", {
+      eventId: investmentEvent._id,
     })
-      .then((res) => res.json())
       .then((data) => {
         if (data.success) {
           publish("investmentsMutated", null);
@@ -47,8 +41,7 @@ export default function InvestmentTimeline(props: InvestmentTimelineProps) {
       });
   }
 
-  if (!investment || !investment.timelineEvents || investment.timelineEvents.length === 0)
-    return <Empty text="Timeline is empty" />;
+  if (!investment || !investment.timelineEvents || investment.timelineEvents.length === 0) return <Empty text="Timeline is empty" />;
 
   const copy: InvestmentEvent[] = [...investment.timelineEvents];
 
@@ -74,12 +67,7 @@ export default function InvestmentTimeline(props: InvestmentTimelineProps) {
         <Select fixedWidthSmall onChange={setSort} required value={sort} items={sortPreset} />
       </div>
       {copy.map((investmentEvent, index) => (
-        <TimelineItem
-          onDelete={onDelete}
-          key={index}
-          itemNumber={sort === "asc" ? index + 1 : copy.length - index}
-          investmentEvent={investmentEvent}
-        />
+        <TimelineItem onDelete={onDelete} key={index} itemNumber={sort === "asc" ? index + 1 : copy.length - index} investmentEvent={investmentEvent} />
       ))}
     </div>
   );

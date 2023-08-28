@@ -7,6 +7,7 @@ import { ImportFormState } from "@organisms/ImportConfigForm/ImportPresets";
 import { StartImportRequest } from "@endpoint/imports/start";
 import { ImportCsvReader } from "@utils/CsvReader";
 import { GearSix } from "phosphor-react";
+import { postRequest } from "@utils/Api";
 
 interface ImportsBodyProps {
   onImportStarted: (importId: string) => void;
@@ -35,15 +36,7 @@ export default function ImportsBody(props: ImportsBodyProps) {
       ...formState,
     };
 
-    const response = await fetch("/api/imports/start", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(request),
-    });
-
-    const data = await response.json();
+    const data = await postRequest<any>("/api/imports/start", request);
 
     if (data?.success) {
       setMessageType("info");

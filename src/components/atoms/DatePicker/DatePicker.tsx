@@ -6,7 +6,7 @@ import { format, isSameMonth, addYears } from "date-fns";
 
 import { Button } from "@atoms/index";
 import { useOutsideClick } from "@hooks/index";
-import { callIfFunction } from "@utils/Global";
+import { getUTCNow, toLocalDate, toUTCDate } from "@utils/Date";
 
 export interface DatePickerProps {
   placeholder?: string;
@@ -24,7 +24,7 @@ export default function DatePicker(props: DatePickerProps) {
   const buttonRef = useRef(null);
   const [show, setShow] = useState(false);
   const placeholder = props.placeholder || "Select a date";
-  const now = new Date();
+  const now = getUTCNow();
 
   const [month, setMonth] = useState<Date>(props.value || now);
 
@@ -32,11 +32,11 @@ export default function DatePicker(props: DatePickerProps) {
 
   function onDayClick(day: Date) {
     if (!day && props.required) {
-      day = new Date();
+      day = now;
     }
 
     setShow(false);
-    callIfFunction(props.onSelect, day, props.name);
+    props?.onSelect(day, props.name);
   }
 
   let footer = props.goToToday ? (
@@ -66,8 +66,8 @@ export default function DatePicker(props: DatePickerProps) {
             mode="single"
             onMonthChange={setMonth}
             month={month}
-            selected={props.value}
-            onSelect={onDayClick}
+            selected={toLocalDate(props.value)}
+            onSelect={o => onDayClick(toUTCDate(o))}
             defaultMonth={props.value || new Date()}
             footer={footer}
           />

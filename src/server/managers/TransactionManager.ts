@@ -6,7 +6,7 @@ import { CookieUser } from "@server/core";
 import { TransactionModel, ITransactionModel, TransactionDocument } from "@server/models";
 import { BalanceManager, CurrencyRateManager } from "@server/managers";
 import { SearchRequest, SearchResponse } from "@endpoint/transactions/search";
-import { escapeRegExp } from "@server/utils/Global";
+import { escapeRegExp, round } from "@server/utils/Global";
 import constants from "@server/utils/Constants";
 import { Currency, Money } from "@utils/Types";
 
@@ -29,6 +29,8 @@ export class TransactionManager {
     if (constants.negativeCategories.includes(request.category) && request.amount > 0) {
       request.amount = -request.amount;
     }
+
+    request.amount = round(request.amount); // Note: Guard against precision problem like -64.16999999999996
 
     const [commonValue] = await Promise.all([
       CurrencyRateManager.getInstance().convert(request.amount, request.currency, "USD", date),
@@ -61,6 +63,8 @@ export class TransactionManager {
   }
 
   public async UpdateTransaction(request: UpdateTransactionRequest): Promise<ITransactionModel> {
+    request.amount = round(request.amount); // Note: Guard against precision problem like -64.16999999999996
+
     const date = new Date(request.date);
     const document = await TransactionModel.findById(request.id);
 
@@ -77,7 +81,7 @@ export class TransactionManager {
       currency: document.currency,
     }] : []; // Uncommit old value
 
-    const positiveAmount = request.amount > 0 ? request.amount : -request.amount;
+    const positiveAmount = Math.abs(request.amount);
 
     document.amount = constants.negativeCategories.includes(request.category) ? -positiveAmount : positiveAmount;
     document.category = request.category;
@@ -129,7 +133,7 @@ export class TransactionManager {
     }, {});
 
     const totalCurrency = Object.keys(totalCurrencyReversed).map<Money>((currency) => ({
-      amount: totalCurrencyReversed[currency],
+      amount: round(totalCurrencyReversed[currency]),
       currency: currency as Currency,
     }));
 

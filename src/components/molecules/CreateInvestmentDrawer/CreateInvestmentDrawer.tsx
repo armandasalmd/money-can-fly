@@ -3,6 +3,7 @@ import { Button, Drawer, Input, Checkbox, DatePicker } from "@atoms/index";
 import { CurrencyInput } from "@molecules/index";
 import { usePreferences } from "@context/index";
 import { Currency, Money } from "@utils/Types";
+import { postRequest } from "@utils/Api";
 
 function defaultMoney(currency: Currency): Money {
   return {
@@ -51,17 +52,11 @@ export default function CreateInvestmentDrawer(props: CreateInvestmentDrawerProp
     }
 
     if (valid) {
-      fetch("/api/investments/create", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          title,
-          initialDeposit: money,
-          subtractFromBalance: subtract,
-          startDate: date
-        }),
+      postRequest("/api/investments/create", {
+        title,
+        initialDeposit: money,
+        subtractFromBalance: subtract,
+        startDate: date
       }).then(onClose);
     }
   }
