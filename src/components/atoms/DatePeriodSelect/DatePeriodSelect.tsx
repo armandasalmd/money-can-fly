@@ -2,9 +2,9 @@ import { format, formatISO, addMonths} from "date-fns";
 
 import { Select, SelectProps } from "@atoms/index";
 import { SelectItem } from "@utils/SelectItems";
-import { callIfFunction, getDateRange, getUTCNow } from "@utils/Global";
+import { callIfFunction } from "@utils/Global";
+import { getUTCNow, getOneMonthRange } from "@utils/Date";
 import { DateRange } from "@utils/Types";
-
 
 const TODAY_SUFFIX = " (now)";
 
@@ -53,7 +53,7 @@ function generateSelectItems(
   function getSelectItem(periodStart: Date, suffix?: string): SelectItem {
     return {
       label: format(periodStart, "yyyy MMMM") + (suffix || ""),
-      value: dateRangeToString(getDateRange(periodStart)),
+      value: dateRangeToString(getOneMonthRange(periodStart)),
     };
   }
 }

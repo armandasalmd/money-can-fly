@@ -2,21 +2,17 @@ import { createElement } from "react";
 import { HourglassMedium, CheckSquare, XSquare, ClockCounterClockwise } from "phosphor-react";
 
 import { Import, ImportState } from "@utils/Types";
-import { callIfFunction, getImportTitle } from "@utils/Global";
+import { getImportTitle } from "@utils/Import";
 import { Button, PopConfirm } from "@atoms/index";
 
-type ImportMapper = {
-  [key in ImportState]: any;
-};
-
-const iconDict: ImportMapper = {
+const iconDict: Record<ImportState, any> = {
   undo: ClockCounterClockwise,
   running: HourglassMedium,
   success: CheckSquare,
   error: XSquare,
 };
 
-const colorDict: ImportMapper = {
+const colorDict: Record<ImportState, string> = {
   running: "var(--shade50)",
   success: "var(--color-success)",
   error: "var(--color-error)",
@@ -50,7 +46,7 @@ export default function ImportItem(props: ImportItemProps) {
 
   return (
     <div className="iItem">
-      <div className="iItem__details" onClick={() => callIfFunction(props.onClick)}>
+      <div className="iItem__details" onClick={() => props?.onClick}>
         <h5 className="iItem__title">{getImportTitle(props)}</h5>
         <p className="iItem__subtitle">{props.message}</p>
       </div>

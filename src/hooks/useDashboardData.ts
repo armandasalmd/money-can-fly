@@ -4,7 +4,7 @@ import { useRecoilState } from "recoil";
 import { dashboardData } from "@recoil/dashboard/atoms";
 import { DisplaySections, InvestmentEvent } from "@utils/Types";
 import { DisplayModelResponse } from "@endpoint/dashboard/displayModel";
-import { getDateRange } from "@utils/Global";
+import { getOneMonthRange } from "@utils/Date";
 
 function transformDates(data: Partial<DisplayModelResponse>) {
   if (!data) return;
@@ -71,14 +71,14 @@ export default function useDashboardData<T>(section?: DisplaySections) {
       // eslint-disable-next-line
       initialized = true;
 
-      const thisMonthRange = getDateRange();
+      const thisMonthRange = getOneMonthRange();
 
       fetchSections(Object.values(DisplaySections), {
         balanceAnalysisDateRange: thisMonthRange,
         categoryAnalysisDateRange: thisMonthRange,
         spendingChartRanges: [
-          getDateRange(undefined, -2),
-          getDateRange(undefined, -1),
+          getOneMonthRange(undefined, -2),
+          getOneMonthRange(undefined, -1),
           thisMonthRange
         ],
       });

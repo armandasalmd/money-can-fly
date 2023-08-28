@@ -7,6 +7,7 @@ import { AddTimelineEvent, InvestmentTimeline } from "@organisms/index";
 import { selectedInvestment } from "@recoil/dashboard/atoms";
 import { CreateInvestmentEvent } from "@utils/Types";
 import { publish } from "@utils/Events";
+import { postRequest } from "@utils/Api";
 
 interface InvestmentDetailsDrawerProps {
   open: boolean;
@@ -24,7 +25,7 @@ export default function InvestmentDetailsDrawer(props: InvestmentDetailsDrawerPr
   function displayMessage(message: string, messageType: MessageColor) {
     setMessage(message);
     setMessageType(messageType);
-  };
+  }
 
   function onClose() {
     setMessage(null);
@@ -33,28 +34,24 @@ export default function InvestmentDetailsDrawer(props: InvestmentDetailsDrawerPr
   }
 
   function onCreateEvent(data: CreateInvestmentEvent) {
-    fetch("/api/investments/addEvent", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        investmentId: investment.id,
-        ...data
-      }),
-    }).then(res => res.json()).then(data => {
-      if (data && data.success === true) {
-        displayMessage("Event created successfully", "success");
+    postRequest<any>("/api/investments/addEvent", {
+      investmentId: investment.id,
+      ...data,
+    })
+      .then((data) => {
+        if (data && data.success === true) {
+          displayMessage("Event created successfully", "success");
 
-        publish("investmentsMutated", null);
+          publish("investmentsMutated", null);
 
-        setActiveTabId("timeline");
-      } else {
-        displayMessage(data.message || "Error creating event", "error");
-      }
-    }).catch(err => {
-      displayMessage("Error creating event", "error");
-    });
+          setActiveTabId("timeline");
+        } else {
+          displayMessage(data.message || "Error creating event", "error");
+        }
+      })
+      .catch((err) => {
+        displayMessage("Error creating event", "error");
+      });
   }
 
   function onTabChange(id: string) {
@@ -63,22 +60,9 @@ export default function InvestmentDetailsDrawer(props: InvestmentDetailsDrawerPr
   }
 
   return (
-    <Drawer
-      size="small"
-      open={props.open}
-      onClose={onClose}
-      title="Inspect & manage investment"
-      subtitle={investment.title}
-      noPadding
-      destroyOnClose
-    >
+    <Drawer size="small" open={props.open} onClose={onClose} title="Inspect & manage investment" subtitle={investment.title} noPadding destroyOnClose>
       {message && (
-        <Message
-          colorType={messageType}
-          onDismiss={() => setMessage(null)}
-          fadeIn
-          messageStyle="bordered"
-        >
+        <Message colorType={messageType} onDismiss={() => setMessage(null)} fadeIn messageStyle="bordered">
           {message}
         </Message>
       )}

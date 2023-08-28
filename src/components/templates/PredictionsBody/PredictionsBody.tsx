@@ -9,14 +9,9 @@ import { MonthPrediction } from "@utils/Types";
 import WeeklyPredictionsChart from "./WeeklyPredictionsChart";
 import { amountForDisplay } from "@utils/Currency";
 import { yearsPreset } from "@utils/SelectItems";
-import {
-  editorChartToolState,
-  chartToolState,
-  monthPredictionFormState,
-  getDefaultWeekPredictions,
-} from "@recoil/predictions/atoms";
+import { editorChartToolState, chartToolState, monthPredictionFormState, getDefaultWeekPredictions } from "@recoil/predictions/atoms";
 import { subscribe, unsubscribe } from "@utils/Events";
-import { getDateRange } from "@utils/Global";
+import { deleteRequest } from "@utils/Api";
 
 function getCardHeader(p: MonthPrediction, editorChartOverride: boolean): HeaderProps {
   if (editorChartOverride) {
@@ -71,41 +66,31 @@ export default function PredictionsBody() {
 
       setFormState({
         ...formState,
-        predictions: weekPredCopy
+        predictions: weekPredCopy,
       });
     },
     type: "default",
     tooltip: "Copy selected values to the form ->",
-  }
+  };
 
   const deleteAction: CardHeaderAction = {
     text: "Delete",
     onClick: () => {
       const id = chartTool?.id;
 
-      fetch("/api/predictions/resetPeriod", {
-        method: "DELETE",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ predictionId: id }),
-      })
-        .then((res) => {
-          return res.json();
-        })
-        .then((data) => {
-          if (data.success) {
-            setChartTool(null);
-            mutate();
-          }
-        });
+      deleteRequest<any>("/api/predictions/resetPeriod", { predictionId: id }).then((data) => {
+        if (data.success) {
+          setChartTool(null);
+          mutate();
+        }
+      });
     },
     type: "danger",
     popConfirm: {
       placement: "bottomRight",
       description: "Delete prediction for selected month",
       onConfirm: () => {},
-    }
+    },
   };
 
   function onYearChange(year: string) {
@@ -130,7 +115,7 @@ export default function PredictionsBody() {
 
     return () => {
       unsubscribe("predictionsUpdated", onPredictionUpdated);
-    }
+    };
   }, [mutate]);
 
   return (
@@ -140,9 +125,7 @@ export default function PredictionsBody() {
           noDivider
           header={{
             title: "Preview expectations",
-            description: displayEditorChart
-              ? "Disable chart tool to preview existing"
-              : "Select monthly period to preview",
+            description: displayEditorChart ? "Disable chart tool to preview existing" : "Select monthly period to preview",
             color: displayEditorChart ? "warning" : "primary",
           }}
           noContentPaddingX
@@ -150,18 +133,10 @@ export default function PredictionsBody() {
         >
           {!displayEditorChart && (
             <div className="predictionsBody__yearSelect">
-              <Select
-                required
-                items={yearsPreset}
-                placeholder="Filter by year"
-                value={selectedYear}
-                onChange={onYearChange}
-              />
+              <Select required items={yearsPreset} placeholder="Filter by year" value={selectedYear} onChange={onYearChange} />
             </div>
           )}
-          {!displayEditorChart && (
-            <PredictionPreviewList selectedPrediction={chartTool} onSelect={onSelect} predictions={predictions} />
-          )}
+          {!displayEditorChart && <PredictionPreviewList selectedPrediction={chartTool} onSelect={onSelect} predictions={predictions} />}
         </Card>
       </div>
       <div className="predictionsBody__chart">
@@ -170,9 +145,7 @@ export default function PredictionsBody() {
           header={getCardHeader(chartTool, displayEditorChart)}
           headerActions={chartTool && !displayEditorChart ? [copyAction, deleteAction] : undefined}
         >
-          {(chartTool || displayEditorChart) && (
-            <WeeklyPredictionsChart prediction={displayEditorChart ? editorChartTool : chartTool} />
-          )}
+          {(chartTool || displayEditorChart) && <WeeklyPredictionsChart prediction={displayEditorChart ? editorChartTool : chartTool} />}
           {!chartTool && !displayEditorChart && <Empty />}
         </Card>
       </div>

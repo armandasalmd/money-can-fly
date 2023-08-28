@@ -6,6 +6,7 @@ import { currencyPreset } from "@utils/SelectItems";
 import WeekPredictionItem from "./WeekPredictionItem";
 import { monthPredictionFormState, getDefaultForm, getDefaultWeekPredictions } from "@recoil/predictions/atoms";
 import { useRecoilState } from "recoil";
+import { getRequest } from "@utils/Api";
 
 export interface CreateUpdatePredictionFormProps {
   onSubmit: (prediction: MonthPrediction, isEmpty: boolean) => void;
@@ -29,7 +30,9 @@ export default function CreateUpdatePredictionForm(props: CreateUpdatePrediction
   function selectedPeriodChange(range: DateRange) {
     props.setLoading(true);
 
-    fetch("/api/predictions/read?month=" + range.from.toISOString()).then((o) => o.json()).then((data: MonthPrediction) => {
+    getRequest<MonthPrediction>("/api/predictions/read", {
+      month: range.from.toISOString()
+    }).then(data => {
       if (data && data.period) {
         const d = getDefaultWeekPredictions();
         

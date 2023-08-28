@@ -9,6 +9,7 @@ import { Money } from "@utils/Types";
 import { amountForDisplay } from "@utils/Currency";
 import { publish } from "@utils/Events";
 import { usePreferences } from "@context/PreferencesContext";
+import { getRequest, putRequest } from "@utils/Api";
 
 interface PreferencesDrawerProps {
   open: boolean;
@@ -27,14 +28,7 @@ export default function PreferencesDrawer(props: PreferencesDrawerProps) {
 
   function onSave() {
     setLoading(true);
-    fetch("/api/preferences/update", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(state),
-    })
-      .then((res) => res.json())
+    putRequest<any>("/api/preferences/update", state)
       .then((res) => {
         const errorMessage = res.message
         
@@ -128,14 +122,10 @@ export default function PreferencesDrawer(props: PreferencesDrawerProps) {
   });
 
   useEffect(() => {
-    async function fetchPreferences(): Promise<PreferencesForm> {
-      return fetch("/api/preferences/read").then((res) => res.json());
-    }
-
     if (props.open) {
       if (!loading) setLoading(true);
 
-      fetchPreferences().then((res) => {
+      getRequest<PreferencesForm>("/api/preferences/read").then((res) => {
         res.forecastPivotDate = new Date(res.forecastPivotDate);
 
         setDefaultCurrency(res.defaultCurrency);

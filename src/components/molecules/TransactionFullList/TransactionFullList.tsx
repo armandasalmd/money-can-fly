@@ -8,6 +8,7 @@ import { Transaction } from "@utils/Types";
 import { Empty, Loader } from "@atoms/index";
 import { pagedTransactionsState, filterFormState } from "@recoil/transactions/atoms";
 import { subscribe, unsubscribe } from "@utils/Events";
+import { patchRequest, postRequest } from "@utils/Api";
 
 export interface PredictionPreviewListProps {
   selectedTransactions: Transaction[];
@@ -36,22 +37,12 @@ export default function TransactionFullList(props: PredictionPreviewListProps) {
     }
   }
 
-  async function transactionsFetcher(
-    page: number,
-    size: number,
-    extra: any
-  ): Promise<IRecoilPaginationFetchResponse<Transaction>> {
-    return fetch("/api/transactions/search", {
-      method: "POST",
-      body: JSON.stringify({
-        skip: (page - 1) * size,
-        take: size,
-        ...(extra ? extra : filterForm),
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    }).then((response) => response.json());
+  async function transactionsFetcher(page: number, size: number, extra: any): Promise<IRecoilPaginationFetchResponse<Transaction>> {
+    return postRequest("/api/transactions/search", {
+      skip: (page - 1) * size,
+      take: size,
+      ...(extra ? extra : filterForm),
+    });
   }
 
   function postPageChange() {
@@ -64,36 +55,28 @@ export default function TransactionFullList(props: PredictionPreviewListProps) {
   }
 
   function toggleActive(transaction: Transaction) {
-    fetch("/api/transactions/setActive", {
-      method: "PATCH",
-      body: JSON.stringify({
-        id: transaction._id,
-        active: !transaction.isActive,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.success) {
-          const itemIdx = displayState.displayedItems.findIndex((t) => t._id === transaction._id)
-          
-          if (itemIdx > -1) {
-            const newItems = [...displayState.displayedItems];
+    patchRequest<any>("/api/transactions/setActive", {
+      id: transaction._id,
+      active: !transaction.isActive,
+    }).then((data) => {
+      if (data.success) {
+        const itemIdx = displayState.displayedItems.findIndex((t) => t._id === transaction._id);
 
-            newItems[itemIdx] = {
-              ...newItems[itemIdx],
-              isActive: !newItems[itemIdx].isActive,
-            };
+        if (itemIdx > -1) {
+          const newItems = [...displayState.displayedItems];
 
-            setDisplayState({
-              ...displayState,
-              displayedItems: newItems,
-            });
-          }
+          newItems[itemIdx] = {
+            ...newItems[itemIdx],
+            isActive: !newItems[itemIdx].isActive,
+          };
+
+          setDisplayState({
+            ...displayState,
+            displayedItems: newItems,
+          });
         }
-      });
+      }
+    });
   }
 
   const onSearchCallback = useCallback(onSearch, [reset]);

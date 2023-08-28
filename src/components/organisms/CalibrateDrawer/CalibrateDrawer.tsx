@@ -9,6 +9,7 @@ import { usePreferences } from "@context/index";
 import { useDashboardData } from "@hooks/index";
 import { balanceChartDateRange, spendingChartDateRanges } from "@recoil/dashboard/atoms";
 import { publish } from "@utils/Events";
+import { getRequest, postRequest } from "@utils/Api";
 
 interface CalibrateDrawerProps {
   open: boolean;
@@ -43,17 +44,13 @@ function toTableRows(balances: Balances, currentState: CalibrateCurrencyRow[]): 
   });
 }
 
-type StatusMapper<T> = {
-  [key in CalibrationStatus]: T;
-};
-
-const messages: StatusMapper<string> = {
+const messages: Record<CalibrationStatus, string> = {
   fail: "Resolve conflicts using actions below",
   pass: "All balances are calibrated",
   unset: "Set most recent values for each currency using input below",
 };
 
-const messageTypes: StatusMapper<MessageColor> = {
+const messageTypes: Record<CalibrationStatus, MessageColor> = {
   fail: "warning",
   pass: "success",
   unset: "info",
@@ -86,7 +83,7 @@ export default function CalibrateDrawer(props: CalibrateDrawerProps) {
     } else {
       row.target.amount = 0;
     }
-    
+
     setRowStatus(row);
     setTableState(stateCopy);
   }
@@ -106,7 +103,7 @@ export default function CalibrateDrawer(props: CalibrateDrawerProps) {
   function onFinish() {
     mutate([DisplaySections.BalanceAnalysis, DisplaySections.Insights, DisplaySections.SpendingAnalysis], {
       balanceAnalysisDateRange,
-      spendingChartRanges
+      spendingChartRanges,
     });
     publish("transactionSearchFormSubmit", null);
     props.setOpen(false);
@@ -114,26 +111,17 @@ export default function CalibrateDrawer(props: CalibrateDrawerProps) {
 
   const retrieveFixes = useCallback(() => {
     function go() {
-      fetch("/api/calibrate/availableFixes", {
-        method: "POST",
-        body: JSON.stringify({
-          targets: tableState,
-        }),
-        headers: {
-          "Content-Type": "application/json",
-        },
-      })
-        .then((o) => o.json())
-        .then(setAvailableFixes);
+      postRequest("/api/calibrate/availableFixes", {
+        targets: tableState,
+      }).then(setAvailableFixes);
     }
 
     go();
   }, [tableState]);
 
   const retreiveBalance = useCallback(() => {
-    fetch("/api/balance/read")
-      .then((response) => response.json())
-      .then((balances: Balances) => {
+    getRequest<Balances>("/api/balance/read")
+      .then(balances => {
         setTableState(
           toTableRows(balances, tableState).map((row) => {
             if (row.inApp.amount === 0) {

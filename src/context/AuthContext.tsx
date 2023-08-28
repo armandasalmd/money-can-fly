@@ -9,6 +9,7 @@ import {
 import { useRouter } from "next/router";
 import { auth } from "../../firebase";
 import AuthUtils from "@utils/Auth";
+import { getRequest, postRequest } from "@utils/Api";
 
 export interface UseAuthProps {
   user: User;
@@ -63,15 +64,7 @@ export function AuthContextProvider({ children }) {
 
     AuthUtils.setApiLoginInProgress(true);
     const token = await user.getIdToken(true);
-
-    const response = await fetch("/api/auth/login", {
-      method: "POST",
-      body: JSON.stringify({ userIdToken: token }),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const data = await response.json();
+    const data = await postRequest<any>("/api/auth/login", { userIdToken: token });
     
     AuthUtils.setApiLoginInProgress(false);
 
@@ -110,8 +103,7 @@ export function AuthContextProvider({ children }) {
     AuthUtils.clearApiExpiry();
     
     AuthUtils.setApiLoginInProgress(true);
-    const response = await fetch("/api/auth/logout");
-    const data = await response.json();
+    const data = await getRequest<any>("/api/auth/logout");
     AuthUtils.setApiLoginInProgress(false);
 
     if (data?.success === true) {

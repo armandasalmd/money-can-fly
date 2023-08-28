@@ -81,7 +81,7 @@ export class InvestmentsManager {
     if (request.subtractFromBalance) {
       transactionId = await this.SubmitCashTransaction(
         {
-          amount: request.initialDeposit.amount * -1,
+          amount: -request.initialDeposit.amount,
           currency: request.initialDeposit.currency,
         },
         user,

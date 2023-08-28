@@ -1,6 +1,6 @@
 import { atom } from "recoil";
 import { DateRange, MonthPrediction, WeekPrediction } from "@utils/Types";
-import { getPeriodNow } from "@utils/Global";
+import { getOneMonthRange } from "@utils/Date";
 
 export function getDefaultWeekPredictions(): WeekPrediction[] {
   const weeks: WeekPrediction[] = [];
@@ -26,7 +26,7 @@ export function getDefaultWeekPredictions(): WeekPrediction[] {
 
 export function getDefaultForm(period?: DateRange): MonthPrediction {
   return {
-    period: period || getPeriodNow(),
+    period: period || getOneMonthRange(),
     currency: "GBP",
     predictions: getDefaultWeekPredictions(),
   };

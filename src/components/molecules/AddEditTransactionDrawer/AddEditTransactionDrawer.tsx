@@ -7,6 +7,7 @@ import { addEditTransactionState } from "@recoil/transactions/atoms";
 import { callIfFunction } from "@utils/Global";
 import { FieldErrors, Transaction, TransactionWithOptions } from "@utils/Types";
 import { CreateUpdateTransactionForm } from "@molecules/index";
+import { patchRequest, postRequest } from "@utils/Api";
 
 interface AddEditTransactionDrawerProps {
   open: boolean;
@@ -35,34 +36,20 @@ export default function Component(props: AddEditTransactionDrawerProps) {
   }
 
   async function apiCreate(transaction: TransactionWithOptions): Promise<boolean> {
-    const response = await fetch("/api/transactions/create", {
-      method: "POST",
-      body: JSON.stringify(transaction),
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
-    const data = await response.json();
+    const response = await postRequest<any>("/api/transactions/create", transaction);
 
-    if (data.fieldErrors) {
-      setFieldErrors(data.fieldErrors);
+    if (response.fieldErrors) {
+      setFieldErrors(response.fieldErrors);
     }
 
-    return !!data._id;
+    return !!response._id;
   }
 
   async function apiUpdate(transaction: TransactionWithOptions): Promise<boolean> {
-    const response = await fetch("/api/transactions/update", {
-      method: "PATCH",
-      body: JSON.stringify({
-        ...transaction,
-        id: transaction._id,
-      }),
-      headers: {
-        "Content-Type": "application/json",
-      },
+    const data = await patchRequest<any>("/api/transactions/update", {
+      ...transaction,
+      id: transaction._id,
     });
-    const data = await response.json();
 
     if (data.fieldErrors) {
       setFieldErrors(data.fieldErrors);
