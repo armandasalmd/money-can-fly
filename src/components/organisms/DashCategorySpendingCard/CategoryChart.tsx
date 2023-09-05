@@ -1,11 +1,11 @@
 import React, { useRef } from "react";
 import { Bar, getElementAtEvent } from "react-chartjs-2";
 
-import Categories from "@atoms/CategoryIcon/TransactionCategories";
+import Categories from "@atoms/CategoryIcon/CategoryIconMetaData";
 
 import { Empty } from "@atoms/index";
 import { CategoryAnalysisModel } from "@server/models";
-import { Category } from "@utils/Types";
+import { getCategoryByLabel, Category } from "@utils/Category";
 
 interface CategoryChartProps {
   apiModel: CategoryAnalysisModel;
@@ -43,11 +43,10 @@ export default function CategoryChart(props: CategoryChartProps) {
     const [item] = getElementAtEvent(chartRef.current, event);
 
     if (item && item.datasetIndex === 0) {
-      const label = props.apiModel.chartLabels[item.index];
-      const category = Object.entries(Categories).find(([_, c]) => c.name === label);
+      const category = getCategoryByLabel(props.apiModel.chartLabels[item.index]);
 
       if (category) {
-        props.onCaterogyClick(category[0] as Category);
+        props.onCaterogyClick(category.value);
       }
     }
   };

@@ -9,6 +9,7 @@ import { SearchRequest, SearchResponse } from "@endpoint/transactions/search";
 import { escapeRegExp, round } from "@server/utils/Global";
 import constants from "@server/utils/Constants";
 import { Currency, Money } from "@utils/Types";
+import { isNegative } from "@utils/Category";
 
 interface DeleteManyTransaction extends Money {
   id: string;
@@ -26,7 +27,7 @@ export class TransactionManager {
   public async CreateTransaction(request: CreateTransactionRequest): Promise<ITransactionModel> {
     const date = new Date(request.date);
 
-    if (constants.negativeCategories.includes(request.category) && request.amount > 0) {
+    if (isNegative(request.category) && request.amount > 0) {
       request.amount = -request.amount;
     }
 
@@ -72,7 +73,7 @@ export class TransactionManager {
       return null;
     }
 
-    if (constants.negativeCategories.includes(document.category) && request.amount > 0) {
+    if (isNegative(document.category) && request.amount > 0) {
       request.amount = -request.amount;
     }
 
@@ -83,7 +84,7 @@ export class TransactionManager {
 
     const positiveAmount = Math.abs(request.amount);
 
-    document.amount = constants.negativeCategories.includes(request.category) ? -positiveAmount : positiveAmount;
+    document.amount = isNegative(request.category) ? -positiveAmount : positiveAmount;
     document.category = request.category;
     document.currency = request.currency;
     document.date = date;

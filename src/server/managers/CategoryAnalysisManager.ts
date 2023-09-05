@@ -7,6 +7,7 @@ import { CurrencyRateManager } from "./CurrencyRateManager";
 import { addMonths, endOfMonth, format } from "date-fns";
 import { round } from "@server/utils/Global";
 import { amountForDisplay } from "@utils/Currency";
+import { allCategories } from "@utils/Category";
 
 interface ICategorySummary {
   _id: string;
@@ -33,7 +34,7 @@ export class CategoryAnalysisManager {
     const avgValues = [];
 
     for (const category of categorySummary) {
-      labels.push(capitalise(category._id));
+      labels.push(allCategories[category._id].label);
       values.push(await rateManager.convert(Math.abs(category.totalUsd), "USD", this.defaultCurrency));
 
       const avgCategory = averageSummary.find((x) => x._id === category._id);

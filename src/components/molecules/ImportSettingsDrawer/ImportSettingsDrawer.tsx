@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 
-import { Button, Drawer, Select } from "@components/atoms";
-import { TagList } from "@components/molecules";
+import { Button, Drawer, Select } from "@atoms/index";
+import { TagList } from "@molecules/index";
 import { importSettingsAtom } from "@recoil/imports/atoms";
 import { categotyPreset } from "@utils/SelectItems";
 import { Category } from "@utils/Types";

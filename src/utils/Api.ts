@@ -5,7 +5,7 @@ const JSON_TYPE_HEADERS = {
 
 export async function deleteRequest<TResponse>(path: string, body: any): Promise<TResponse> {
   const response = await fetch(path, {
-    method: "PATCH",
+    method: "DELETE",
     body: JSON.stringify(body),
     headers: JSON_TYPE_HEADERS
   });
@@ -14,7 +14,7 @@ export async function deleteRequest<TResponse>(path: string, body: any): Promise
 }
 
 export async function getRequest<TResponse>(path: string, queryObject?: any): Promise<TResponse> {
-  const response = await fetch(path + (queryObject ? new URLSearchParams(queryObject).toString(): ""));
+  const response = await fetch(path + (queryObject ? "?" + new URLSearchParams(queryObject).toString(): ""));
 
   return await response.json();
 }

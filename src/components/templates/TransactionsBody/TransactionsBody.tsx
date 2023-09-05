@@ -13,7 +13,7 @@ import {
 } from "@recoil/transactions/atoms";
 import { publish } from "@utils/Events";
 import { Transaction, TransactionWithOptions } from "@utils/Types";
-import constants from "@server/utils/Constants";
+import { isNegative } from "@utils/Category";
 
 export default function TransactionsBody() {
   const [addDrawerOpen, setAddDrawerOpen] = useState(false);
@@ -71,7 +71,7 @@ export default function TransactionsBody() {
 
       newItems[itemIdx] = {
         ...transaction,
-        amount: constants.negativeCategories.includes(transaction.category) ? -transaction.amount : transaction.amount,
+        amount: isNegative(transaction.category) ? -transaction.amount : transaction.amount,
       };
 
       setDisplayState({

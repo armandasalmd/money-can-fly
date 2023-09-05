@@ -95,7 +95,7 @@ export default function DatePickerRange(props: DatePickerRangeProps) {
       {props.withDatePresets && (
         <DatePeriodSelect
           monthsAhead={12}
-          monthsBehind={12}
+          monthsBehind={24}
           onChange={onDatePeriodChange}
           menuAbove={props.selectMenuAbove}
           value={datePeriod}

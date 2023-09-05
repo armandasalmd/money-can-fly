@@ -12,6 +12,6 @@ const Template: Story<CategoryIconProps> = (args) => <CategoryIcon {...args} />;
 
 export const Default = Template.bind({});
 Default.args = {
-  category: "education",
+  category: "alcoholSmoking",
   size: "medium",
 } as CategoryIconProps;

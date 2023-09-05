@@ -1,40 +1,11 @@
+import { allCategoryValues } from "@utils/Category";
+
 const constants = {
   calibartionTerms: ["calibration", "calibrate", "calibrated", "calibrating"],
-  positiveCategories: ["deposits", "trendUp", "salary"],
-  neutralCategories: ["investments"],
-  negativeCategories: [
-    "food",
-    "shopping",
-    "transport",
-    "health",
-    "entertainment",
-    "education",
-    "home",
-    "bills",
-    "gifts",
-    "other",
-    "trendDown",
-  ],
   allowed: {
     sources: ["barclays", "revolut", "cash"],
     currencies: ["USD", "EUR", "GBP"],
-    categories: [
-      "food",
-      "shopping",
-      "transport",
-      "health",
-      "entertainment",
-      "education",
-      "home",
-      "bills",
-      "gifts",
-      "other",
-      "deposits",
-      "salary",
-      "investments",
-      "trendUp",
-      "trendDown",
-    ],
+    categories: allCategoryValues,
     importStates: ["running", "success", "error"],
     transactionStatusFilters: ["active", "inactive"],
     amountFilters: [
