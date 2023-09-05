@@ -1,5 +1,5 @@
 import { TransactionBank, Currency, TransactionStatusFilter, AmountFilter, Sort } from "@utils/Types";
-import Categories from "@atoms/CategoryIcon/TransactionCategories";
+import { allCategories } from "./Category";
 
 export type SelectItemsObject<T extends string> = { [key in T]: string };
 
@@ -55,12 +55,7 @@ const yearSelect: SelectItemsObject<string> = {
   "2026": "Year 2026",
 };
 
-export const categotyPreset: SelectItem[] = Object.keys(Categories).map((
-  key,
-) => ({
-  label: Categories[key].name,
-  value: key,
-}));
+export const categotyPreset: SelectItem[] = Object.values(allCategories);
 
 export const searchCategoryPreset: SelectItem[] = [{
   label: "Not investment",

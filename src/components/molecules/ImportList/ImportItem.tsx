@@ -46,7 +46,7 @@ export default function ImportItem(props: ImportItemProps) {
 
   return (
     <div className="iItem">
-      <div className="iItem__details" onClick={() => props?.onClick}>
+      <div className="iItem__details" onClick={() => props?.onClick()}>
         <h5 className="iItem__title">{getImportTitle(props)}</h5>
         <p className="iItem__subtitle">{props.message}</p>
       </div>

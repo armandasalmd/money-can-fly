@@ -28,7 +28,7 @@ export const filterFormState = atom<TransactionForm>({
   default: {
     amountFilter: undefined,
     statusFilter: undefined,
-    category: undefined,
+    category: "notInvestments",
     currency: undefined,
     dateRange: {
       from: dateFromNow(-365 * 5),

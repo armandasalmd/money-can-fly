@@ -27,8 +27,10 @@ module.exports = {
       "@utils": path.resolve(__dirname, "../src/utils"),
       "@styles": path.resolve(__dirname, "../src/styles"),
       "@context": path.resolve(__dirname, "../src/context"),
+      "@components": path.resolve(__dirname, "../src/components"),
       "@recoil": path.resolve(__dirname, "../src/recoil"),
       "@endpoint": path.resolve(__dirname, "../src/pages/api"),
+      "@server": path.resolve(__dirname, "../src/server"),
     };
     return config;
   },

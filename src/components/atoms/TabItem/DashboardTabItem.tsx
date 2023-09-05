@@ -1,4 +1,4 @@
-import { Button } from "@components/atoms";
+import { Button } from "@atoms/index";
 import { callIfFunction } from "@utils/Global";
 import { TabItemProps } from "./TabItemProps";
 

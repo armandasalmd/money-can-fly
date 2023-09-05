@@ -1,32 +1,25 @@
 import { createElement } from "react";
-import classNames from "classnames";
 
 import { Size, Category } from "@utils/Types";
-import AllCategories from "./TransactionCategories";
-import { capitalise } from "@utils/Global";
+import AllCategories from "./CategoryIconMetaData";
 
 export interface CategoryIconProps {
   category: Category;
   size: Size;
 }
 
-type SizeValues = {
-  [key in Size]: number;
-}
-
-const sizes: SizeValues = {
+const sizes: Record<Size, number> = {
   large: 40,
   medium: 32,
   small: 24,
 };
 
 export default function CategoryIcon(props: CategoryIconProps) {
-  const classes = classNames("categoryIcon", {});
   const categoryMeta = AllCategories[props.category || "other"];
   const hexTransparency = "40"; // 25% transparency
 
   return (
-    <div className={classes} title={capitalise(props.category)} style={{backgroundColor: categoryMeta.color + hexTransparency}}>
+    <div className="categoryIcon" title={categoryMeta.label} style={{backgroundColor: categoryMeta.color + hexTransparency}}>
       {createElement(categoryMeta.icon, {
         className: "categoryIcon__icon",
         color: categoryMeta.color,

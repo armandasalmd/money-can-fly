@@ -1,6 +1,9 @@
 import { ForwardRefExoticComponent, RefAttributes } from "react";
 import { IconProps } from "phosphor-react";
 
+import { type Category, type SearchCategory, CategoryMetaData } from "./Category"; 
+export { type Category, type SearchCategory, type CategoryMetaData };
+
 export enum DisplaySections {
   BalanceAnalysis = "balanceAnalysis",
   CategoryAnalysis = "categoryAnalysis",
@@ -37,25 +40,6 @@ export type InvestmentEventType = "deposit" | "adjustment" | "withdrawal" | "cre
 export type Balances = {
   [key in Currency]: Money;
 }
-
-export type Category =
-  | "food"
-  | "shopping"
-  | "transport"
-  | "health"
-  | "entertainment"
-  | "education"
-  | "home"
-  | "bills"
-  | "gifts"
-  | "other"
-  | "deposits"
-  | "salary"
-  | "investments"
-  | "trendUp"
-  | "trendDown";
-
-export type SearchCategory = Category | "notInvestments";
 
 export interface Money {
   amount: number;

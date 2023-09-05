@@ -1,6 +1,6 @@
 import React, { ReactElement, PropsWithChildren, ReactNode } from "react";
 import classNames from "classnames";
-import { TabItemProps } from "@components/atoms";
+import { TabItemProps } from "@atoms/index";
 
 type ReactTabItemProps = PropsWithChildren<TabItemProps>;
 

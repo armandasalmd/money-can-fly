@@ -1,5 +1,5 @@
 import React, { ReactElement, PropsWithChildren, ReactNode } from "react";
-import { ButtonProps, TabItemProps } from "@components/atoms";
+import { ButtonProps, TabItemProps } from "@atoms/index";
 
 type ReactTabItemProps = PropsWithChildren<TabItemProps>;
 
