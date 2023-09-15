@@ -240,15 +240,22 @@ export class BalanceAnalysisManager {
       monthDate: { $gte: from, $lte: to },
     }).sort({ monthDate: 1 });
 
-    this.predictionPoints = periodPredictions.flatMap((o) =>
-      o.predictions.map(
-        (m) =>
-          ({
-            date: this.GetWeeksDate(m.week, o.monthDate),
-            amountChange: m.moneyIn - m.moneyOut,
-          } as IPredictionPoint)
-      )
-    );
+    this.predictionPoints = [];
+
+    for (let predictionModel of periodPredictions) {
+      for (let weekPrediction of predictionModel.predictions) {
+        let amountChange = weekPrediction.moneyIn - weekPrediction.moneyOut;
+
+        if (predictionModel.currency !== this.prefs.defaultCurrency) {
+          amountChange = await this.rateManager.convert(amountChange, predictionModel.currency, this.prefs.defaultCurrency);
+        }
+
+        this.predictionPoints.push({
+          date: this.GetWeeksDate(weekPrediction.week, predictionModel.monthDate),
+          amountChange
+        } as IPredictionPoint);
+      }
+    }
 
     this.CalculatePivotedTotal();
   }
