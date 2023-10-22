@@ -160,19 +160,16 @@ export class SpendingAnalysisManager {
     const predictionManager = new PeriodPredictionManager(this.user);
     const predictions = await predictionManager.GetTotalSpending(
       ranges.map((o) => o.from),
+      this.prefs.defaultCurrency
     );
     const budgets: number[] = [];
 
     for (const range of ranges) {
-      let pred: Money = predictions.find((p) =>
+      const pred: Money = predictions.find((p) =>
         p.monthDate.getTime() === range.from.getTime()
       );
 
       if (pred) {
-        pred = await CurrencyRateManager.getInstance().convertMoney(
-          pred,
-          this.prefs.defaultCurrency,
-        );
         budgets.push(pred.amount);
       } else {
         budgets.push(this.prefs.monthlyBudget);
