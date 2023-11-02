@@ -1,24 +1,39 @@
-import { useState } from "react";
-import { useRecoilValue } from "recoil";
+import { useEffect, useState } from "react";
 
 import { Drawer, Message, MessageColor, TabItem } from "@atoms/index";
 import { Tabs } from "@molecules/index";
 import { AddTimelineEvent, InvestmentTimeline } from "@organisms/index";
-import { selectedInvestment } from "@recoil/dashboard/atoms";
-import { CreateInvestmentEvent } from "@utils/Types";
+import { CreateInvestmentEvent, Investment, InvestmentSummary } from "@utils/Types";
 import { publish } from "@utils/Events";
-import { postRequest } from "@utils/Api";
+import { getRequest, postRequest } from "@utils/Api";
 
 interface InvestmentDetailsDrawerProps {
   open: boolean;
   onClose: () => void;
+  selectedInvestment: InvestmentSummary | null
 }
 
 export default function InvestmentDetailsDrawer(props: InvestmentDetailsDrawerProps) {
   const [message, setMessage] = useState<string | null>(null);
   const [messageType, setMessageType] = useState<MessageColor>("success");
-  const investment = useRecoilValue(selectedInvestment);
   const [activeTabId, setActiveTabId] = useState("timeline");
+  const [investment, setInvestment] = useState<Investment>(null);
+
+  useEffect(() => {
+    if (props.selectedInvestment?.id) {
+      getRequest<Investment>(`/api/investments/read`, {
+        investmentId: props.selectedInvestment.id
+      }).then(investment => {
+        investment.dateCreated = new Date(investment.dateCreated);
+        
+        for (let event of investment.timelineEvents) {
+          event.eventDate = new Date(event.eventDate);
+        }
+
+        setInvestment(investment);
+      });
+    }
+  }, [props.selectedInvestment]);
 
   if (!investment) return null;
 
@@ -30,6 +45,7 @@ export default function InvestmentDetailsDrawer(props: InvestmentDetailsDrawerPr
   function onClose() {
     setMessage(null);
     setActiveTabId("timeline");
+    setInvestment(null);
     props.onClose();
   }
 
@@ -60,7 +76,7 @@ export default function InvestmentDetailsDrawer(props: InvestmentDetailsDrawerPr
   }
 
   return (
-    <Drawer size="small" open={props.open} onClose={onClose} title="Inspect & manage investment" subtitle={investment.title} noPadding destroyOnClose>
+    <Drawer loading={!investment} size="small" open={props.open} onClose={onClose} title="Inspect & manage investment" subtitle={investment.title} noPadding destroyOnClose>
       {message && (
         <Message colorType={messageType} onDismiss={() => setMessage(null)} fadeIn messageStyle="bordered">
           {message}
@@ -68,7 +84,7 @@ export default function InvestmentDetailsDrawer(props: InvestmentDetailsDrawerPr
       )}
       <Tabs tabId={activeTabId} onTabChange={onTabChange} spaceEvenly>
         <TabItem id="timeline" text="Timeline">
-          <InvestmentTimeline displayMessage={displayMessage} />
+          <InvestmentTimeline displayMessage={displayMessage} investment={investment} setInvestment={setInvestment} />
         </TabItem>
         <TabItem id="deposit" text="Deposit">
           <AddTimelineEvent currentInvestmentValue={investment.currentValue} eventType="deposit" onCreateEvent={onCreateEvent} />

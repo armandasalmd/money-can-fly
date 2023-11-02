@@ -1,10 +1,10 @@
-import { Investment } from "@utils/Types";
+import { InvestmentSummary } from "@utils/Types";
 import { InvestmentListItem } from "./InvestmentListItem";
 import { Empty } from "@atoms/index";
 
 interface InvestmentListProps {
-  investments: Investment[];
-  onClick: (investment: Investment) => void;
+  investments: InvestmentSummary[];
+  onClick: (investment: InvestmentSummary) => void;
 }
 
 export default function InvestmentList(props: InvestmentListProps) {

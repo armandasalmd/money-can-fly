@@ -1,133 +1,92 @@
+import { addWeeks, min, max, differenceInDays, differenceInCalendarDays } from "date-fns";
 import { CookieUser } from "@server/core";
 import {
   BalanceAnalysisModel,
+  BalanceChartPoint,
   IPeriodPredictionModel,
   IUserPreferencesModel,
   PeriodPredictionModel,
   TransactionModel,
 } from "@server/models";
-import { DateRange, Investment, Money } from "@utils/Types";
-import { round, splitDateIntoEqualIntervals } from "@server/utils/Global";
-import { format, differenceInDays, min, max, isWithinInterval, addWeeks } from "date-fns";
-import { CurrencyRateManager } from "./CurrencyRateManager";
+import { getLast, round, findIndexBackwards } from "@server/utils/Global";
+import { Currency, DateRange, Investment, Money } from "@utils/Types";
+import { getUTCFirstOfMonth, toUTCDate } from "@utils/Date";
 import { amountForDisplay } from "@utils/Currency";
+import { CurrencyRateManager } from "./CurrencyRateManager";
 
 interface IPredictionPoint {
   date: Date;
-  amountChange: number; // in default currency
-  pivotedTotal?: number; // in default currency
+  changeAmount: number; // in default currency
+  forecastTotal: number; // in default currency
 }
 
-interface IAggregateResult {
-  _id: Date | "sumAfterEndDate";
-  changes: Money[];
+interface ITransactionAggregate {
+  a: number;
+  c: Currency;
+  d: Date;
 }
 
-interface IPeriodChangeInDefaultCurrency {
-  _id: Date | "sumAfterEndDate";
-  totalAmount: number;
-}
+// Smaller number means less data points. This number affects chart quality & sharpness
+const DATE_RANGE_CHUNK_COUNT = 600;
+const DATE_CLUSTER_BY_HOUR = "%Y-%m-%d %H";
+const DATE_CLUSTER_BY_MINUTE = "%Y-%m-%d %H-%M";
 
 export class BalanceAnalysisManager {
-  private dateBreakpoints: Date[];
-  private nowBreakpointIndex: number;
-  private daysCovered: number;
-  private rateManager: CurrencyRateManager;
-  private predictionPoints: IPredictionPoint[];
-  private totalWorthToday: Money;
+  private dateRange: DateRange;
+  private investments: Investment[];
   private readonly now: Date;
+  private predictionPoints: IPredictionPoint[];
+  private rateManager: CurrencyRateManager;
+  private totalWorthToday: Money;
 
-  constructor(private prefs: IUserPreferencesModel, private cashBalance: Money, private investmentsValue: Money) {
-    this.now = new Date();
+  constructor(
+    private user: CookieUser,
+    private prefs: IUserPreferencesModel) {
+    this.now = toUTCDate(new Date());
     this.rateManager = CurrencyRateManager.getInstance();
-    this.totalWorthToday = {
-      amount: this.cashBalance.amount + this.investmentsValue.amount,
-      currency: this.cashBalance.currency,
-    };
   }
 
   public async GetBalanceAnalysis(
-    user: CookieUser,
     dateRange: DateRange,
+    totalCashValue: Money,
+    totalInvestmentsValue: Money,
     investments: Investment[]
   ): Promise<BalanceAnalysisModel> {
-    dateRange.from = new Date(dateRange.from);
-    dateRange.to = new Date(dateRange.to);
+    this.dateRange = dateRange;
+    this.investments = investments;
+    this.totalWorthToday = {
+      amount: totalCashValue.amount + totalInvestmentsValue.amount,
+      currency: totalCashValue.currency,
+    };
 
-    this.daysCovered = differenceInDays(dateRange.to, dateRange.from);
+    this.DateRangeValidation();
 
-    // Reverse date range if logically incorrect
-    if (this.daysCovered < 0) {
-      const temp = dateRange.from;
-      dateRange.from = dateRange.to;
-      dateRange.to = temp;
-      this.daysCovered = -this.daysCovered;
-    }
-
-    this.dateBreakpoints = splitDateIntoEqualIntervals(
-      dateRange.from,
-      dateRange.to,
-      this.prefs.balanceChartBreakpoints,
-      this.daysCovered > 14
-    );
-
-    // Replace closest breakpoint with NOW if possible
-    if (isWithinInterval(this.now, { start: dateRange.from, end: dateRange.to })) {
-      this.nowBreakpointIndex = this.dateBreakpoints.findIndex((o) => o > this.now);
-
-      if (this.nowBreakpointIndex >= 0) this.dateBreakpoints[this.nowBreakpointIndex] = this.now;
-    }
-
-    const labels = this.MakeLabels();
-
-    const invDataset = await this.CalculateInvestmentsDataset(investments);
-
-    const [totalWorthDataset] = await Promise.all([
-      this.CalculateTotalWorthDataset(user, dateRange, invDataset),
-      this.PopulatePredictionPoints(user, dateRange),
+    let queueResults = await Promise.all([
+      this.CalculateBalanceDataset(),
+      this.CalculateInvestmentDataset(),
+      this.CalculateRequiredPredictions()
     ]);
 
-    const description = this.CreateDescription();
-    const expectedWorthDataset = this.dateBreakpoints.map((o) => this.GetPredictionAmountForDate(o));
-
     return {
-      cardDescription: description,
-      chartLabels: labels,
-      expectedWorthDataset,
-      investmentsDataset: invDataset,
-      projectionDataset: this.MakeProjectionDataset(expectedWorthDataset, totalWorthDataset),
-      totalWorthDataset,
+      balanceDataset: queueResults[0],
+      cardDescription: this.CreateDescription(),
+      expectationDataset: this.GetExpectationDataset(),
+      investmentDataset: queueResults[1]
     };
   }
 
-  private MakeProjectionDataset(expectedWorthDataset: number[], totalWorthDataset: number[]): number[] {
-    const firstNaN = totalWorthDataset.findIndex((o) => isNaN(o));
-
-    if (firstNaN <= 0) return Array(this.dateBreakpoints.length).fill(NaN);
-
-    const projectionDataset: number[] = Array(firstNaN - 1).fill(NaN);
-    let predDelta = expectedWorthDataset[firstNaN - 1] - totalWorthDataset[firstNaN - 1];
-    projectionDataset.push(totalWorthDataset[firstNaN - 1]);
-
-    for (let i = firstNaN; i < this.dateBreakpoints.length; i++) {
-      projectionDataset.push(expectedWorthDataset[i] - predDelta * 0.9);
-      predDelta = expectedWorthDataset[i] - projectionDataset[i];
-    }
-
-    return projectionDataset;
-  }
-
-  private async CalculateTotalWorthDataset(user: CookieUser, range: DateRange, investmentDataset: number[]): Promise<number[]> {
+  private async CalculateBalanceDataset(): Promise<BalanceChartPoint[]> {
     // Scenario 1: range is in the future
-    if (this.now <= range.from) return Array(this.dateBreakpoints.length).fill(NaN);
+    if (this.now <= this.dateRange.from) return [];
     // Scenario 2: range is in the past, or intersects with now
-
-    const aggregateResults = await TransactionModel.aggregate([
+    let clusteringDateFormat = Math.abs(differenceInCalendarDays(this.dateRange.from, this.dateRange.to)) < 90 ? DATE_CLUSTER_BY_MINUTE : DATE_CLUSTER_BY_HOUR;
+    
+    let items: ITransactionAggregate[] = await TransactionModel.aggregate([
       {
         $match: {
-          userUID: user.userUID,
+          userUID: this.user.userUID,
           isActive: true,
-          date: { $gte: range.from, $lte: this.now },
+          date: { $gte: this.dateRange.from, $lte: this.now },
           $or: [
             { isInvestment: false },
             { investmentEventType: "adjustment" },
@@ -135,80 +94,96 @@ export class BalanceAnalysisManager {
         },
       },
       {
-        $bucket: {
-          groupBy: "$date",
-          boundaries: this.dateBreakpoints,
-          default: "sumAfterEndDate",
-          output: {
-            changes: { $push: { amount: "$amount", currency: "$currency" } },
-          },
-        },
-      },
-      {
-        $unwind: "$changes",
-      },
-      {
         $group: {
           _id: {
-            currency: "$changes.currency",
-            period: "$_id"
+            date: {
+              $dateToString: {
+                format: clusteringDateFormat,
+                date: "$date"
+              }
+            },
+            currency: "$currency"
           },
-          amount: {
-            $sum: "$changes.amount",
-          },
-        }
-      },
-      {
-        $group: {
-          _id: "$_id.period",
-          changes: {
-            $push: {
-              currency: "$_id.currency",
-              amount: "$amount"
-            }
-          }
+          sum: { $sum: "$amount" },
+          date: { $max: "$date" }
         }
       },
       {
         $sort: {
-          _id: 1
+          date: 1
+        }
+      },
+      {
+        $project: {
+          a: "$sum",
+          c: "$_id.currency",
+          d: "$date"
         }
       }
     ]);
 
-    const groupedChanges = await this.SimplifyAggregateResults(aggregateResults);
-    const sumAfterEndDate = groupedChanges.find((o: IPeriodChangeInDefaultCurrency) => o._id == "sumAfterEndDate")?.totalAmount ?? 0;
+    items = await this.NormalizeTransactions(items);
 
-    let backwardsSum = this.totalWorthToday.amount - sumAfterEndDate; // In default currency
-    let worthDataset: number[] = [backwardsSum];
-    let breakpointsToCalculate = this.dateBreakpoints.slice(0, this.nowBreakpointIndex);
+    let lastBalanceValue = this.totalWorthToday.amount;
+    let lastItemInRangeIdx = items.length - 1;
 
-    for (let i = breakpointsToCalculate.length - 1; i >= 0; i--) {
-      const bucket = groupedChanges.find(o => o._id instanceof Date && o._id.getTime() == breakpointsToCalculate[i].getTime());
-
-      if (bucket) backwardsSum = backwardsSum - bucket.totalAmount;
-
-      worthDataset.push(backwardsSum);
+    let fromAndNowGapExists = this.now.getTime() > this.dateRange.to.getTime();
+    if (fromAndNowGapExists) {
+      lastItemInRangeIdx = findIndexBackwards(items, (item: ITransactionAggregate) => item.d.getTime() <= this.dateRange.to.getTime());
+      if (lastItemInRangeIdx === -1) return [];
+  
+      let gapItemsSum = items.slice(lastItemInRangeIdx + 1).reduce((acc, item: ITransactionAggregate) => acc + item.a, 0);
+      lastBalanceValue -= gapItemsSum;
     }
 
-    worthDataset = worthDataset.reverse();
+    let itemsInRange = items.slice(0, lastItemInRangeIdx + 1);
 
-    for (let i = worthDataset.length; i < this.dateBreakpoints.length; i++) {
-      // This fills empty points until NOW with last known value, and after NOW with NaN
-      worthDataset.push(this.dateBreakpoints[i] > this.now ? NaN : worthDataset[worthDataset.length - 1]);
+    let results: BalanceChartPoint[] = [{ x: min([this.dateRange.to, this.now]).getTime(), y: lastBalanceValue }];
+
+    for (let idx = itemsInRange.length - 1; idx >= 0; idx--) {
+      lastBalanceValue -= itemsInRange[idx].a;
+
+      results.push({ x: itemsInRange[idx].d.getTime(), y: round(lastBalanceValue) });
     }
 
-    return worthDataset;
+    if (itemsInRange[0].d.getTime() !== this.dateRange.from.getTime()) {
+      results.push({ x: this.dateRange.from.getTime(), y: round(lastBalanceValue) });
+    }
+
+    return results.reverse();
   }
 
-  private async SimplifyAggregateResults(items: IAggregateResult[]): Promise<IPeriodChangeInDefaultCurrency[]> {
-    return await Promise.all(
-      items.map(async (o) => {
-        const total = await this.rateManager.sumMoney(o.changes, this.prefs.defaultCurrency);
+  private async CalculateInvestmentDataset(): Promise<BalanceChartPoint[]> {
+    const eventsSorted = this.investments
+      .flatMap((o) => o.timelineEvents)
+      .sort((a, b) => a.eventDate.getTime() - b.eventDate.getTime());
 
-        return { _id: o._id, totalAmount: total.amount };
-      })
-    );
+    let sumInDefaultCurrency = 0;
+    let fromTime = this.dateRange.from.getTime();
+    let toTime = this.dateRange.to.getTime();
+    const dataset: BalanceChartPoint[] = [];
+
+    for (let idx = 0; idx < eventsSorted.length; idx++) {
+      const time = eventsSorted[idx].eventDate.getTime();
+      
+      sumInDefaultCurrency += (await this.ToDefaultMoney(eventsSorted[idx].valueChange)).amount;
+
+      if (time > toTime) break;
+      if (time >= fromTime) {
+        if (!dataset.length && idx !== 0) {
+          let subtract =  (await this.ToDefaultMoney(eventsSorted[idx - 1].valueChange)).amount;
+          dataset.push({ x: fromTime, y: round(sumInDefaultCurrency - subtract) });
+        }
+
+        dataset.push({ x: time, y: round(sumInDefaultCurrency) });
+      }
+    }
+
+    let lastPoint = getLast(dataset);
+
+    if (lastPoint && lastPoint.x !== toTime) dataset.push({ x: toTime, y: lastPoint.y });
+
+    return dataset;
   }
 
   private CreateDescription(): string {
@@ -220,64 +195,97 @@ export class BalanceAnalysisManager {
 
     const percent = predictionAmountForNow === 0 ? 0 : Math.round((delta.amount / predictionAmountForNow) * 1000) / 10;
 
-    return `Currenctly ${amountForDisplay(delta)} (${percent > 0 ? "+" : ""}${percent}%) ${
+    return `Currently ${amountForDisplay(delta)} (${percent > 0 ? "+" : ""}${percent}%) ${
       delta.amount > 0 ? "above" : "below"
     } expected`;
   }
 
-  private async PopulatePredictionPoints(user: CookieUser, dateRange: DateRange): Promise<void> {
-    const requiredDates = [new Date(dateRange.from), new Date(dateRange.to), this.now, this.prefs.forecastPivotDate];
-    const from = min(requiredDates);
-    const to = max(requiredDates);
+  private DateRangeValidation() {
+    if (this.dateRange.from.getTime() > this.dateRange.to.getTime()) {
+      let temp = this.dateRange.from;
+      this.dateRange.from = this.dateRange.to;
+      this.dateRange.to = temp;
+    }
+  }
 
-    from.setUTCHours(0, 0, 0, 0);
-    from.setDate(1);
-    to.setUTCHours(0, 0, 0, 0);
-    to.setDate(1);
+  private async CalculateRequiredPredictions() {
+    let requiredDates = [this.dateRange.from, this.dateRange.to, this.now, this.prefs.forecastPivotDate];
 
-    const periodPredictions: IPeriodPredictionModel[] = await PeriodPredictionModel.find({
-      userUID: user.userUID,
+    let from = getUTCFirstOfMonth(min(requiredDates));
+    let to = getUTCFirstOfMonth(max(requiredDates));
+
+    let periodPredictions: IPeriodPredictionModel[] = await PeriodPredictionModel.find({
+      userUID: this.user.userUID,
       monthDate: { $gte: from, $lte: to },
     }).sort({ monthDate: 1 });
 
-    this.predictionPoints = periodPredictions.flatMap((o) =>
-      o.predictions.map(
-        (m) =>
-          ({
-            date: this.GetWeeksDate(m.week, o.monthDate),
-            amountChange: m.moneyIn - m.moneyOut,
-          } as IPredictionPoint)
-      )
-    );
+    if (!periodPredictions) return;
 
-    this.CalculatePivotedTotal();
+    this.predictionPoints = [];
+
+    for (let periodPrediction of periodPredictions) {
+      for (let weekPrediction of periodPrediction.predictions) {
+        let changeAmount = weekPrediction.moneyIn - weekPrediction.moneyOut;
+      
+        if (periodPrediction.currency !== this.prefs.defaultCurrency) {
+          changeAmount = await this.rateManager.convert(changeAmount, periodPrediction.currency, this.prefs.defaultCurrency);
+        }
+
+        this.predictionPoints.push({
+          changeAmount,
+          date: __GetWeeksDate(weekPrediction.week, periodPrediction.monthDate),
+          forecastTotal: 0
+        } as IPredictionPoint);
+      }
+    }
+
+    this.PopulateForecastTotals();
+
+    function __GetWeeksDate(week: number, monthDate: Date): Date {
+      return week > 1 ? addWeeks(monthDate, week - 1) : monthDate;
+    }
   }
 
-  private CalculatePivotedTotal() {
-    let pivotIndex = this.predictionPoints.findIndex((o) => o.date >= this.prefs.forecastPivotDate) - 1;
+  private GetExpectationDataset(): BalanceChartPoint[] {
+    if (!this.predictionPoints.length) return [];
 
-    if (pivotIndex > 0) {
-      let daysDiff = differenceInDays(this.prefs.forecastPivotDate, this.predictionPoints[pivotIndex].date);
-      daysDiff = daysDiff > 7 ? 7 : daysDiff;
+    let firstWithinRangeId = this.predictionPoints.findIndex(o => o.date.getTime() >= this.dateRange.from.getTime());
+    let lastWithinRangeId = findIndexBackwards(this.predictionPoints, o => o.date.getTime() <= this.dateRange.to.getTime());
 
-      this.predictionPoints[pivotIndex].pivotedTotal =
-        this.prefs.forecastPivotValue - this.predictionPoints[pivotIndex].amountChange * (daysDiff / 7);
+    let results = this.predictionPoints.slice(firstWithinRangeId, lastWithinRangeId + 1);
 
-      for (let i = pivotIndex - 1; i >= 0; i--) {
-        this.predictionPoints[i].pivotedTotal =
-          this.predictionPoints[i + 1].pivotedTotal - this.predictionPoints[i].amountChange;
-      }
-    } else if (this.predictionPoints.length > 0) {
-      this.predictionPoints[0].pivotedTotal = this.prefs.forecastPivotValue;
-      pivotIndex = 0;
-    } else {
-      return;
+    if (firstWithinRangeId === -1) {
+      let lastForecastValue = getLast(this.predictionPoints).forecastTotal;
+      return [
+        { x: this.dateRange.from.getTime(), y: lastForecastValue },
+        { x: this.dateRange.to.getTime(), y: lastForecastValue }
+      ];
+    } else if (this.predictionPoints[firstWithinRangeId].date.getTime() !== this.dateRange.from.getTime()) {
+      let leftEdgeForecast = this.GetPredictionAmountForDate(this.dateRange.from);
+
+      results.unshift({ date: this.dateRange.from, forecastTotal: leftEdgeForecast, changeAmount: 0 });
     }
 
-    for (let i = pivotIndex + 1; i < this.predictionPoints.length; i++) {
-      this.predictionPoints[i].pivotedTotal =
-        this.predictionPoints[i - 1].pivotedTotal + this.predictionPoints[i - 1].amountChange;
+    if (lastWithinRangeId === -1) {
+      let firstForecastValue = this.predictionPoints[0].forecastTotal;
+      return [
+        { x: this.dateRange.from.getTime(), y: firstForecastValue },
+        { x: this.dateRange.to.getTime(), y: firstForecastValue }
+      ];
+    } else if (this.predictionPoints[lastWithinRangeId].date.getTime() !== this.dateRange.to.getTime()) {
+      let rightEdgeForecast = this.GetPredictionAmountForDate(this.dateRange.to);
+
+      results.push({ date: this.dateRange.to, forecastTotal: rightEdgeForecast, changeAmount: 0 });
     }
+
+    return results.map<BalanceChartPoint>(o => ({ x: o.date.getTime(), y: o.forecastTotal }));
+  }
+
+  private GetProportionalChangeValue(point: IPredictionPoint, date: Date) {
+    let daysDiff = differenceInDays(date, point.date);
+    daysDiff = daysDiff > 7 ? 7 : daysDiff;
+
+    return point.changeAmount * (daysDiff / 7);
   }
 
   private GetPredictionAmountForDate(date: Date): number {
@@ -291,52 +299,107 @@ export class BalanceAnalysisManager {
     }
 
     if (edgeIndex === -1) {
-      return this.predictionPoints.length > 0 ? this.predictionPoints[0].pivotedTotal : 0;
+      return this.predictionPoints.length > 0 ? this.predictionPoints[0].forecastTotal : 0;
     }
 
     let predictionPoint = this.predictionPoints[edgeIndex];
-    let daysDiff = differenceInDays(date, predictionPoint.date);
-    daysDiff = daysDiff > 7 ? 7 : daysDiff;
 
-    return round(predictionPoint.pivotedTotal + predictionPoint.amountChange * (daysDiff / 7));
+    return round(predictionPoint.forecastTotal + this.GetProportionalChangeValue(predictionPoint, date));
   }
 
-  private GetWeeksDate(week: number, monthDate: Date): Date {
-    return week > 1 ? addWeeks(monthDate, week - 1) : monthDate;
+  private async NormalizeTransactions(sortedItems: ITransactionAggregate[]): Promise<ITransactionAggregate[]> {
+    let groupBucketTimeInMs = (this.dateRange.to.getTime() - this.dateRange.from.getTime()) / DATE_RANGE_CHUNK_COUNT;
+    
+    // Group same dates and convert all to default currency;
+    let normalizedList = await Promise.all(
+      __GroupItemsByDate().map(async (itemsGroup: ITransactionAggregate[]): Promise<ITransactionAggregate> => {
+        let sum = 0;
+
+        for (let item of itemsGroup) {
+          sum += await this.rateManager.convert(item.a, item.c, this.prefs.defaultCurrency, this.now);
+        }
+
+        return { a: sum, c: this.prefs.defaultCurrency, d: itemsGroup[0].d };
+      })
+    );
+
+    return normalizedList;
+
+    function __GroupItemsByDate() {
+      let newItems: ITransactionAggregate[][] = [];
+      let groupingArray: ITransactionAggregate[] = null;
+      let lastTime = 0;
+
+      for (let idx = 0; idx < sortedItems.length; idx++) {
+        if (sortedItems[idx].d.getTime() - lastTime < groupBucketTimeInMs) {
+          groupingArray.push(sortedItems[idx]);
+        } else {
+          groupingArray !== null && newItems.push(groupingArray);
+          groupingArray = [sortedItems[idx]];
+          lastTime = sortedItems[idx].d.getTime();
+        }
+      }
+      groupingArray !== null && newItems.push(groupingArray);
+
+      return newItems;
+    }
   }
 
-  private MakeLabels(): string[] {
-    const template = this.daysCovered <= 14 ? "MMM d HH:mm" : "MMM d";
-    return this.dateBreakpoints.map((date) => date === this.now ? "✅ NOW" : format(date, template));
+  private PopulateForecastTotals() {
+    if (!this.predictionPoints || this.predictionPoints.length === 0) return;
+
+    let forecastPivotIndex = this.predictionPoints.findIndex((o) => o.date >= this.prefs.forecastPivotDate);
+    let firstItemForecast = 0;
+    
+    if (forecastPivotIndex > 0) { // Case: there is week point before forecast point
+      let daysDiff = Math.abs(differenceInDays(this.prefs.forecastPivotDate, this.predictionPoints[forecastPivotIndex - 1].date));
+      daysDiff = daysDiff > 7 ? 7 : daysDiff;
+
+      let changeToOneBefore = this.predictionPoints[forecastPivotIndex - 1].changeAmount * (daysDiff / 7);
+      let oneItemBeforePivotForecast = this.prefs.forecastPivotValue - changeToOneBefore;
+
+      firstItemForecast = this.predictionPoints
+        .slice(0, forecastPivotIndex - 1)
+        .reduce((acc, item) => acc - item.changeAmount, oneItemBeforePivotForecast);
+
+    } else { // Case: there is no week point before forecast point, only after
+      let daysDiff = Math.abs(differenceInDays(this.prefs.forecastPivotDate, this.predictionPoints[0].date));
+      daysDiff = daysDiff > 7 ? 7 : daysDiff;
+
+      let changeToOneAfter = this.predictionPoints[0].changeAmount * (daysDiff / 7);
+      firstItemForecast = this.prefs.forecastPivotValue - changeToOneAfter;
+    }
+
+    this.predictionPoints[0].forecastTotal = firstItemForecast;
+
+    for (let index = 1; index < this.predictionPoints.length; index++) {
+      let itemBefore = this.predictionPoints[index - 1];
+
+      this.predictionPoints[index].forecastTotal = itemBefore.forecastTotal + itemBefore.changeAmount;
+    }
+
+    let forecastTime = this.prefs.forecastPivotDate.getTime();
+
+    if (forecastTime >= this.dateRange.from.getTime() && forecastTime <= this.dateRange.to.getTime()) {
+      let forecastPredictionPoint: IPredictionPoint = {
+        changeAmount: 0,
+        date: this.prefs.forecastPivotDate,
+        forecastTotal: this.prefs.forecastPivotValue
+      };
+      // Insert forecast pivot point in between
+      this.predictionPoints = [
+        ...this.predictionPoints.slice(0, forecastPivotIndex),
+        forecastPredictionPoint,
+        ...this.predictionPoints.slice(forecastPivotIndex),
+      ];
+    }
+    // Round
+    for (let point of this.predictionPoints) {
+      point.forecastTotal = round(point.forecastTotal);
+    }
   }
 
   private async ToDefaultMoney(money: Money, date?: Date): Promise<Money> {
     return await this.rateManager.convertMoney(money, this.prefs.defaultCurrency, date);
-  }
-
-  private async CalculateInvestmentsDataset(source: Investment[]): Promise<number[]> {
-    const eventsSorted = source
-      .flatMap((o) => o.timelineEvents)
-      .sort((a, b) => a.eventDate.getTime() - b.eventDate.getTime());
-
-    let sumInDefaultCurrency = 0;
-    const dataset: number[] = [];
-
-    for (const breakpoint of this.dateBreakpoints) {
-      if (breakpoint > this.now) {
-        dataset.push(NaN);
-        continue;
-      }
-
-      while (eventsSorted.length > 0 && eventsSorted[0].eventDate.getTime() <= breakpoint.getTime()) {
-        const event = eventsSorted.shift();
-
-        sumInDefaultCurrency += (await this.ToDefaultMoney(event.valueChange)).amount;
-      }
-
-      dataset.push(sumInDefaultCurrency === 0 ? NaN : sumInDefaultCurrency);
-    }
-
-    return dataset;
   }
 }

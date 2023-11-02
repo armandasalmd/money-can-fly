@@ -37,6 +37,7 @@ export function AuthContextProvider({ children }) {
 
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
+    console.log(user);
       
       if (user || AuthUtils.isApiTokenExpired()) {
         if (!AuthUtils.apiLoginInProgress()) {
@@ -61,7 +62,6 @@ export function AuthContextProvider({ children }) {
 
   async function loginToApi(user: User): Promise<boolean> {
     if (!user) return true;
-
     AuthUtils.setApiLoginInProgress(true);
     const token = await user.getIdToken(true);
     const data = await postRequest<any>("/api/auth/login", { userIdToken: token });

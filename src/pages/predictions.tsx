@@ -1,3 +1,5 @@
+import "@utils/ChartJsInit";
+
 import { SidebarHeaderProps } from "@atoms/index";
 import { SetPredictionSidebar } from "@components/organisms";
 import { AppLayout, PredictionsBody } from "@templates/index";

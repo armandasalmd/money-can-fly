@@ -1,6 +1,13 @@
 import { add, differenceInDays, format } from "date-fns";
 import { DateRange } from "./Types";
 
+export function getUTCFirstOfMonth(date: Date): Date {
+  const UTCDate = toUTCDate(date);
+  UTCDate.setUTCDate(1);
+  UTCDate.setUTCHours(0, 0, 0, 0);
+  return UTCDate;
+}
+
 export function getUTCNow(overrideDay?: number): Date {
   const UTCDate = toUTCDate(new Date());
   overrideDay && UTCDate.setUTCDate(overrideDay);
@@ -8,8 +15,7 @@ export function getUTCNow(overrideDay?: number): Date {
 }
 
 export function getOneMonthRange(periodStart: Date = new Date(), monthsToAdd: number = 0): DateRange {
-  periodStart = toUTCDate(periodStart);
-  periodStart.setUTCDate(1);
+  periodStart = getUTCFirstOfMonth(periodStart);
   
   if (monthsToAdd !== 0) {
     periodStart = add(periodStart, {

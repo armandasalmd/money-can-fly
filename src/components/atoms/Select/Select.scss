@@ -161,7 +161,7 @@
   }
 
   &:hover:not(&--selected) {
-    background-color: var(--shade10);
+    background-color: var(--bg-input);
   }
 
   &:not(:last-child) {

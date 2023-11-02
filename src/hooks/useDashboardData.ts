@@ -2,7 +2,7 @@ import { useCallback, useEffect } from "react";
 import { useRecoilState } from "recoil";
 
 import { dashboardData } from "@recoil/dashboard/atoms";
-import { DisplaySections, InvestmentEvent } from "@utils/Types";
+import { DisplaySections } from "@utils/Types";
 import { DisplayModelResponse } from "@endpoint/dashboard/displayModel";
 import { getOneMonthRange } from "@utils/Date";
 
@@ -12,13 +12,7 @@ function transformDates(data: Partial<DisplayModelResponse>) {
   const investments = data?.investments?.investments;
 
   if (investments) {
-    investments.forEach((item) => {
-      item.dateCreated = new Date(item.dateCreated);
-      item.dateModified = new Date(item.dateModified);
-      item.timelineEvents.forEach((event: InvestmentEvent) => {
-        event.eventDate = new Date(event.eventDate);
-      });
-    });
+    investments.forEach((item) => item.dateModified = new Date(item.dateModified));
   }
 
   const insights = data?.insights;

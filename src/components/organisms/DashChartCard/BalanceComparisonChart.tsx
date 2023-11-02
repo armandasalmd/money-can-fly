@@ -12,7 +12,7 @@ export default function BalanceComparisonChart(props: BalanceComparisonChartProp
   }
 
   const data = {
-    labels: props.apiModel.chartLabels,
+    labels: [], //props.apiModel.chartLabels,
     datasets: [
       {
         type: "line" as const,
@@ -20,7 +20,7 @@ export default function BalanceComparisonChart(props: BalanceComparisonChartProp
         borderColor: "rgb(19, 121, 168)",
         borderWidth: 2,
         cubicInterpolationMode: "monotone",
-        data: props.apiModel.totalWorthDataset
+        data: [] //props.apiModel.totalWorthDataset
       },
       {
         type: "line" as const,
@@ -28,7 +28,7 @@ export default function BalanceComparisonChart(props: BalanceComparisonChartProp
         borderColor: "rgb(19, 121, 168)",
         borderWidth: 2,
         cubicInterpolationMode: "monotone",
-        data: props.apiModel.projectionDataset,
+        data: [],// props.apiModel.projectionDataset,
         borderDash: [10, 8],
       },
       {
@@ -37,7 +37,7 @@ export default function BalanceComparisonChart(props: BalanceComparisonChartProp
         borderWidth: 2,
         borderColor: "rgb(121, 181, 148)",
         cubicInterpolationMode: "monotone",
-        data: props.apiModel.expectedWorthDataset,
+        data: [],// props.apiModel.expectedWorthDataset,
         borderDash: [10, 8]
       },
       {
@@ -47,14 +47,14 @@ export default function BalanceComparisonChart(props: BalanceComparisonChartProp
         backgroundColor: "rgba(214, 162, 17, 0.2)",
         borderWidth: 2,
         cubicInterpolationMode: "monotone",
-        data: props.apiModel.investmentsDataset,
+        data: [], //props.apiModel.investmentsDataset,
         fill: "origin",
         pointStyle: "triangle",
         pointRadius: 6
       },
     ],
   };
-  return <Chart height={360} className="invertColors" type="bar" data={data as any} options={{
+  return <Chart height={360} className="invertColors" type="line" data={data as any} options={{
     maintainAspectRatio: false
   }} />;
 }

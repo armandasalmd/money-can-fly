@@ -1,11 +1,10 @@
 import { BaseModel } from "../BaseModel";
-import { Currency } from "@utils/Types";
+import { IBalanceAnalysisSection } from "./IBalanceAnalysisSection";
+import { IGeneralSection } from "./IGeneralSection";
 
 export interface IUserPreferencesModel extends BaseModel {
-  defaultCurrency: Currency;
-  monthlyBudget: number;
-  monthlyBudgetStartDay: number;
-  balanceChartBreakpoints: number;
-  forecastPivotDate: Date;
-  forecastPivotValue: number;
+  balanceAnalysisSection: IBalanceAnalysisSection;
+  generalSection: IGeneralSection;
 }
+
+export type IGeneralPreferences = Omit<IUserPreferencesModel, "balanceAnalysisSection">;

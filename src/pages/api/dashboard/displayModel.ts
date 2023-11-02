@@ -13,6 +13,7 @@ import {
 } from "@server/managers";
 import { BalanceAnalysisModel, CategoryAnalysisModel, InsightsModel, InvestmentsModel, SpendingAnalysisModel } from "@server/models";
 import { DateRange, DisplaySections } from "@utils/Types";
+import { toUTCDate } from "@utils/Date";
 
 export class DisplayModelRequest {
   @IsArray()
@@ -57,8 +58,8 @@ export default validatedApiRoute("POST", DisplayModelRequest, async (request, re
   const loadInvestmentValue = loadInvestments;
 
   const [prefs, investments] = await Promise.all([
-    new PreferencesManager(user).GetPreferences(),
-    loadInvestments ? investmentsManager.GetInvestments(user) : null,
+    new PreferencesManager(user).GetGeneralPreferences(),
+    loadInvestments ? investmentsManager.GetBasicInvestments(user) : null,
   ]);
 
   // Requires default currency, thus loaded separately
@@ -73,7 +74,7 @@ export default validatedApiRoute("POST", DisplayModelRequest, async (request, re
   if (sections.includes(DisplaySections.Investments)) {
     result.investments = {
       totalValue: investmentsValue,
-      investments,
+      investments: investmentsManager.ToSummary(investments),
       profitChart: await new InvestmentChartManager(prefs.defaultCurrency).CalculateProfitChart(investments)
     };
   }
@@ -92,12 +93,13 @@ export default validatedApiRoute("POST", DisplayModelRequest, async (request, re
     const dateRange = body.balanceAnalysisDateRange;
 
     if (!dateRange) return response.status(400).json({ error: "Missing date range" });
-    if (isDateString(dateRange.from)) dateRange.from = new Date(dateRange.from);
-    if (isDateString(dateRange.to)) dateRange.to = new Date(dateRange.to);
+    if (isDateString(dateRange.from)) dateRange.from = toUTCDate(new Date(dateRange.from));
+    if (isDateString(dateRange.to)) dateRange.to = toUTCDate(new Date(dateRange.to));
 
-    result.balanceAnalysis = await new BalanceAnalysisManager(prefs, cashValue, investmentsValue).GetBalanceAnalysis(
-      user,
+    result.balanceAnalysis = await new BalanceAnalysisManager(user, prefs).GetBalanceAnalysis(
       dateRange,
+      cashValue,
+      investmentsValue,
       investments
     );
   }

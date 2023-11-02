@@ -12,6 +12,8 @@ export enum DisplaySections {
   SpendingAnalysis = "spendingAnalysis"
 }
 
+export type ChartColor = "red" | "green" | "blue" | "orange" | "yellow" | "purple" | "grey";
+
 export type DateRange = {
   from: Date | undefined;
   to?: Date | undefined;
@@ -22,20 +24,20 @@ export type IconComponentType = ForwardRefExoticComponent<
 >;
 
 export type ActionColor = "success" | "warning" | "error" | "info";
+export type AmountFilter = "incomeOnly" | "spendingOnly" | "moreThan10Spent" | "moreThan25Spent" | "moreThan50Spent" | "moreThan100Spent" | "moreThan250Spent";
 export type CalibrationStatus = "unset" | "pass" | "fail";
+export type CategoryFallbacks = Record<Category, string[]>;
 export type CheckState = "checked" | "unchecked" | "indeterminate";
 export type ColorType = "primary" | "secondary";
+export type Currency = "USD" | "EUR" | "GBP";
 export type Size = "small" | "medium" | "large";
 export type Sort = "asc" | "desc";
-export type CategoryFallbacks = Record<Category, string[]>;
-export type Theme = "light" | "dark";
-export type Currency = "USD" | "EUR" | "GBP";
-export type ImportState = "running" | "success" | "error" | "undo";
-export type TransactionBank = "barclays" | "revolut" | "cash";
 export type ImportPresetType = Exclude<TransactionBank, "cash"> | "custom";
-export type TransactionStatusFilter = "active" | "inactive";
-export type AmountFilter = "incomeOnly" | "spendingOnly" | "moreThan10Spent" | "moreThan25Spent" | "moreThan50Spent" | "moreThan100Spent" | "moreThan250Spent";
 export type InvestmentEventType = "deposit" | "adjustment" | "withdrawal" | "created";
+export type ImportState = "running" | "success" | "error" | "undo";
+export type Theme = "light" | "dark";
+export type TransactionBank = "barclays" | "revolut" | "cash";
+export type TransactionStatusFilter = "active" | "inactive";
 
 export type Balances = {
   [key in Currency]: Money;
@@ -44,13 +46,6 @@ export type Balances = {
 export interface Money {
   amount: number;
   currency: Currency;
-}
-
-export interface Borrowing {
-  id?: string;
-  description: string;
-  date?: string;
-  money: Money;
 }
 
 export interface CalibrateCurrencyRow {
@@ -138,6 +133,14 @@ export interface Investment {
   dateModified: Date;
   dateCreated: Date;
   timelineEvents: InvestmentEvent[];
+}
+
+export interface InvestmentSummary {
+  id: string;
+  title: string;
+  dateModified: Date;
+  currentValue: Money;
+  timelineEventsCount: number;
 }
 
 export type FieldErrors<T> = Partial<{

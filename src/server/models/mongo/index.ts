@@ -6,11 +6,13 @@ import {
 } from "./periodPrediction/PeriodPredictionModel";
 import { default as ImportModel, ImportDocument } from "./import/ImportModel";
 import { default as ImportSettingsModel, ImportSettingsDocument } from "./importSettings/ImportSettingsModel";
-import { default as UserPreferencesModel, UserPreferencesDocument } from "./userPreferences/UserPreferencesModel";
+import { default as UserPreferencesModel, BalanceAnalysisSectionDocument, GeneralSectionDocument, UserPreferencesDocument } from "./userPreferences/UserPreferencesModel";
 import { default as TransactionModel, TransactionDocument } from "./transaction/TransactionModel";
 import { default as CurrencyRateModel, CurrencyRateDocument } from "./currencyRate/CurrencyRateModel";
 import { default as InvestmentModel, InvestmentDocument } from "./investment/InvestmentModel";
 
+export { type IBalanceAnalysisSection } from "./userPreferences/IBalanceAnalysisSection";
+export { type IGeneralSection } from "./userPreferences/IGeneralSection";
 export { type ICurrencyRateModel } from "./currencyRate/ICurrencyRateModel";
 export { type ITransactionModel } from "./transaction/ITransactionModel";
 export { type IUserPreferencesModel } from "./userPreferences/IUserPreferencesModel";
@@ -30,6 +32,8 @@ export {
   InvestmentModel,
   UserPreferencesModel,
   TransactionModel,
+  type BalanceAnalysisSectionDocument,
+  type GeneralSectionDocument,
   type CurrencyRateDocument,
   type MoneyDocument,
   type UserBalanceDocument,

@@ -52,7 +52,7 @@ export default function DashChartCard() {
       className="dashChart"
       header={{
         color: "info",
-        title: "Balance analysis & expectations",
+        title: "Balance analysis",
         description: data?.cardDescription ?? "Loading...",
       }}
       headerActions={[{
