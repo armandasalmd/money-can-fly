@@ -49,6 +49,7 @@ export default validatedApiRoute("POST", DisplayModelRequest, async (request, re
   const sections = body.sections;
   const result: Partial<DisplayModelResponse> = {};
   const investmentsManager = new InvestmentsManager();
+  const balanceManager = new BalanceManager(user);
 
   const loadInvestments =
     sections.includes(DisplaySections.Investments) ||
@@ -56,18 +57,18 @@ export default validatedApiRoute("POST", DisplayModelRequest, async (request, re
     sections.includes(DisplaySections.BalanceAnalysis);
   const loadCashValue =
     sections.includes(DisplaySections.Insights) || sections.includes(DisplaySections.BalanceAnalysis);
-  const loadInvestmentValue = loadInvestments;
 
-  const [userSettings, investments] = await Promise.all([
+  const [userSettings, investments, balances] = await Promise.all([
     new UserSettingsManager(user).ReadFull(),
     loadInvestments ? investmentsManager.GetBasicInvestments(user) : null,
+    loadCashValue ? balanceManager.GetBalances() : null
   ]);
   const defaultCurrency = userSettings.generalSection.defaultCurrency;
 
   // Requires default currency, thus loaded separately
   const [investmentsValue, cashValue] = await Promise.all([
-    loadInvestmentValue ? investmentsManager.GetTotalMoneyValue(defaultCurrency, investments) : null,
-    loadCashValue ? new BalanceManager(user).GetBalanceSummary(defaultCurrency) : null,
+    loadInvestments ? investmentsManager.GetTotalMoneyValue(defaultCurrency, investments) : null,
+    loadCashValue ? new BalanceManager(user).GetBalanceSummary(balances, defaultCurrency) : null,
   ]);
 
   /**
@@ -87,7 +88,7 @@ export default validatedApiRoute("POST", DisplayModelRequest, async (request, re
   if (sections.includes(DisplaySections.Insights)) {
     result.insights = await new InsightsManager(cashValue).GetInsights(user, investmentsValue, userSettings);
   }
-
+  
   /**
    * BalanceAnalysis section
    */
@@ -104,7 +105,7 @@ export default validatedApiRoute("POST", DisplayModelRequest, async (request, re
       investments
     );
   }
-
+  
   /**
    * CategoryAnalysis section
    */
@@ -120,7 +121,7 @@ export default validatedApiRoute("POST", DisplayModelRequest, async (request, re
       body.categoryAnalysisDateRange
     );
   }
-
+  
   /**
    * SpendingAnalysis section
    */

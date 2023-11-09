@@ -20,8 +20,8 @@ export class InvestmentsManager {
 
   public async GetBasicInvestments(user: CookieUser): Promise<Investment[]> {
     const investments: InvestmentDocument[] = await InvestmentModel
-      .find({ userUID: user.userUID }, {
-        userUID: 0,
+    .find({ userUID: user.userUID }, {
+      userUID: 0,
         "timelineEvents.title": 0,
         "timelineEvents.transaction": 0
       });

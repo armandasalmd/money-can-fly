@@ -84,8 +84,7 @@ export class BalanceManager {
     return update.modifiedCount > 0;
   }
 
-  public async GetBalanceSummary(currency: Currency): Promise<Money> {
-    const balances = await this.GetBalances();
+  public async GetBalanceSummary(balances: IUserBalanceModel, currency: Currency): Promise<Money> {
     const rateManager = CurrencyRateManager.getInstance();
     const total: Money = {
       amount: 0,

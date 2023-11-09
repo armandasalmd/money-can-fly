@@ -66,9 +66,9 @@ function buildConfig(apiModel: BalanceAnalysisModel): ChartConfiguration {
         y: {
           ticks: {
             callback: (value) => amountForDisplay({
-              currency: "USD",
+              currency: apiModel.defaultCurrency,
               amount: value as number
-            })
+            }, 0)
           },
         },
       },
