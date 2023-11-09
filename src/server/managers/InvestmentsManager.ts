@@ -1,5 +1,5 @@
 import { CookieUser } from "@server/core";
-import { Category, CreateInvestmentEvent, Currency, Investment, InvestmentEventType, Money } from "@utils/Types";
+import { Category, CreateInvestmentEvent, Currency, Investment, InvestmentEventType, InvestmentSummary, Money } from "@utils/Types";
 import { amountForDisplay } from "@utils/Currency";
 import { InvestmentModel, InvestmentDocument, IInvestmentEventModel } from "@server/models";
 import { TransactionManager, CurrencyRateManager } from "@server/managers";
@@ -8,8 +8,23 @@ import { InvestmentEventDocument } from "@server/models/mongo/investment/Investm
 import { capitalise } from "@utils/Global";
 
 export class InvestmentsManager {
-  public async GetInvestments(user: CookieUser): Promise<Investment[]> {
-    const investments: InvestmentDocument[] = await InvestmentModel.find({ userUID: user.userUID });
+
+  public async GetInvestment(user: CookieUser, id: string): Promise<Investment> {
+    let investment: InvestmentDocument = await InvestmentModel.findOne({
+      _id: id,
+      userUID: user.userUID
+    });
+
+    return investment ? this.ToInvestment(investment) : null;
+  }
+
+  public async GetBasicInvestments(user: CookieUser): Promise<Investment[]> {
+    const investments: InvestmentDocument[] = await InvestmentModel
+    .find({ userUID: user.userUID }, {
+      userUID: 0,
+        "timelineEvents.title": 0,
+        "timelineEvents.transaction": 0
+      });
     const result: Investment[] = [];
 
     for (const investment of investments) {
@@ -282,5 +297,15 @@ export class InvestmentsManager {
 
   private GetInvestmentCurrency(investment: Investment | InvestmentDocument): Currency {
     return investment.timelineEvents[0]?.valueChange?.currency || "USD";
+  }
+
+  public ToSummary(basicInvestments: Investment[]): InvestmentSummary[] {
+    return !basicInvestments ? [] : basicInvestments.map(o => ({
+      id: o.id,
+      title: o.title,
+      dateModified: o.dateModified,
+      currentValue: o.currentValue,
+      timelineEventsCount: o.timelineEvents.length
+    } as InvestmentSummary));
   }
 }

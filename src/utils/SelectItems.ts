@@ -1,4 +1,4 @@
-import { TransactionBank, Currency, TransactionStatusFilter, AmountFilter, Sort } from "@utils/Types";
+import { TransactionBank, Currency, TransactionStatusFilter, AmountFilter, Sort, ChartColor } from "@utils/Types";
 import { allCategories } from "./Category";
 
 export type SelectItemsObject<T extends string> = { [key in T]: string };
@@ -55,6 +55,16 @@ const yearSelect: SelectItemsObject<string> = {
   "2026": "Year 2026",
 };
 
+const chartColorSelect: SelectItemsObject<ChartColor> = {
+  blue: "Blue",
+  green: "Green",
+  grey: "Grey",
+  orange: "Orange",
+  purple: "Purple",
+  red: "Red",
+  yellow: "Yellow"
+};
+
 export const categotyPreset: SelectItem[] = Object.values(allCategories);
 
 export const searchCategoryPreset: SelectItem[] = [{
@@ -65,6 +75,7 @@ export const searchCategoryPreset: SelectItem[] = [{
 export const yearsPreset = toSelectItems(yearSelect);
 export const amountFilterPreset = toSelectItems(amountFilterSelect);
 export const bankNamesPreset = toSelectItems(bankNamesSelect);
+export const chartColorPreset = toSelectItems(chartColorSelect);
 export const currencyPreset = toSelectItems(currencySelect);
 export const sortPreset = toSelectItems(sortSelect);
 export const transactionStatusPreset = toSelectItems(transactionStatusFilterSelect);

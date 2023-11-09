@@ -47,7 +47,7 @@ export default function SpendingAnalyticsCard() {
     icon: ArrowClockwise,
     onClick: () => updateDateRanges([...dateRanges]),
     type: "text",
-    text: "Refresh",
+    tooltip: "Refresh",
   }];
 
   if (dateRanges.filter(o => o !== null).length === 1) {

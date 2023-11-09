@@ -22,13 +22,13 @@ export class InvestmentChartManager {
     this.dateBreakpoints = splitDateIntoEqualIntervals(this.dateRange.from, this.dateRange.to, 10, true);
 
     const finalEvents = investments
-      .flatMap((i) => i.timelineEvents.filter((e) => this.isDateInRange(e.eventDate) && e.type === "adjustment"))
+      .flatMap((i) => i.timelineEvents.filter((e) => this.IsDateInRange(e.eventDate) && e.type === "adjustment"))
       .sort((a, b) => a.eventDate.getTime() - b.eventDate.getTime());
 
     let sum: number = 0;
     let iteratedBreakpointIndex = 0;
     const values = [];
-    
+
     for (const iEvent of finalEvents) {
       if (iEvent.valueChange.currency !== this.currency) {
         iEvent.valueChange = await CurrencyRateManager.getInstance().convertMoney(iEvent.valueChange, this.currency);
@@ -59,7 +59,7 @@ export class InvestmentChartManager {
     };
   }
 
-  private isDateInRange(date: Date): boolean {
+  private IsDateInRange(date: Date): boolean {
     let time = date.getTime();
 
     return this.dateRange.from.getTime() < time && (!this.dateRange.to || time < this.dateRange.to.getTime());

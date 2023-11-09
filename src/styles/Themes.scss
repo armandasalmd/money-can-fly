@@ -11,7 +11,7 @@ $themeLightClass: ".theme--light";
   --bg-input-error: #{mix($shade0, $colorError, 95%)};
   --bg-mask: rgba(0, 0, 0, 0.3);
   --color-border: #dfdfdf;
-  --color-error-outline: #{mix($shade0, $colorError, 25%)};
+  --color-error-outline: #{mix($shade0, $colorError, 5%)};
   --color-success-outline: #{mix($shade0, $colorSuccess, 25%)};
   --color-placeholder: #95939D;
   --color-primary: #{$colorPrimary};
@@ -51,16 +51,16 @@ $themeLightClass: ".theme--light";
 
 // Global color variables for dark
 #{$themeDarkClass} {
-  --bg-card: #26262a;
-  --bg-select-menu: #3a3a42;
-  --bg-navbar: #242428;
-  --bg-input: rgba(167, 164, 174, 0.11);
+  --bg-card: #202026;
+  --bg-select-menu: #323239;
+  --bg-navbar: #1e1e21;
+  --bg-input: rgba(120, 120, 120, 0.19);
   --bg-input-hover: rgba(167, 164, 174, 0.07);
   --bg-input-error: #{mix($shade80, $colorError, 97%)};
   --bg-mask: rgba(255, 255, 255, 0.2);
 
-  --color-border: #454545;
-  --color-error-outline: #{mix($shade0, $colorError, 40%)};
+  --color-border: #424242;
+  --color-error-outline: #{mix($shade0, $colorError, 80%)};
   --color-success-outline: #{mix($shade0, $colorSuccess, 40%)};
   --color-placeholder: #95939D;
   --color-primary: #{$colorPrimaryDark};
@@ -95,7 +95,7 @@ $themeLightClass: ".theme--light";
   --color-popup-border: var(--color-border);
 
   color-scheme: dark;
-  background-color: #151517;
+  background-color: #131315;
 
   p.text {
     color: #{$colorTextLight};

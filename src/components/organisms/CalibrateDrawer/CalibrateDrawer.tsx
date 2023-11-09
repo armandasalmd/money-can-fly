@@ -10,6 +10,7 @@ import { useDashboardData } from "@hooks/index";
 import { balanceChartDateRange, spendingChartDateRanges } from "@recoil/dashboard/atoms";
 import { publish } from "@utils/Events";
 import { getRequest, postRequest } from "@utils/Api";
+import { round } from "@server/utils/Global";
 
 interface CalibrateDrawerProps {
   open: boolean;
@@ -19,7 +20,7 @@ interface CalibrateDrawerProps {
 function setRowStatus(row: CalibrateCurrencyRow) {
   if (!row.target.amount) {
     row.status = "unset";
-  } else if (row.target.amount === row.inApp.amount) {
+  } else if (round(row.target.amount) === round(row.inApp.amount)) {
     row.status = "pass";
   } else {
     row.status = "fail";

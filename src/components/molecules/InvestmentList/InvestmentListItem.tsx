@@ -1,11 +1,11 @@
 import { amountForDisplay } from "@utils/Currency";
 import { toDisplayDate } from "@utils/Date";
-import { Investment } from "@utils/Types";
+import { InvestmentSummary } from "@utils/Types";
 import { AlignCenterVertical } from "phosphor-react";
 
 interface InvestmentListItemProps {
-  investment: Investment;
-  onClick: (investment: Investment) => void;
+  investment: InvestmentSummary;
+  onClick: (investment: InvestmentSummary) => void;
 }
 
 export function InvestmentListItem(props: InvestmentListItemProps) {
@@ -16,7 +16,7 @@ export function InvestmentListItem(props: InvestmentListItemProps) {
       <div className="investmentListItem__main">
         <h5 className="investmentListItem__title">{investment.title}</h5>
         <p className="investmentListItem__subtitle">
-          {props.investment.timelineEvents.length} timeline events • {toDisplayDate(props.investment.dateModified)}
+          {props.investment.timelineEventsCount} timeline events • {toDisplayDate(props.investment.dateModified)}
         </p>
       </div>
       <div className="investmentListItem__right">

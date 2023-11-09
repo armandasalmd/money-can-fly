@@ -2,7 +2,7 @@ import { add } from "date-fns";
 import { FilterQuery } from "mongoose";
 
 import { CookieUser } from "@server/core";
-import { IUserPreferencesModel, InsightsModel, TransactionModel, ImportModel, IImportModel } from "@server/models";
+import { IUserSettingsModel, InsightsModel, TransactionModel, ImportModel, IImportModel } from "@server/models";
 import { Currency, Money } from "@utils/Types";
 import { CurrencyRateManager } from "./CurrencyRateManager";
 import { round } from "@server/utils/Global";
@@ -18,16 +18,16 @@ export class InsightsManager {
   public async GetInsights(
     user: CookieUser,
     investmentValue: Money,
-    prefs: IUserPreferencesModel
+    settings: IUserSettingsModel
   ): Promise<InsightsModel> {
-    this.defaultCurrency = prefs.defaultCurrency;
+    this.defaultCurrency = settings.generalSection.defaultCurrency;
     const now = toUTCDate(new Date());
 
     const firstOfThisMonth = new Date(now);
     firstOfThisMonth.setUTCDate(1);
     firstOfThisMonth.setUTCHours(0, 0, 0, 0);
 
-    const budgetResetDate = this.GetBugdetResetDate(prefs);
+    const budgetResetDate = this.GetBugdetResetDate(settings);
     const previousMonth = add(now, { months: -1 });
     previousMonth.setUTCDate(1);
     previousMonth.setUTCHours(0, 0, 0, 0);
@@ -41,14 +41,14 @@ export class InsightsManager {
       this.GetAmountChange(user, previousMonth, now, false),
       this.GetAmountChange(user, previousMonth, add(previousMonth, { months: 1, seconds: -1 }), true),
       this.GetLastImportSummary(user),
-      prefs.monthlyBudgetStartDay === 1 ? new PeriodPredictionManager(user).GetTotalSpending([firstOfThisMonth], prefs.defaultCurrency) : Promise.resolve()
+      settings.generalSection.monthlyBudgetStartDay === 1 ? new PeriodPredictionManager(user).GetTotalSpending([firstOfThisMonth], settings.generalSection.defaultCurrency) : Promise.resolve()
     ]);
 
     amountSpentThisPeriod.amount = -amountSpentThisPeriod.amount;
     spentInLastWeek.amount = -spentInLastWeek.amount;
 
     const budgetRemaining = {
-      amount: prefs.monthlyBudget - amountSpentThisPeriod.amount,
+      amount: settings.generalSection.monthlyBudget - amountSpentThisPeriod.amount,
       currency: this.defaultCurrency,
     };
 
@@ -139,11 +139,11 @@ export class InsightsManager {
     return Math.round((resetDate.getTime() - date.getTime()) / 86400000);
   }
 
-  private GetBugdetResetDate(prefs: IUserPreferencesModel): Date {
+  private GetBugdetResetDate(settings: IUserSettingsModel): Date {
     let date = new Date();
-    date.setDate(prefs.monthlyBudgetStartDay);
+    date.setDate(settings.generalSection.monthlyBudgetStartDay);
     date.setUTCHours(0, 0, 0, 0);
 
-    return date.getDate() >= prefs.monthlyBudgetStartDay ? add(date, { months: 1 }) : date;
+    return date.getDate() >= settings.generalSection.monthlyBudgetStartDay ? add(date, { months: 1 }) : date;
   }
 }

@@ -11,8 +11,8 @@
     padding: $halfUnit $unit;
     cursor: pointer;
     user-select: none;
-    border-top: 1px solid var(--shade10);
-    border-bottom: 0px solid var(--shade10); // fixes color transition
+    border-top: 1px solid var(--color-border);
+    border-bottom: 0px solid var(--color-border); // fixes color transition
 
     &--selected {
       background-color: rgba($colorPrimary, 0.1) !important;

@@ -1,20 +1,17 @@
 import { atom } from "recoil";
 import { Balances } from "@utils/Types";
-import { IUserPreferencesModel } from "@server/models";
+import { IGeneralSection } from "@server/models/mongo";
 
-export interface PreferencesForm extends Omit<IUserPreferencesModel, "userUID"> {
+export interface PreferencesForm extends IGeneralSection {
   balances: Balances;
 }
 
-export const preferencesState = atom<PreferencesForm>({
+export const preferencesState = atom<Omit<PreferencesForm, "userUID">>({
   key: "preferences",
   default: {
     defaultCurrency: "GBP",
     monthlyBudget: 0,
     monthlyBudgetStartDay: 1,
-    balanceChartBreakpoints: 12,
-    forecastPivotDate: new Date(),
-    forecastPivotValue: 0,
     balances: {
       GBP: {
         amount: 0,

@@ -1,4 +1,4 @@
-import { Investment, Money } from "@utils/Types";
+import { InvestmentSummary, Money } from "@utils/Types";
 
 export interface InvestmentProfitChart {
   description: string;
@@ -8,6 +8,6 @@ export interface InvestmentProfitChart {
 
 export interface InvestmentsModel {
   totalValue: Money;
-  investments: Investment[];
+  investments: InvestmentSummary[];
   profitChart: InvestmentProfitChart;
 }

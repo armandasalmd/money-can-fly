@@ -12,6 +12,7 @@
 
     #{$base}__filters {
       display: flex;
+      gap: $halfUnit;
     }
   }
 }

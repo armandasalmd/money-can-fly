@@ -81,7 +81,6 @@
     }
 
     input:focus {
-      background-color: transparent;
       @include focusOutline(var(--color-error-outline));
     }
 

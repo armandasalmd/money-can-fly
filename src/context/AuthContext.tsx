@@ -61,7 +61,6 @@ export function AuthContextProvider({ children }) {
 
   async function loginToApi(user: User): Promise<boolean> {
     if (!user) return true;
-
     AuthUtils.setApiLoginInProgress(true);
     const token = await user.getIdToken(true);
     const data = await postRequest<any>("/api/auth/login", { userIdToken: token });

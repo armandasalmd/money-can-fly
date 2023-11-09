@@ -1,7 +1,7 @@
 import { useRecoilState, useResetRecoilState } from "recoil";
 import { useState, useEffect } from "react";
 
-import { Drawer, Select, DatePicker, Button, Message, Input } from "@atoms/index";
+import { Drawer, Select, DatePicker, Button, Message } from "@atoms/index";
 import { CurrencyInput } from "@molecules/index";
 import { PreferencesForm, preferencesState } from "@recoil/preferences/atoms";
 import { currencyPreset } from "@utils/SelectItems";
@@ -9,7 +9,8 @@ import { Money } from "@utils/Types";
 import { amountForDisplay } from "@utils/Currency";
 import { publish } from "@utils/Events";
 import { usePreferences } from "@context/PreferencesContext";
-import { getRequest, putRequest } from "@utils/Api";
+import { getRequest, patchRequest } from "@utils/Api";
+import { ReadUserSettingsResponse } from "@endpoint/userSettings/read";
 
 interface PreferencesDrawerProps {
   open: boolean;
@@ -23,46 +24,33 @@ export default function PreferencesDrawer(props: PreferencesDrawerProps) {
   const resetState = useResetRecoilState(preferencesState);
   const [message, setMessage] = useState("");
   const [messageType, setMessageType] = useState<"success" | "error">("success");
-  const [breakpointCountError, setBreakpointCountError] = useState("");
   const { setDefaultCurrency } = usePreferences();
 
   function onSave() {
     setLoading(true);
-    putRequest<any>("/api/preferences/update", state)
+    patchRequest<PreferencesForm>("/api/userSettings/update", { general: state })
       .then((res) => {
-        const errorMessage = res.message
-        
-        if (!errorMessage) {
-          res.forecastPivotDate = new Date(res.forecastPivotDate);
-
-          setState(res);
-          setChanged(false);
-          setMessageType("success");
-          setMessage("Preferences saved");
-          setBreakpointCountError("");
-          setDefaultCurrency(res.defaultCurrency);
-
-          publish("cashBalanceChanged", null);
-        } else if (res.fieldErrors.balanceChartBreakpoints) {
-          setBreakpointCountError(res.fieldErrors.balanceChartBreakpoints);
-        } else {
+        if (Object.hasOwn(res, "message")) {
           setMessageType("error");
-          setMessage(errorMessage);
+          setMessage(res["message"]);
+          return;
         }
+        
+        setState(res);
+        setChanged(false);
+        setMessageType("success");
+        setMessage("User settings saved");
+        setDefaultCurrency(res.defaultCurrency);
+
+        publish("cashBalanceChanged", null);
       })
       .catch((_) => {
         setMessageType("error");
-        setMessage("Error saving preferences");
+        setMessage("Error saving user setting");
       })
       .finally(() => setLoading(false));
   }
-
-  function onBreakpointCountChange(value: string) {
-    const breakpointCount = parseInt(value);
-
-    onInputChange(isNaN(breakpointCount) ? 0 : breakpointCount, "balanceChartBreakpoints");
-  }
-
+  
   function onInputChange(value: string | number | Date, name: string) {
     if (changed === false) {
       setChanged(true);
@@ -94,7 +82,6 @@ export default function PreferencesDrawer(props: PreferencesDrawerProps) {
     resetState();
     setChanged(false);
     setMessage("");
-    setBreakpointCountError("");
   }
 
   const saveButton = (
@@ -125,11 +112,9 @@ export default function PreferencesDrawer(props: PreferencesDrawerProps) {
     if (props.open) {
       if (!loading) setLoading(true);
 
-      getRequest<PreferencesForm>("/api/preferences/read").then((res) => {
-        res.forecastPivotDate = new Date(res.forecastPivotDate);
-
-        setDefaultCurrency(res.defaultCurrency);
-        setState(res);
+      getRequest<ReadUserSettingsResponse>("/api/userSettings/read", { general: true }).then((res) => {
+        setDefaultCurrency(res.general.defaultCurrency);
+        setState(res.general);
       }).finally(() => setLoading(false));
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -172,35 +157,6 @@ export default function PreferencesDrawer(props: PreferencesDrawerProps) {
         />
         <h3>Cash balance</h3>
         {currencyBalanceInputs}
-        <h3>Balance analysis chart</h3>
-        <DatePicker
-          required
-          title="Forecast pivot date"
-          name="forecastPivotDate"
-          onSelect={onInputChange}
-          value={state.forecastPivotDate}
-          goToToday
-        />
-        <CurrencyInput
-          disableCurrencyChange
-          title="Forecast pivot value"
-          required
-          name="forecastPivotValue"
-          onChange={(money, name) => onInputChange(money.amount, name)}
-          value={{
-            amount: state.forecastPivotValue,
-            currency: state.defaultCurrency,
-          }}
-          onlyPositive
-        />
-        <Input
-          required
-          error={breakpointCountError}
-          title="Date breakpoint count"
-          placeholder="Value between 6 and 16"
-          value={state.balanceChartBreakpoints.toString()}
-          setValue={onBreakpointCountChange}
-        />
       </div>
     </Drawer>
   );

@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { useRecoilState } from "recoil";
 
-import { selectedInvestment } from "@recoil/dashboard/atoms";
 import TimelineItem from "./TimelineItem";
 import { Empty, MessageColor, Select } from "@atoms/index";
-import { InvestmentEvent, Sort } from "@utils/Types";
+import { Investment, InvestmentEvent, Sort } from "@utils/Types";
 import { sortPreset } from "@utils/SelectItems";
 import { amountForDisplay } from "@utils/Currency";
 import { publish } from "@utils/Events";
@@ -12,11 +11,13 @@ import { deleteRequest } from "@utils/Api";
 
 interface InvestmentTimelineProps {
   displayMessage: (message: string, messageType: MessageColor) => void;
+  investment: Investment;
+  setInvestment(investment: Investment): void;
 }
 
 export default function InvestmentTimeline(props: InvestmentTimelineProps) {
+  const { investment, setInvestment } = props;
   const [sort, setSort] = useState<string>("desc" as Sort);
-  const [investment, setInvestment] = useRecoilState(selectedInvestment);
 
   function onDelete(investmentEvent: InvestmentEvent) {
     deleteRequest<any>("/api/investments/deleteEvent", {

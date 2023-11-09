@@ -1,4 +1,4 @@
-import { DateRange, Investment } from "@utils/Types";
+import { DateRange } from "@utils/Types";
 import { atom } from "recoil";
 import { DisplayModelResponse } from "@endpoint/dashboard/displayModel";
 import { getOneMonthRange } from "@utils/Date";
@@ -10,11 +10,6 @@ export const transactionsCount = atom<number>({
   default: 0,
 });
 
-export const selectedInvestment = atom<Investment>({
-  key: "selectedInvestment",
-  default: null,
-});
-
 export const dashboardData = atom<DisplayModelResponse>({
   key: "dashboardData",
   default: null,
@@ -22,7 +17,7 @@ export const dashboardData = atom<DisplayModelResponse>({
 
 export const balanceChartDateRange = atom<DateRange>({
   key: "balanceChartDateRange",
-  default: getOneMonthRange(),
+  default: null,
 });
 
 export const spendingChartDateRanges = atom<DateRange[]>({

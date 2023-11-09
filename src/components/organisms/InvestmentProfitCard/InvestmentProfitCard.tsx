@@ -35,7 +35,7 @@ export default function InvestmentProfitCard() {
         {
           icon: ArrowClockwise,
           onClick: onChange,
-          text: "Refresh",
+          tooltip: "Refresh",
           type: "text",
         },
       ]}

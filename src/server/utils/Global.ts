@@ -2,6 +2,22 @@ export function escapeRegExp(text: string) {
   return text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 }
 
+export function findIndexBackwards<T>(
+  arr: T[],
+  callback: (element: T, index: number, array: T[]) => boolean
+): number {
+  for (let i = arr.length - 1; i >= 0; i--) {
+    if (callback(arr[i], i, arr)) {
+      return i;
+    }
+  }
+  return -1;
+}
+
+export function getLast<T>(array: T[]): T {
+  return Array.isArray(array) ? array[array.length - 1] : null;
+}
+
 export function round(num: number, precision = 2) {
   return parseFloat(num.toFixed(precision));
 }
