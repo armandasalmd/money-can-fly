@@ -7,7 +7,8 @@ import { Currency, Money } from "@utils/Types";
 import { CurrencyRateManager } from "./CurrencyRateManager";
 import { round } from "@server/utils/Global";
 import { capitalise } from "@utils/Global";
-import { toDisplayDate } from "@utils/Date";
+import { toDisplayDate, toUTCDate } from "@utils/Date";
+import { PeriodPredictionManager } from "./PeriodPredictionManager";
 
 export class InsightsManager {
   private defaultCurrency: Currency;
@@ -20,22 +21,27 @@ export class InsightsManager {
     settings: IUserSettingsModel
   ): Promise<InsightsModel> {
     this.defaultCurrency = settings.generalSection.defaultCurrency;
+    const now = toUTCDate(new Date());
+
+    const firstOfThisMonth = new Date(now);
+    firstOfThisMonth.setUTCDate(1);
+    firstOfThisMonth.setUTCHours(0, 0, 0, 0);
 
     const budgetResetDate = this.GetBugdetResetDate(settings);
-    const lastMonth = add(new Date(), { months: -1 });
-
-    lastMonth.setDate(1);
-    lastMonth.setHours(0, 0, 0, 0);
+    const previousMonth = add(now, { months: -1 });
+    previousMonth.setUTCDate(1);
+    previousMonth.setUTCHours(0, 0, 0, 0);
 
     const budgetStartDate = add(budgetResetDate, { months: -1 });
     const budgetDaysLeft = this.GetBudgetDaysLeft(budgetResetDate);
     const cashValue = this.balanceSummary;
 
-    const [amountSpentThisPeriod, spentInLastWeek, lastMonthProfit, lastImportMessage] = await Promise.all([
+    const [amountSpentThisPeriod, spentInLastWeek, lastMonthProfit, lastImportMessage, expectedSpendings] = await Promise.all([
       this.GetAmountChange(user, budgetStartDate, budgetResetDate, false),
-      this.GetAmountChange(user, lastMonth, new Date(), false),
-      this.GetAmountChange(user, lastMonth, add(lastMonth, { months: 1, seconds: -1 }), true),
+      this.GetAmountChange(user, previousMonth, now, false),
+      this.GetAmountChange(user, previousMonth, add(previousMonth, { months: 1, seconds: -1 }), true),
       this.GetLastImportSummary(user),
+      settings.generalSection.monthlyBudgetStartDay === 1 ? new PeriodPredictionManager(user).GetTotalSpending([firstOfThisMonth], settings.generalSection.defaultCurrency) : Promise.resolve()
     ]);
 
     amountSpentThisPeriod.amount = -amountSpentThisPeriod.amount;
@@ -45,6 +51,10 @@ export class InsightsManager {
       amount: settings.generalSection.monthlyBudget - amountSpentThisPeriod.amount,
       currency: this.defaultCurrency,
     };
+
+    if (expectedSpendings && expectedSpendings[0]) {
+        budgetRemaining.amount = expectedSpendings[0].amount - amountSpentThisPeriod.amount;
+    }
 
     return {
       availableBalance: cashValue,
@@ -63,7 +73,7 @@ export class InsightsManager {
             },
       budgetRemaining,
       budgetResetDate,
-      lastMonth: lastMonth.getFullYear() + " " + lastMonth.toLocaleString("default", { month: "long" }),
+      lastMonth: previousMonth.getFullYear() + " " + previousMonth.toLocaleString("default", { month: "long" }),
       lastMonthProfit,
       lastImportMessage,
     };

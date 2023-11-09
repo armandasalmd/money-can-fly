@@ -160,6 +160,7 @@ export class SpendingAnalysisManager {
     const predictionManager = new PeriodPredictionManager(this.user);
     const predictions = await predictionManager.GetTotalSpending(
       ranges.map((o) => o.from),
+      this.settings.generalSection.defaultCurrency
     );
     const budgets: number[] = [];
 
