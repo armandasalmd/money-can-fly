@@ -28,7 +28,7 @@ export class InvestmentChartManager {
     let sum: number = 0;
     let iteratedBreakpointIndex = 0;
     const values = [];
-    
+
     for (const iEvent of finalEvents) {
       if (iEvent.valueChange.currency !== this.currency) {
         iEvent.valueChange = await CurrencyRateManager.getInstance().convertMoney(iEvent.valueChange, this.currency);

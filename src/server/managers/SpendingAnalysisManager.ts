@@ -3,7 +3,7 @@ import { format, getDaysInMonth } from "date-fns";
 import { CookieUser } from "@server/core";
 import { CurrencyRateManager, PeriodPredictionManager } from "@server/managers";
 import {
-  IUserPreferencesModel,
+  IUserSettingsModel,
   MonthlySpendingDataset,
   SpendingAnalysisModel,
   TransactionModel,
@@ -24,7 +24,7 @@ interface IMonthDataset {
 }
 
 export class SpendingAnalysisManager {
-  constructor(private user: CookieUser, private prefs: IUserPreferencesModel) {}
+  constructor(private user: CookieUser, private settings: IUserSettingsModel) {}
 
   public async Calculate(ranges: DateRange[]): Promise<SpendingAnalysisModel> {
     ranges = this.CleanupDateRanges(ranges);
@@ -140,7 +140,7 @@ export class SpendingAnalysisManager {
       return `Money spent ${
         amountForDisplay({
           amount: getLast(datasets[0].spendingLine),
-          currency: this.prefs.defaultCurrency,
+          currency: this.settings.generalSection.defaultCurrency,
         })
       } (${datasets[0].label})`;
     } else {
@@ -150,7 +150,7 @@ export class SpendingAnalysisManager {
       return `On average spent ${
         amountForDisplay({
           amount: average,
-          currency: this.prefs.defaultCurrency,
+          currency: this.settings.generalSection.defaultCurrency,
         })
       }`;
     }
@@ -171,11 +171,11 @@ export class SpendingAnalysisManager {
       if (pred) {
         pred = await CurrencyRateManager.getInstance().convertMoney(
           pred,
-          this.prefs.defaultCurrency,
+          this.settings.generalSection.defaultCurrency,
         );
         budgets.push(pred.amount);
       } else {
-        budgets.push(this.prefs.monthlyBudget);
+        budgets.push(this.settings.generalSection.monthlyBudget);
       }
     }
 
@@ -199,7 +199,7 @@ export class SpendingAnalysisManager {
       value = dataset.buckets.filter((o) =>
         o.dateFrom.getTime() < breakpoint.getTime()
       ).reduce((acc, b) => acc + b.usdSpent, 0);
-      value = await rateManager.convert(value, "USD", this.prefs.defaultCurrency);
+      value = await rateManager.convert(value, "USD", this.settings.generalSection.defaultCurrency);
 
       spendingLine.push(value);
       dateLine.push(breakpoint);

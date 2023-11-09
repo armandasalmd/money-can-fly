@@ -6,16 +6,16 @@ import {
 } from "./periodPrediction/PeriodPredictionModel";
 import { default as ImportModel, ImportDocument } from "./import/ImportModel";
 import { default as ImportSettingsModel, ImportSettingsDocument } from "./importSettings/ImportSettingsModel";
-import { default as UserPreferencesModel, BalanceAnalysisSectionDocument, GeneralSectionDocument, UserPreferencesDocument } from "./userPreferences/UserPreferencesModel";
+import { default as UserSettingsModel, BalanceAnalysisSectionDocument, GeneralSectionDocument, UserSettingsDocument } from "./userSettings/UserSettingsModel";
 import { default as TransactionModel, TransactionDocument } from "./transaction/TransactionModel";
 import { default as CurrencyRateModel, CurrencyRateDocument } from "./currencyRate/CurrencyRateModel";
 import { default as InvestmentModel, InvestmentDocument } from "./investment/InvestmentModel";
 
-export { type IBalanceAnalysisSection } from "./userPreferences/IBalanceAnalysisSection";
-export { type IGeneralSection } from "./userPreferences/IGeneralSection";
+export { type IBalanceAnalysisSection } from "./userSettings/IBalanceAnalysisSection";
+export { type IGeneralSection } from "./userSettings/IGeneralSection";
 export { type ICurrencyRateModel } from "./currencyRate/ICurrencyRateModel";
 export { type ITransactionModel } from "./transaction/ITransactionModel";
-export { type IUserPreferencesModel } from "./userPreferences/IUserPreferencesModel";
+export { type IUserSettingsModel } from "./userSettings/IUserSettingsModel";
 export { type IImportModel } from "./import/IImportModel";
 export { type IImportSettingsModel, defaultCategoryFallbacks } from "./importSettings/IImportSettingsModel";
 export { type IInvestmentModel } from "./investment/IInvestmentModel";
@@ -30,7 +30,7 @@ export {
   ImportModel,
   ImportSettingsModel,
   InvestmentModel,
-  UserPreferencesModel,
+  UserSettingsModel,
   TransactionModel,
   type BalanceAnalysisSectionDocument,
   type GeneralSectionDocument,
@@ -41,7 +41,7 @@ export {
   type WeekPredictionDocument,
   type ImportDocument,
   type ImportSettingsDocument,
-  type UserPreferencesDocument,
+  type UserSettingsDocument,
   type TransactionDocument, 
   type InvestmentDocument
 };

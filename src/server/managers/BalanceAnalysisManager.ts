@@ -4,7 +4,7 @@ import {
   BalanceAnalysisModel,
   BalanceChartPoint,
   IPeriodPredictionModel,
-  IUserPreferencesModel,
+  IUserSettingsModel,
   PeriodPredictionModel,
   TransactionModel,
 } from "@server/models";
@@ -27,12 +27,13 @@ interface ITransactionAggregate {
 }
 
 // Smaller number means less data points. This number affects chart quality & sharpness
-const DATE_RANGE_CHUNK_COUNT = 600;
+const DATE_RANGE_CHUNK_COUNT = 500;
 const DATE_CLUSTER_BY_HOUR = "%Y-%m-%d %H";
 const DATE_CLUSTER_BY_MINUTE = "%Y-%m-%d %H-%M";
 
 export class BalanceAnalysisManager {
   private dateRange: DateRange;
+  private defaultCurrency: Currency;
   private investments: Investment[];
   private readonly now: Date;
   private predictionPoints: IPredictionPoint[];
@@ -41,9 +42,10 @@ export class BalanceAnalysisManager {
 
   constructor(
     private user: CookieUser,
-    private prefs: IUserPreferencesModel) {
+    private settings: IUserSettingsModel) {
     this.now = toUTCDate(new Date());
     this.rateManager = CurrencyRateManager.getInstance();
+    this.defaultCurrency = settings?.generalSection?.defaultCurrency ?? "USD"; 
   }
 
   public async GetBalanceAnalysis(
@@ -67,11 +69,16 @@ export class BalanceAnalysisManager {
       this.CalculateRequiredPredictions()
     ]);
 
+    const { forecastPivotDate, forecastPivotValue, ...settings } = this.settings.balanceAnalysisSection;
+
     return {
       balanceDataset: queueResults[0],
       cardDescription: this.CreateDescription(),
+      dateRange,
+      defaultCurrency: this.defaultCurrency,
       expectationDataset: this.GetExpectationDataset(),
-      investmentDataset: queueResults[1]
+      investmentDataset: queueResults[1],
+      settings: settings as any,
     };
   }
 
@@ -181,7 +188,15 @@ export class BalanceAnalysisManager {
 
     let lastPoint = getLast(dataset);
 
-    if (lastPoint && lastPoint.x !== toTime) dataset.push({ x: toTime, y: lastPoint.y });
+    if (lastPoint && lastPoint.x !== toTime) {
+      let nowTime = this.now.getTime();
+
+      if (nowTime > lastPoint.x && nowTime > fromTime && nowTime < toTime) {
+        dataset.push({ x: nowTime, y: lastPoint.y })
+      } else {
+        dataset.push({ x: toTime, y: lastPoint.y })
+      }
+    }
 
     return dataset;
   }
@@ -190,7 +205,7 @@ export class BalanceAnalysisManager {
     const predictionAmountForNow = this.GetPredictionAmountForDate(this.now);
     const delta: Money = {
       amount: this.totalWorthToday.amount - predictionAmountForNow,
-      currency: this.prefs.defaultCurrency,
+      currency: this.defaultCurrency,
     };
 
     const percent = predictionAmountForNow === 0 ? 0 : Math.round((delta.amount / predictionAmountForNow) * 1000) / 10;
@@ -209,7 +224,7 @@ export class BalanceAnalysisManager {
   }
 
   private async CalculateRequiredPredictions() {
-    let requiredDates = [this.dateRange.from, this.dateRange.to, this.now, this.prefs.forecastPivotDate];
+    let requiredDates = [this.dateRange.from, this.dateRange.to, this.now, this.settings.balanceAnalysisSection.forecastPivotDate];
 
     let from = getUTCFirstOfMonth(min(requiredDates));
     let to = getUTCFirstOfMonth(max(requiredDates));
@@ -227,8 +242,8 @@ export class BalanceAnalysisManager {
       for (let weekPrediction of periodPrediction.predictions) {
         let changeAmount = weekPrediction.moneyIn - weekPrediction.moneyOut;
       
-        if (periodPrediction.currency !== this.prefs.defaultCurrency) {
-          changeAmount = await this.rateManager.convert(changeAmount, periodPrediction.currency, this.prefs.defaultCurrency);
+        if (periodPrediction.currency !== this.defaultCurrency) {
+          changeAmount = await this.rateManager.convert(changeAmount, periodPrediction.currency, this.defaultCurrency);
         }
 
         this.predictionPoints.push({
@@ -316,10 +331,10 @@ export class BalanceAnalysisManager {
         let sum = 0;
 
         for (let item of itemsGroup) {
-          sum += await this.rateManager.convert(item.a, item.c, this.prefs.defaultCurrency, this.now);
+          sum += await this.rateManager.convert(item.a, item.c, this.defaultCurrency, this.now);
         }
 
-        return { a: sum, c: this.prefs.defaultCurrency, d: itemsGroup[0].d };
+        return { a: sum, c: this.defaultCurrency, d: itemsGroup[0].d };
       })
     );
 
@@ -348,26 +363,29 @@ export class BalanceAnalysisManager {
   private PopulateForecastTotals() {
     if (!this.predictionPoints || this.predictionPoints.length === 0) return;
 
-    let forecastPivotIndex = this.predictionPoints.findIndex((o) => o.date >= this.prefs.forecastPivotDate);
+    let forecastPivotDate = this.settings.balanceAnalysisSection.forecastPivotDate;
+    let forecastPivotValue = this.settings.balanceAnalysisSection.forecastPivotValue;
+
+    let forecastPivotIndex = this.predictionPoints.findIndex((o) => o.date >= forecastPivotDate);
     let firstItemForecast = 0;
     
     if (forecastPivotIndex > 0) { // Case: there is week point before forecast point
-      let daysDiff = Math.abs(differenceInDays(this.prefs.forecastPivotDate, this.predictionPoints[forecastPivotIndex - 1].date));
+      let daysDiff = Math.abs(differenceInDays(forecastPivotDate, this.predictionPoints[forecastPivotIndex - 1].date));
       daysDiff = daysDiff > 7 ? 7 : daysDiff;
 
       let changeToOneBefore = this.predictionPoints[forecastPivotIndex - 1].changeAmount * (daysDiff / 7);
-      let oneItemBeforePivotForecast = this.prefs.forecastPivotValue - changeToOneBefore;
+      let oneItemBeforePivotForecast = forecastPivotValue - changeToOneBefore;
 
       firstItemForecast = this.predictionPoints
         .slice(0, forecastPivotIndex - 1)
         .reduce((acc, item) => acc - item.changeAmount, oneItemBeforePivotForecast);
 
     } else { // Case: there is no week point before forecast point, only after
-      let daysDiff = Math.abs(differenceInDays(this.prefs.forecastPivotDate, this.predictionPoints[0].date));
+      let daysDiff = Math.abs(differenceInDays(forecastPivotDate, this.predictionPoints[0].date));
       daysDiff = daysDiff > 7 ? 7 : daysDiff;
 
       let changeToOneAfter = this.predictionPoints[0].changeAmount * (daysDiff / 7);
-      firstItemForecast = this.prefs.forecastPivotValue - changeToOneAfter;
+      firstItemForecast = forecastPivotValue - changeToOneAfter;
     }
 
     this.predictionPoints[0].forecastTotal = firstItemForecast;
@@ -378,13 +396,13 @@ export class BalanceAnalysisManager {
       this.predictionPoints[index].forecastTotal = itemBefore.forecastTotal + itemBefore.changeAmount;
     }
 
-    let forecastTime = this.prefs.forecastPivotDate.getTime();
+    let forecastTime = forecastPivotDate.getTime();
 
     if (forecastTime >= this.dateRange.from.getTime() && forecastTime <= this.dateRange.to.getTime()) {
       let forecastPredictionPoint: IPredictionPoint = {
         changeAmount: 0,
-        date: this.prefs.forecastPivotDate,
-        forecastTotal: this.prefs.forecastPivotValue
+        date: forecastPivotDate,
+        forecastTotal: forecastPivotValue
       };
       // Insert forecast pivot point in between
       this.predictionPoints = [
@@ -400,6 +418,6 @@ export class BalanceAnalysisManager {
   }
 
   private async ToDefaultMoney(money: Money, date?: Date): Promise<Money> {
-    return await this.rateManager.convertMoney(money, this.prefs.defaultCurrency, date);
+    return await this.rateManager.convertMoney(money, this.defaultCurrency, date);
   }
 }

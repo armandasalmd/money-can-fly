@@ -81,14 +81,18 @@ export function validatedApiRoute(
   }, sessionOptions);
 }
 
-function toFieldErrors(errors: ValidationError[]): IResponseError {
+export function toFieldErrors(errors: ValidationError[]): IResponseError {
   const result: IResponseError = {};
 
   for (const error of errors) {
-    const message = Object.values(error.constraints || {}).find(() => true) || "Unknwon error";
+    const message = Object.values(error.constraints || {}).find(() => true) || "Unknown error";
 
     result[error.property] = message;
   }
 
   return result;
+}
+
+export function validate(modelClass: ClassConstructor<any>, target: any) {
+  return validateSync(plainToInstance(modelClass, target));
 }

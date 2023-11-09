@@ -107,7 +107,7 @@ export class CurrencyRateManager {
     }
 
     const rates = await this.getRate(date);
-
+    
     if (from === rates.baseCurrency) {
       return round(amount * rates.data[to].value);
     }

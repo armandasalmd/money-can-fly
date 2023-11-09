@@ -1,5 +1,5 @@
 import { Schema, model, Document, models, Model } from "mongoose";
-import { IUserPreferencesModel, IBalanceAnalysisSection } from "@server/models/mongo";
+import { IUserSettingsModel, IBalanceAnalysisSection } from "@server/models/mongo";
 import { IGeneralSection } from "./IGeneralSection";
 
 const REQUIRED_NUMBER = {
@@ -38,13 +38,13 @@ const GeneralSectionSchema = new Schema<IGeneralSection>({
   monthlyBudgetStartDay: REQUIRED_NUMBER,
 });
 
-const UserPreferencesSchema = new Schema<IUserPreferencesModel>({
+const UserSettingsSchema = new Schema<IUserSettingsModel>({
   userUID: REQUIRED_STRING,
   balanceAnalysisSection: BalanceAnalysisSectionSchema,
   generalSection: GeneralSectionSchema
 });
 
-export interface UserPreferencesDocument extends IUserPreferencesModel, Document {}
+export interface UserSettingsDocument extends IUserSettingsModel, Document {}
 export interface BalanceAnalysisSectionDocument extends IBalanceAnalysisSection, Document {}
 export interface GeneralSectionDocument extends IGeneralSection, Document {}
-export default (models.userPreferences || model<IUserPreferencesModel & Document>("userPreferences", UserPreferencesSchema)) as Model<IUserPreferencesModel>;
+export default (models.userSettings || model<IUserSettingsModel & Document>("userSettings", UserSettingsSchema)) as Model<IUserSettingsModel>;

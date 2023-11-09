@@ -46,7 +46,7 @@ export default function DashCategorySpendingCard() {
       headerActions={[{
         icon: ArrowClockwise,
         onClick: () => onChange(dateRange),
-        text: "Refresh",
+        tooltip: "Refresh",
         type: "text"
       }]}
       noDivider

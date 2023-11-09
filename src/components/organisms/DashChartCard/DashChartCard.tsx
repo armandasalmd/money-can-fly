@@ -1,21 +1,25 @@
 import { useEffect, useState } from "react";
 import { useRecoilState } from "recoil";
 import { DayPickerRangeProps } from "react-day-picker/dist/index";
-import { ArrowClockwise, Scales } from "phosphor-react";
+import { ArrowClockwise, ArrowLeft, ArrowRight, Faders, Scales } from "phosphor-react";
+import { addMonths, endOfMonth } from "date-fns";
 
-import { Card, DateRangePicker } from "@atoms/index";
+import { Button, Card, DateRangePicker } from "@atoms/index";
 import { CalibrateDrawer } from "@organisms/index";
-import BalanceComparisonChart from "./BalanceComparisonChart";
 import { useDashboardData } from "@hooks/index";
 import { BalanceAnalysisModel } from "@server/models";
 import { balanceChartDateRange } from "@recoil/dashboard/atoms";
 import { DisplaySections, DateRange } from "@utils/Types";
 import { subscribe, unsubscribe } from "@utils/Events";
+import DashChart from "./DashChart";
+import { getUTCFirstOfMonth, toUTCDate } from "@utils/Date";
+import { BalanceAnalysisSettingsDrawer } from "@components/templates";
 
 export default function DashChartCard() {
   const { data, mutate } = useDashboardData<BalanceAnalysisModel>(DisplaySections.BalanceAnalysis);
   const [reloading, setReloading] = useState(false);
   const [calibrateOpen, setCalibrateOpen] = useState(false);
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const [dateRange, setDateRange] = useRecoilState(balanceChartDateRange);
 
   const pickerOptions: DayPickerRangeProps = {
@@ -24,19 +28,31 @@ export default function DashChartCard() {
     onSelect: onChange,
   };
 
+  function onPreviousRange() {
+    const from = addMonths(getUTCFirstOfMonth(dateRange.from), -1);
+
+    onChange({ from, to: endOfMonth(toUTCDate(from)) });
+  }
+
+  function onNextRange() {
+    const to = addMonths(endOfMonth(toUTCDate(dateRange.to)), 1);
+
+    onChange({ from: getUTCFirstOfMonth(to), to });
+  }
+
   function onChange(range: DateRange) {
     setDateRange(range);
     setReloading(true);
 
     mutate([], {
-      balanceAnalysisDateRange: range
+      balanceAnalysisDateRange: range,
     }).then(() => setReloading(false));
   }
 
   useEffect(() => {
     function onCashBalanceChanged() {
       mutate([DisplaySections.Insights], {
-        balanceAnalysisDateRange: dateRange
+        balanceAnalysisDateRange: dateRange,
       });
     }
 
@@ -44,6 +60,15 @@ export default function DashChartCard() {
 
     return () => unsubscribe("cashBalanceChanged", onCashBalanceChanged);
   });
+
+  useEffect(() => {
+    if (data && data.dateRange) {
+      setDateRange({
+        from: new Date(data.dateRange.from),
+        to: new Date(data.dateRange.to)
+      });
+    }
+  }, [data]);
 
   return (
     <Card
@@ -55,33 +80,42 @@ export default function DashChartCard() {
         title: "Balance analysis",
         description: data?.cardDescription ?? "Loading...",
       }}
-      headerActions={[{
-        icon: Scales,
-        onClick: () => setCalibrateOpen(true),
-        text: "Calibrate",
-        type: "text"
-      },{
-        icon: ArrowClockwise,
-        onClick: () => onChange(dateRange),
-        text: "Refresh",
-        type: "text"
-      }]}
+      headerActions={[
+        {
+          icon: Faders,
+          onClick: () => setSettingsOpen(true),
+          tooltip: "Chart settings",
+          type: "text",
+        },
+        {
+          icon: Scales,
+          onClick: () => setCalibrateOpen(true),
+          tooltip: "Calibrate",
+          type: "text",
+        },
+        {
+          icon: ArrowClockwise,
+          onClick: () => onChange(dateRange),
+          tooltip: "Refresh",
+          type: "text",
+        },
+      ]}
       noDivider
     >
       <div className="dashChart__content">
         <div className="dashChart__chart">
-          <BalanceComparisonChart apiModel={data} />
+          <DashChart apiModel={data} />
         </div>
-        <div className="dashChart__filters">
-          <DateRangePicker
-            selectMenuAbove
-            wrapContent
-            withDatePresets
-            options={pickerOptions}
-          />
-        </div>
+        {dateRange && (
+          <div className="dashChart__filters">
+            <Button wrapContent icon={ArrowLeft} onClick={onPreviousRange} />
+            <DateRangePicker selectMenuAbove wrapContent withDatePresets options={pickerOptions} />
+            <Button wrapContent icon={ArrowRight} onClick={onNextRange} />
+          </div>
+        )}
       </div>
       <CalibrateDrawer open={calibrateOpen} setOpen={setCalibrateOpen} />
+      <BalanceAnalysisSettingsDrawer open={settingsOpen} onClose={setSettingsOpen} />
     </Card>
   );
 }

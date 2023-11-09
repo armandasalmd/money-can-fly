@@ -37,7 +37,6 @@ export function AuthContextProvider({ children }) {
 
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
-    console.log(user);
       
       if (user || AuthUtils.isApiTokenExpired()) {
         if (!AuthUtils.apiLoginInProgress()) {

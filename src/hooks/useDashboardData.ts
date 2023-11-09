@@ -68,7 +68,6 @@ export default function useDashboardData<T>(section?: DisplaySections) {
       const thisMonthRange = getOneMonthRange();
 
       fetchSections(Object.values(DisplaySections), {
-        balanceAnalysisDateRange: thisMonthRange,
         categoryAnalysisDateRange: thisMonthRange,
         spendingChartRanges: [
           getOneMonthRange(undefined, -2),

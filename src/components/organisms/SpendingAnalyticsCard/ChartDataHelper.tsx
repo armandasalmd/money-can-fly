@@ -1,6 +1,7 @@
 import { ChartData, ChartDataset } from "chart.js";
 import { format } from "date-fns";
 import { MonthlySpendingDataset } from "@server/models";
+import { getBackgroundColor, getBorderColor } from "@utils/ChartColors";
 
 export interface SelectedPoint {
   datasetIndex: number;
@@ -8,8 +9,8 @@ export interface SelectedPoint {
 }
 
 const colors = {
-  datasets: ["rgb(40,125,160)", "rgb(70,170,75)", "rgb(220,80,75)"],
-  datasetsbg: ["rgb(40,125,160,0.3)", "rgb(70,170,75,0.3)", "rgb(220,80,75,0.3)"],
+  datasets: [getBorderColor("green"), getBorderColor("blue"), getBorderColor("orange")],
+  datasetsbg: [getBackgroundColor("green"), getBackgroundColor("blue"), getBackgroundColor("orange")],
 };
 
 const baseSpendingLineStyle = (target: number) => ({

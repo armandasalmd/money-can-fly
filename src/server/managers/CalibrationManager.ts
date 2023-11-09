@@ -42,7 +42,7 @@ export class CalibrationManager {
     model.balances[data.to.currency].amount += Math.abs(exchangeTo.amount);
     model.balances[data.from.currency].amount -= Math.abs(data.from.amount);
 
-    return !!await balanceManager.UpdateBalances(model);
+    return !!await balanceManager.UpdateBalances(model.balances);
   }
 
   public async ApplyTrendFix(trend: Money): Promise<boolean> {

@@ -2,7 +2,7 @@ import { add } from "date-fns";
 import { FilterQuery } from "mongoose";
 
 import { CookieUser } from "@server/core";
-import { IUserPreferencesModel, InsightsModel, TransactionModel, ImportModel, IImportModel } from "@server/models";
+import { IUserSettingsModel, InsightsModel, TransactionModel, ImportModel, IImportModel } from "@server/models";
 import { Currency, Money } from "@utils/Types";
 import { CurrencyRateManager } from "./CurrencyRateManager";
 import { round } from "@server/utils/Global";
@@ -17,11 +17,11 @@ export class InsightsManager {
   public async GetInsights(
     user: CookieUser,
     investmentValue: Money,
-    prefs: IUserPreferencesModel
+    settings: IUserSettingsModel
   ): Promise<InsightsModel> {
-    this.defaultCurrency = prefs.defaultCurrency;
+    this.defaultCurrency = settings.generalSection.defaultCurrency;
 
-    const budgetResetDate = this.GetBugdetResetDate(prefs);
+    const budgetResetDate = this.GetBugdetResetDate(settings);
     const lastMonth = add(new Date(), { months: -1 });
 
     lastMonth.setDate(1);
@@ -42,7 +42,7 @@ export class InsightsManager {
     spentInLastWeek.amount = -spentInLastWeek.amount;
 
     const budgetRemaining = {
-      amount: prefs.monthlyBudget - amountSpentThisPeriod.amount,
+      amount: settings.generalSection.monthlyBudget - amountSpentThisPeriod.amount,
       currency: this.defaultCurrency,
     };
 
@@ -129,11 +129,11 @@ export class InsightsManager {
     return Math.round((resetDate.getTime() - date.getTime()) / 86400000);
   }
 
-  private GetBugdetResetDate(prefs: IUserPreferencesModel): Date {
+  private GetBugdetResetDate(settings: IUserSettingsModel): Date {
     let date = new Date();
-    date.setDate(prefs.monthlyBudgetStartDay);
+    date.setDate(settings.generalSection.monthlyBudgetStartDay);
     date.setUTCHours(0, 0, 0, 0);
 
-    return date.getDate() >= prefs.monthlyBudgetStartDay ? add(date, { months: 1 }) : date;
+    return date.getDate() >= settings.generalSection.monthlyBudgetStartDay ? add(date, { months: 1 }) : date;
   }
 }

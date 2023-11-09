@@ -1,6 +1,7 @@
 import { Line } from "react-chartjs-2";
 import { Empty } from "@atoms/index";
 import { InvestmentProfitChart } from "@server/models/display/Investments";
+import { getBackgroundColor } from "@utils/ChartColors";
 
 export default function Component(props: InvestmentProfitChart) {
   if (!props || !props.labels || props.labels.length === 0) {
@@ -17,7 +18,7 @@ export default function Component(props: InvestmentProfitChart) {
         borderRadius: 2,
         cubicInterpolationMode: "monotone",
         data: props.values,
-        fill: {above: "rgba(153, 204, 0, 0.2)", below: "rgba(0, 0, 0, 0.1)", target: {value: 0}}
+        fill: {above: getBackgroundColor("orange"), below: getBackgroundColor("grey"), target: {value: 0}}
       }
     ],
   };

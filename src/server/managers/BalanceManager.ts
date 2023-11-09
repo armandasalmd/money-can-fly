@@ -1,6 +1,6 @@
 import { IUserBalanceModel, UserBalanceModel, UserBalanceDocument } from "@server/models";
 import { CookieUser } from "@server/core";
-import { Currency, Money } from "@utils/Types";
+import { Balances, Currency, Money } from "@utils/Types";
 import { CurrencyRateManager } from "./CurrencyRateManager";
 import constants from "@server/utils/Constants";
 import { round } from "@server/utils/Global";
@@ -9,18 +9,21 @@ export class BalanceManager {
 
   constructor(private user: CookieUser) {}
 
-  public async UpdateBalances(model: IUserBalanceModel): Promise<IUserBalanceModel> {
+  public async UpdateBalances(newBalances: Balances): Promise<IUserBalanceModel> {
     const existing = await UserBalanceModel.findOne({ userUID: this.user.userUID });
     let result: UserBalanceDocument = null;
 
     if (existing) {
-      if (model && model.balances) {
-        existing.balances = model.balances;
+      if (newBalances) {
+        existing.balances = newBalances;
 
         result = await existing.save();
       }
     } else {
-      result = await UserBalanceModel.create(model);
+      result = await UserBalanceModel.create({
+        balances: newBalances,
+        userUID: this.user.userUID
+      });
     }
 
     return result?.toJSON<IUserBalanceModel>();
@@ -39,7 +42,7 @@ export class BalanceManager {
       };
     }
 
-    return this.UpdateBalances(result);
+    return this.UpdateBalances(result.balances);
   }
 
   public async GetBalances(): Promise<IUserBalanceModel> {

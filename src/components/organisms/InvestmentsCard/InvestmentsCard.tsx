@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilValue } from "recoil";
 
 import { useDashboardData } from "@hooks/index";
 import { Card } from "@atoms/index";

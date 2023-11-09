@@ -3,7 +3,7 @@ import { IsArray, IsIn, IsNotEmptyObject, IsOptional, isDateString } from "class
 import { validatedApiRoute } from "@server/core";
 import {
   InvestmentsManager,
-  PreferencesManager,
+  UserSettingsManager,
   InsightsManager,
   BalanceAnalysisManager,
   CategoryAnalysisManager,
@@ -14,6 +14,7 @@ import {
 import { BalanceAnalysisModel, CategoryAnalysisModel, InsightsModel, InvestmentsModel, SpendingAnalysisModel } from "@server/models";
 import { DateRange, DisplaySections } from "@utils/Types";
 import { toUTCDate } from "@utils/Date";
+import { getDefaultDateRangeFromSettings } from "@server/utils/DateRange";
 
 export class DisplayModelRequest {
   @IsArray()
@@ -57,15 +58,16 @@ export default validatedApiRoute("POST", DisplayModelRequest, async (request, re
     sections.includes(DisplaySections.Insights) || sections.includes(DisplaySections.BalanceAnalysis);
   const loadInvestmentValue = loadInvestments;
 
-  const [prefs, investments] = await Promise.all([
-    new PreferencesManager(user).GetGeneralPreferences(),
+  const [userSettings, investments] = await Promise.all([
+    new UserSettingsManager(user).ReadFull(),
     loadInvestments ? investmentsManager.GetBasicInvestments(user) : null,
   ]);
+  const defaultCurrency = userSettings.generalSection.defaultCurrency;
 
   // Requires default currency, thus loaded separately
   const [investmentsValue, cashValue] = await Promise.all([
-    loadInvestmentValue ? investmentsManager.GetTotalMoneyValue(prefs.defaultCurrency, investments) : null,
-    loadCashValue ? new BalanceManager(user).GetBalanceSummary(prefs.defaultCurrency) : null,
+    loadInvestmentValue ? investmentsManager.GetTotalMoneyValue(defaultCurrency, investments) : null,
+    loadCashValue ? new BalanceManager(user).GetBalanceSummary(defaultCurrency) : null,
   ]);
 
   /**
@@ -75,7 +77,7 @@ export default validatedApiRoute("POST", DisplayModelRequest, async (request, re
     result.investments = {
       totalValue: investmentsValue,
       investments: investmentsManager.ToSummary(investments),
-      profitChart: await new InvestmentChartManager(prefs.defaultCurrency).CalculateProfitChart(investments)
+      profitChart: await new InvestmentChartManager(defaultCurrency).CalculateProfitChart(investments)
     };
   }
 
@@ -83,20 +85,19 @@ export default validatedApiRoute("POST", DisplayModelRequest, async (request, re
    * Insights section
    */
   if (sections.includes(DisplaySections.Insights)) {
-    result.insights = await new InsightsManager(cashValue).GetInsights(user, investmentsValue, prefs);
+    result.insights = await new InsightsManager(cashValue).GetInsights(user, investmentsValue, userSettings);
   }
 
   /**
    * BalanceAnalysis section
    */
   if (sections.includes(DisplaySections.BalanceAnalysis)) {
-    const dateRange = body.balanceAnalysisDateRange;
+    let dateRange = body.balanceAnalysisDateRange || getDefaultDateRangeFromSettings(userSettings.balanceAnalysisSection);
 
-    if (!dateRange) return response.status(400).json({ error: "Missing date range" });
     if (isDateString(dateRange.from)) dateRange.from = toUTCDate(new Date(dateRange.from));
     if (isDateString(dateRange.to)) dateRange.to = toUTCDate(new Date(dateRange.to));
 
-    result.balanceAnalysis = await new BalanceAnalysisManager(user, prefs).GetBalanceAnalysis(
+    result.balanceAnalysis = await new BalanceAnalysisManager(user, userSettings).GetBalanceAnalysis(
       dateRange,
       cashValue,
       investmentsValue,
@@ -114,7 +115,7 @@ export default validatedApiRoute("POST", DisplayModelRequest, async (request, re
     if (isDateString(dateRange.from)) dateRange.from = new Date(dateRange.from);
     if (isDateString(dateRange.to)) dateRange.to = new Date(dateRange.to);
 
-    result.categoryAnalysis = await new CategoryAnalysisManager(prefs.defaultCurrency).GetCategoryAnalysis(
+    result.categoryAnalysis = await new CategoryAnalysisManager(defaultCurrency).GetCategoryAnalysis(
       user,
       body.categoryAnalysisDateRange
     );
@@ -124,7 +125,7 @@ export default validatedApiRoute("POST", DisplayModelRequest, async (request, re
    * SpendingAnalysis section
    */
   if (sections.includes(DisplaySections.SpendingAnalysis)) {
-    result.spendingAnalysis = await new SpendingAnalysisManager(user, prefs).Calculate(body.spendingChartRanges);
+    result.spendingAnalysis = await new SpendingAnalysisManager(user, userSettings).Calculate(body.spendingChartRanges);
   }
 
   return response.status(200).json(result);

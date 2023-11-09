@@ -19,11 +19,11 @@ export const config = {
     "/api/balance/:function*",
     "/api/calibrate/:function*",
     "/api/dashboard/:function*",
+    "/api/imports/:function*",
     "/api/investments/:function*",
-    "/api/investments/settings/:function*",
     "/api/predictions/:function*",
-    "/api/preferences/:function*",
     "/api/transactions/:function*",
+    "/api/userSettings/:function*",
     "/api/user",
   ],
 };

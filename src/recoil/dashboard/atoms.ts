@@ -17,7 +17,7 @@ export const dashboardData = atom<DisplayModelResponse>({
 
 export const balanceChartDateRange = atom<DateRange>({
   key: "balanceChartDateRange",
-  default: getOneMonthRange(),
+  default: null,
 });
 
 export const spendingChartDateRanges = atom<DateRange[]>({
