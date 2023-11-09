@@ -25,7 +25,7 @@ const BalanceAnalysisSectionSchema = new Schema<IBalanceAnalysisSection>({
   },
   hideInvestmentsOnLoad: {
     type: Boolean,
-    default: true
+    default: false
   },
   investmentColor: REQUIRED_STRING,
   predictionColor: REQUIRED_STRING,

@@ -68,7 +68,7 @@ export default function DashChartCard() {
         to: new Date(data.dateRange.to)
       });
     }
-  }, [data]);
+  }, [data, setDateRange]);
 
   return (
     <Card
