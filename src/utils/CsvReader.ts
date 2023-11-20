@@ -31,7 +31,7 @@ export class ImportCsvReader {
       throw new Error("CSV file must have at least 2 lines");
     }
 
-    const header = lines[0].replace("\r", "").split(",");
+    const header = lines[0].replace("\r", "").replaceAll(`"`, "").split(",").filter(o => !!o);
     const result: SelectItem[] = [];
 
     function isInResult(name: string): boolean {

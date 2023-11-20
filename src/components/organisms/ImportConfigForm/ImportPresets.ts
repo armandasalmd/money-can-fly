@@ -74,6 +74,24 @@ const revolutImportPreset: ImportPreset = {
     currencyColumn: "Currency",
     transactionFeeColumn: "Fee",
   },
+};
+
+const swedbankImportPreset: ImportPreset = {
+  type: "swedbank",
+  formState: {
+    alterBalance: true,
+    bank: "swedbank",
+    ignoreDescriptionPattern: "Apyvarta,Likutis",
+    defaultCurrency: "EUR",
+    categoryColumn: "",
+    hasCurrencyColumn: true,
+    hasTransactionFeeColumn: false,
+    hasCategoryColumn: false,
+    transactionDateColumn: "Data",
+    descriptionColumn: "Paaiškinimai",
+    amountColumn: "Suma",
+    currencyColumn: "Valiuta",
+  },
 }
 
 type ImportPresetCollection = {
@@ -84,6 +102,7 @@ const importPresets: ImportPresetCollection = {
   "custom": customImportPreset,
   "barclays": barclaysImportPreset,
   "revolut": revolutImportPreset,
+  "swedbank": swedbankImportPreset
 };
 
 export default importPresets;

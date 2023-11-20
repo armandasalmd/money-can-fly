@@ -36,7 +36,7 @@ export type ImportPresetType = Exclude<TransactionBank, "cash"> | "custom";
 export type InvestmentEventType = "deposit" | "adjustment" | "withdrawal" | "created";
 export type ImportState = "running" | "success" | "error" | "undo";
 export type Theme = "light" | "dark";
-export type TransactionBank = "barclays" | "revolut" | "cash";
+export type TransactionBank = "barclays" | "revolut" | "swedbank" | "cash";
 export type TransactionStatusFilter = "active" | "inactive";
 
 export type Balances = {

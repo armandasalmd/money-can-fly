@@ -193,6 +193,13 @@ export class ImportProcessManager extends BaseImportProcessManager {
     });
   }
 
+  private StepCleanupSwedbankDescription(rows: ImportRow[]) {
+    rows?.forEach((row) => {
+      if (row && row.description && row.description.startsWith("PIRKINYS"))
+        row.description = row.description.replaceAll(/^PIRKINYS.*\(\d+\)\s/g, "");
+    });
+  }
+
   private StepEscapeCategoryFallbackTerms() {
     for (const category in this.globalUserSettings.categoryFallbacks) {
       this.globalUserSettings.categoryFallbacks[category] =
@@ -234,6 +241,13 @@ export class ImportProcessManager extends BaseImportProcessManager {
     for (let i = 0; i < this.csvEntity.count; i++) {
       const row = this.csvEntity.getImportRow(i);
 
+      if (this.options.bank === "swedbank") {
+        let isSpending = this.csvEntity.getCellValueAsAny(i, constants.swedbankDKColumnName) === "D";
+        if (isSpending) {
+          row.amount = -Math.abs(row.amount);
+        }
+      }
+
       if (this.IsIgnored(row.description)) {
         this.AddLog(`Row ${row.rowId} skipped - ignore term match - ${row.description}`);
         ignoreCount++;
@@ -243,6 +257,7 @@ export class ImportProcessManager extends BaseImportProcessManager {
     }
 
     if (this.options.bank === "barclays") this.StepCleanupBarclaysDescription(items);
+    if (this.options.bank === "swedbank") this.StepCleanupSwedbankDescription(items);
 
     await this.StepSetPossibleDuplicates(items);
 

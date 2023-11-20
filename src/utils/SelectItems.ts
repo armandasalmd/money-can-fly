@@ -16,6 +16,7 @@ function toSelectItems(keyValueObject: SelectItemsObject<any>): SelectItem[] {
 const bankNamesSelect: SelectItemsObject<TransactionBank> = {
   barclays: "Barclays",
   revolut: "Revolut",
+  swedbank: "Swedbank",
   cash: "Cash",
 };
 
