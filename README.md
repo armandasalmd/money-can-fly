@@ -20,7 +20,7 @@ For this app to work we need data:
 - Payments
 - Investments
 
-Importing transactions from various banks automatically is possible through [Open Banking](https://www.openbanking.org.uk/) initiative. This means that user could see multiple bank accounts balance summary in real-time. In contrast, it's difficult to acquire bank API keys due to legal issues. **MoneyCanFly takes different approach - import bank statements exported as CSV**. Many banks support CSV statements (i.e. Barclays, Revolut, Monzo). Import process will do heavy work to assign spending categories, filter duplicates etc.
+Importing transactions from various banks automatically is possible through [Open Banking](https://www.openbanking.org.uk/) initiative. This means that user could see multiple bank accounts balance summary in real-time. In contrast, it's difficult to acquire bank API keys due to legal issues. **MoneyCanFly takes different approach - import bank statements exported as CSV**. Many banks support CSV statements (i.e. Barclays, Revolut, Swedbank, Monzo). Import process will do heavy work to assign spending categories, filter duplicates etc.
 
 ![image](https://user-images.githubusercontent.com/17089888/218182250-f2c5dd27-38bf-4eec-b892-c5b86a2e5024.png)
 

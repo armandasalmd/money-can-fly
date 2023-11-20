@@ -32,8 +32,8 @@ export class ImportCsvEntity {
   
   public load(csv: string) {
     const lines = csv.split("\n");
-    const headerLine = lines[0].replace("\r", "");
-    const headerValues = headerLine.split(",");
+    const headerLine = lines[0].replace("\r", "").replaceAll(`"`, "").replaceAll(",,", ",NA,");
+    const headerValues = headerLine.split(",").filter(o => !!o);
 
     if (lines[lines.length - 1].trim() === "") lines.pop();
 
@@ -48,7 +48,7 @@ export class ImportCsvEntity {
 
     for (let i = 1; i < lines.length; i++) {
       // Splits by , but ignores commas inside quotes
-      this.rows.push({ values: lines[i].replaceAll("\r", "").split(new RegExp(`,(?=(?:[^"]*"[^"]*")*[^"]*$)`)) });
+      this.rows.push({ values: lines[i].replace("\r", "").split(new RegExp(`,(?=(?:[^"]*"[^"]*")*[^"]*$)`)).map(o => o.replaceAll(`"`, "")) });
     }
   }
 
@@ -89,6 +89,10 @@ export class ImportCsvEntity {
       transactionFee: this.getCellValue(row, map.transactionFee) as number,
       rowId: index + 2,
     };
+  }
+
+  public getCellValueAsAny<T>(rowIndex: number, name: string): T {
+    return this.getCellValue(this.rows[rowIndex], name) as T;
   }
 
   private getCellValue(row: CsvRow, name: string): string | number | Date | null {
