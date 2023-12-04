@@ -10,7 +10,7 @@ import {
 } from "@server/models";
 import { getLast, round, findIndexBackwards } from "@server/utils/Global";
 import { Currency, DateRange, Investment, Money } from "@utils/Types";
-import { getUTCFirstOfMonth, toUTCDate } from "@utils/Date";
+import { getUTCFirstOfMonth } from "@utils/Date";
 import { amountForDisplay } from "@utils/Currency";
 import { CurrencyRateManager } from "./CurrencyRateManager";
 
@@ -43,7 +43,7 @@ export class BalanceAnalysisManager {
   constructor(
     private user: CookieUser,
     private settings: IUserSettingsModel) {
-    this.now = toUTCDate(new Date());
+    this.now = new Date();
     this.rateManager = CurrencyRateManager.getInstance();
     this.defaultCurrency = settings?.generalSection?.defaultCurrency ?? "USD"; 
   }
@@ -153,7 +153,7 @@ export class BalanceAnalysisManager {
       results.push({ x: itemsInRange[idx].d.getTime(), y: round(lastBalanceValue) });
     }
 
-    if (itemsInRange[0].d.getTime() !== this.dateRange.from.getTime()) {
+    if (itemsInRange[0]?.d.getTime() !== this.dateRange.from.getTime()) {
       results.push({ x: this.dateRange.from.getTime(), y: round(lastBalanceValue) });
     }
 
