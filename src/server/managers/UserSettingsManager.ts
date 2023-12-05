@@ -1,8 +1,16 @@
 import { CookieUser } from "@server/core";
-import { IBalanceAnalysisSection, IGeneralSection, IUserSettingsModel, UserSettingsModel } from "@server/models";
+import { IBalanceAnalysisSection, IGeneralSection, IUserSettingsModel, UserSettingsDocument, UserSettingsModel } from "@server/models";
+import { round } from "@server/utils/Global";
+import { Currency } from "@utils/Types";
 
 export class UserSettingsManager {
   public constructor(private user: CookieUser) {}
+
+  public async GetDefaultCurrency(): Promise<Currency> {
+    const result: Partial<IUserSettingsModel> = await UserSettingsModel.findOne({ userUID: this.user.userUID }, { "generalSection.defaultCurrency": 1 });
+
+    return result?.generalSection?.defaultCurrency ?? null;
+  }
 
   private InitGeneralSection(): Promise<IGeneralSection> {
     return this.UpdateGeneralSection({
@@ -23,6 +31,15 @@ export class UserSettingsManager {
       predictionColor: "grey",
       totalWorthColor: "blue",
     });
+  }
+
+  public async MultiplyForecastPivotValue(multiplier: number): Promise<void> {
+    const result: UserSettingsDocument = await UserSettingsModel.findOne({ userUID: this.user.userUID }, { balanceAnalysisSection: 1 });
+
+    if (result?.balanceAnalysisSection) {
+      result.balanceAnalysisSection.forecastPivotValue = round(result.balanceAnalysisSection.forecastPivotValue * multiplier);
+      await result.save();
+    }
   }
 
   public async ReadFull(): Promise<IUserSettingsModel> {
