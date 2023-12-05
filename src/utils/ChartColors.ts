@@ -15,7 +15,7 @@ export function getBorderColor(color: ChartColor) {
 }
 
 export function getBackgroundColor(color: ChartColor, opacity: number = 0.1) {
-  let value = chartColors[color];
+  let value = chartColors[color] ?? chartColors.blue;
 
   return value.substring(0, value.length - 1) + `, ${opacity})`;
 }

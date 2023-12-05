@@ -2,7 +2,7 @@ import { IsPositive, IsIn, IsObject, Max, IsNumber, Min, IsDateString, IsBoolean
 import { Balances, ChartColor, Currency } from "@utils/Types";
 import { validatedApiRoute, validate, toFieldErrors } from "@server/core";
 import constants from "@server/utils/Constants";
-import { BalanceManager, UserSettingsManager } from "@server/managers";
+import { BalanceManager, CurrencyRateManager, UserSettingsManager } from "@server/managers";
 import { PreferencesForm } from "@recoil/preferences/atoms";
 import { IBalanceAnalysisSection, IGeneralSection } from "@server/models/mongo";
 import { capitalise } from "@utils/Global";
@@ -51,7 +51,7 @@ export class UpdateUserSettingsRequest {
 export default validatedApiRoute("PATCH", UpdateUserSettingsRequest, async (request, response, user) => {
   const body = request.body as UpdateUserSettingsRequest;
 
-  if (!Object.values(body).some(o => o !== undefined)) return response.status(400).json({ message: "Bad request" });
+  if (!body || !Object.values(body).some(o => o !== undefined)) return response.status(400).json({ message: "Bad request" });
   
   const settingsManager = new UserSettingsManager(user);
 
@@ -71,8 +71,16 @@ export default validatedApiRoute("PATCH", UpdateUserSettingsRequest, async (requ
   }
   
   if (body.general && errors.length === 0) {
+    const previousDefaultCurrency = await settingsManager.GetDefaultCurrency();
+    if (previousDefaultCurrency !== body.general.defaultCurrency) {
+      let multiplier = (await CurrencyRateManager.getInstance().convert(10000, previousDefaultCurrency, body.general.defaultCurrency)) / 10000;
+      
+      await settingsManager.MultiplyForecastPivotValue(multiplier);
+    }
+
     // Update balances
     const userBalanceModel = await new BalanceManager(user).UpdateBalances(body.general.balances);
+
     // Update general settings
     const generalResult = await settingsManager.UpdateGeneralSection(body.general);
 

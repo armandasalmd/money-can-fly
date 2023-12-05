@@ -5,7 +5,7 @@ import { Drawer, Select, DatePicker, Button, Message } from "@atoms/index";
 import { CurrencyInput } from "@molecules/index";
 import { PreferencesForm, preferencesState } from "@recoil/preferences/atoms";
 import { currencyPreset } from "@utils/SelectItems";
-import { Money } from "@utils/Types";
+import { ActionColor, Money } from "@utils/Types";
 import { amountForDisplay } from "@utils/Currency";
 import { publish } from "@utils/Events";
 import { usePreferences } from "@context/PreferencesContext";
@@ -23,7 +23,7 @@ export default function PreferencesDrawer(props: PreferencesDrawerProps) {
   const [state, setState] = useRecoilState(preferencesState);
   const resetState = useResetRecoilState(preferencesState);
   const [message, setMessage] = useState("");
-  const [messageType, setMessageType] = useState<"success" | "error">("success");
+  const [messageType, setMessageType] = useState<ActionColor>("success");
   const { setDefaultCurrency } = usePreferences();
 
   function onSave() {
@@ -54,6 +54,11 @@ export default function PreferencesDrawer(props: PreferencesDrawerProps) {
   function onInputChange(value: string | number | Date, name: string) {
     if (changed === false) {
       setChanged(true);
+    }
+
+    if (name === "defaultCurrency") {
+      setMessageType("info");
+      setMessage("Changing default currency will convert forecast pivot value on save");
     }
 
     setState({
