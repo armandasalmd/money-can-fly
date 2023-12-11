@@ -18,6 +18,17 @@ export function getLast<T>(array: T[]): T {
   return Array.isArray(array) ? array[array.length - 1] : null;
 }
 
+export function hashString(input: string): number {
+  let hash = 0;
+  if (input.length === 0) return hash;
+  for (let i = 0; i < input.length; i++) {
+    let chr = input.charCodeAt(i);
+    hash = ((hash << 5) - hash) + chr;
+    hash |= 0; // Convert to 32bit integer
+  }
+  return hash;
+}
+
 export function round(num: number, precision = 2) {
   return parseFloat(num.toFixed(precision));
 }

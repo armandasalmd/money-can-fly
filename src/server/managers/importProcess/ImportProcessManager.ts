@@ -8,6 +8,7 @@ import { IImportModel, IImportSettingsModel, ITransactionModel, ImportModel } fr
 import { escapeRegExp } from "@server/utils/Global";
 import { CsvCellValueType, ImportCsvEntity, ImportRow } from "@server/utils/ImportCsvEntity";
 import { ImportError } from "@server/utils/ImportError";
+import { hashString } from "@server/utils/Global"
 import { Category, Currency, ImportState } from "@utils/Types";
 import { capitalise } from "@utils/Global";
 
@@ -19,7 +20,6 @@ export class ImportProcessManager extends BaseImportProcessManager {
   private globalUserSettings: IImportSettingsModel;
   private ignoreRegexes: RegExp[] = [];
   private rowsReadyToSave: ITransactionModel[] = [];
-  private sortedAscPossibleDuplicates: ITransactionModel[] = [];
   private logs: string[] = [];
   private logLimitReached = false;
   private now = new Date();
@@ -44,29 +44,8 @@ export class ImportProcessManager extends BaseImportProcessManager {
     this.logs.push(log);
   }
 
-  private GetLogs() {
-    if (this.logLimitReached) this.logs.push("Import logs limit reached. Truncating...");
-    return this.logs;
-  }
-
-  private BinaryFindFirstDateOccurenceId(a: ITransactionModel[], targetTime: number) {
-    if (!a || a.length === 0) return -1;
-    let low = 0,
-      high = a.length - 1;
-
-    while (low <= high) {
-      let mid = Math.floor(low + (high - low) / 2);
-
-      if ((mid === 0 || a[mid - 1].date.getTime() < targetTime) && a[mid].date.getTime() === targetTime) {
-        return mid;
-      } else if (targetTime > a[mid].date.getTime()) {
-        low = mid + 1;
-      } else {
-        high = mid - 1;
-      }
-    }
-
-    return -1;
+  private CreateImportHash(row: ImportRow): number {
+    return hashString(`${row.amount}${row.currency}${row.category}${row.transactionDate}${row.description.substring(0, 3)}`);
   }
 
   private async CreateNewImport(): Promise<void> {
@@ -85,21 +64,6 @@ export class ImportProcessManager extends BaseImportProcessManager {
     this.importId = this.importModel.id;
   }
 
-  private FilterPossibleDuplicates(row: ImportRow): ITransactionModel[] {
-    const targetTime = row.transactionDate.getTime();
-    const firstId = this.BinaryFindFirstDateOccurenceId(this.sortedAscPossibleDuplicates, targetTime);
-    const a = this.sortedAscPossibleDuplicates;
-
-    if (firstId < 0) return [];
-
-    for (let i = firstId; i < a.length; i++) {
-      if (a[i].date.getTime() !== targetTime) return a.slice(firstId, i);
-      else if (i === a.length - 1) return a.slice(firstId);
-    }
-
-    return [a[firstId]];
-  }
-
   private GetFallbackCategory(description: string): Category {
     const category = Object.entries(this.globalUserSettings.categoryFallbacks).find(([_, terms]) => {
       return terms?.some((term: string | RegExp) => term instanceof RegExp && term.test(description)) ?? false;
@@ -107,14 +71,10 @@ export class ImportProcessManager extends BaseImportProcessManager {
 
     return (category && (category[0] as Category)) || null;
   }
-
-  private HasDuplicate(row: ImportRow): boolean {
-    return this.FilterPossibleDuplicates(row).some(
-      (item) =>
-        item.amount === row.amount &&
-        item.description === row.description &&
-        item.date?.getTime() === row.transactionDate?.getTime()
-    );
+  
+  private GetLogs() {
+    if (this.logLimitReached) this.logs.push("Import logs limit reached. Truncating...");
+    return this.logs;
   }
 
   private IsIgnored(desc: string) {
@@ -146,7 +106,7 @@ export class ImportProcessManager extends BaseImportProcessManager {
       description: this.options.descriptionColumn,
       transactionDate: this.options.transactionDateColumn,
       transactionFee: this.options.transactionFeeColumn,
-      rowId: null,
+      rowId: null
     });
 
     try {
@@ -209,33 +169,26 @@ export class ImportProcessManager extends BaseImportProcessManager {
     }
   }
 
-  private async StepSetPossibleDuplicates(rows: ImportRow[]): Promise<void> {
-    let minAmount = Infinity;
-    let maxAmount = -Infinity;
-    let minDate = new Date(0);
-    let maxDate = new Date();
+  private async StepFlagDuplicates(rows: ImportRow[]): Promise<void> {
+    const allTimes = rows.map(o => o.transactionDate.getTime());
+    const existingHashSet = new Set(await this.transactionManager.SearchImportHashes(
+      rows.map(o => o.importHash).filter(o => !!o),
+      this.options.bank,
+      new Date(Math.min(...allTimes)),
+      new Date(Math.max(...allTimes))
+    ));
 
-    for (const row of rows) {
-      if (row.amount < minAmount) minAmount = row.amount;
-      if (row.amount > maxAmount) maxAmount = row.amount;
-      if (row.transactionDate < minDate) minDate = row.transactionDate;
-      if (row.transactionDate > maxDate) maxDate = row.transactionDate;
+    if (existingHashSet.size > 0) {
+      rows.forEach(row => {
+        if (row.importHash && existingHashSet.has(row.importHash)) {
+          row.isDuplicate = true;
+        }
+      });
     }
-
-    this.sortedAscPossibleDuplicates = await this.transactionManager.ImportSearch(
-      {
-        source: this.options.bank,
-        date: { $gte: minDate, $lte: maxDate },
-        amount: { $gte: minAmount, $lte: maxAmount },
-        isInvestment: false,
-        userUID: this.user.userUID,
-      },
-      constants.importDuplicateSearchLimit
-    );
   }
 
   private async StepProcessImportRows(): Promise<string> {
-    const items: ImportRow[] = [];
+    let items: ImportRow[] = [];
     let ignoreCount = 0;
 
     for (let i = 0; i < this.csvEntity.count; i++) {
@@ -259,7 +212,8 @@ export class ImportProcessManager extends BaseImportProcessManager {
     if (this.options.bank === "barclays") this.StepCleanupBarclaysDescription(items);
     if (this.options.bank === "swedbank") this.StepCleanupSwedbankDescription(items);
 
-    await this.StepSetPossibleDuplicates(items);
+    this.StepSetImportHashes(items);
+    await this.StepFlagDuplicates(items);
 
     let position = 0;
     let results: RowImportStatus[] = [];
@@ -285,6 +239,12 @@ export class ImportProcessManager extends BaseImportProcessManager {
     );
 
     return `Imported ${statusMap.success}, skipped ${statusMap.skipped}, failed ${statusMap.failed}`;
+  }
+
+  private StepSetImportHashes(rows: ImportRow[]): void {
+    rows?.forEach(row => {
+      row.importHash = this.CreateImportHash(row);
+    });
   }
 
   private StepSetColumnTypes() {
@@ -341,7 +301,7 @@ export class ImportProcessManager extends BaseImportProcessManager {
     if (row.description.length === 0) row.description = "No description";
 
     try {
-      if (this.HasDuplicate(row)) {
+      if (row.isDuplicate) {
         this.AddLog(`Row ${row.rowId} skipped - duplicate`);
         return "skipped";
       }
@@ -400,6 +360,7 @@ export class ImportProcessManager extends BaseImportProcessManager {
       date: row.transactionDate,
       dateUpdated: new Date(),
       description: row.description,
+      importHash: row.importHash ?? 0,
       importId: this.importId,
       isActive: true,
       isImported: true,

@@ -8,7 +8,7 @@ import { BalanceManager, CurrencyRateManager } from "@server/managers";
 import { SearchRequest, SearchResponse } from "@endpoint/transactions/search";
 import { escapeRegExp, round } from "@server/utils/Global";
 import constants from "@server/utils/Constants";
-import { Currency, Money } from "@utils/Types";
+import { Currency, Money, TransactionBank } from "@utils/Types";
 import { isNegative } from "@utils/Category";
 
 interface DeleteManyTransaction extends Money {
@@ -263,20 +263,6 @@ export class TransactionManager {
     };
   }
 
-  public async ImportSearch(filter: FilterQuery<ITransactionModel>, firstN: number): Promise<ITransactionModel[]> {
-    const results = await TransactionModel.find(filter, {
-      date: 1,
-      description: 1,
-      amount: 1,
-    })
-      .sort({
-        date: 1,
-      })
-      .limit(firstN);
-
-    return results || [];
-  }
-
   public async BulkInsert(transactions: ITransactionModel[], alterBalance: boolean): Promise<boolean> {
     if (!Array.isArray(transactions) || transactions.length === 0) return false;
 
@@ -311,5 +297,36 @@ export class TransactionManager {
         transaction.save(),
       ]);
     }
+  }
+
+  public async SearchImportHashes(hashesToSearch: number[], source: TransactionBank, minDate: Date, maxDate: Date): Promise<number[]> {
+    let results = await TransactionModel.aggregate([
+      {
+        $match: {
+          userUID: this.user.userUID,
+          source,
+          date: {
+            $gte: minDate,
+            $lte: maxDate
+          },
+          $and: [
+            { importHash: { $exists: true } },
+            { importHash: { $ne: 0 } }
+          ]
+        }
+      },
+      {
+        $match: {
+          importHash: { $in: hashesToSearch.splice(0, 500) }
+        }
+      },
+      {
+        $project: {
+          importHash: 1
+        }
+      }
+    ]);
+
+    return results?.length ? results.map<number>(o => o.importHash) : [];
   }
 }

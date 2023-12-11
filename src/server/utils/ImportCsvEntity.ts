@@ -11,7 +11,12 @@ interface CsvRow {
   values: string[];
 }
 
-export interface ImportRow {
+interface ImportRowMetaData {
+  importHash?: number;
+  isDuplicate: boolean;
+}
+
+export interface ImportRow extends ImportRowMetaData {
   category?: string;
   transactionDate: Date;
   description: string;
@@ -21,7 +26,7 @@ export interface ImportRow {
   rowId: number;
 }
 
-export type ImportRowColumnMapping = Record<keyof ImportRow, string>;
+export type ImportRowColumnMapping = Record<keyof Exclude<ImportRow, ImportRowMetaData>, string>;
 
 export class ImportCsvEntity {
   public headers: CsvHeader[] = [];
@@ -88,6 +93,7 @@ export class ImportCsvEntity {
       currency: this.getCellValue(row, map.currency) as string,
       transactionFee: this.getCellValue(row, map.transactionFee) as number,
       rowId: index + 2,
+      isDuplicate: false
     };
   }
 
