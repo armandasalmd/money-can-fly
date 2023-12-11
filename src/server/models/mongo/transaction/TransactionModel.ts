@@ -61,6 +61,10 @@ export const TransactionSchema = new Schema<ITransactionModel>({
     type: Schema.Types.ObjectId,
     ref: "import",
   },
+  importHash: {
+    type: Number,
+    required: false
+  }
 });
 
 export interface TransactionDocument extends ITransactionModel, Document {}

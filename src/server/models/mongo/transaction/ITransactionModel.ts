@@ -16,4 +16,5 @@ export interface ITransactionModel extends BaseModel, Money {
   currency: Currency;
   amount: number;
   importId?: string | ObjectId;
+  importHash?: number;
 }
