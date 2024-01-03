@@ -1,13 +1,11 @@
 import { Import } from "@utils/Types";
 import ImportItem from "./ImportItem";
-import { SkeletonItem, Button, Empty } from "@atoms/index";
+import { SkeletonItem, Empty } from "@atoms/index";
 
 export interface ImportListProps {
   items: Import[];
   showSkeletons: boolean;
-  showLoadMore: boolean;
   showEmpty: boolean;
-  onLoadMore: () => void;
   onUndo: (id: string) => void;
   onClick?: (item: Import) => void;
 }
@@ -23,7 +21,7 @@ export default function ImportList(props: ImportListProps) {
     }
   }
 
-  if (props.showEmpty) {
+  if (!props.showSkeletons && props.showEmpty) {
     return (<div className="iList iList--empty">
       <Empty text="No imports" />
     </div>);
@@ -32,7 +30,6 @@ export default function ImportList(props: ImportListProps) {
   return (
     <div className="iList">
       {items}
-      {props.showLoadMore && <div className="iList__loadMore"><Button centerText onClick={props.onLoadMore}>Load more</Button></div>}
     </div>
   );
 }
