@@ -1,6 +1,4 @@
 import { useEffect, useRef } from "react";
-import classNames from "classnames";
-import useSWRInfinite from "swr/infinite";
 import { useRecoilValue, useRecoilState } from "recoil";
 
 import { TransactionList } from "@molecules/index";
@@ -10,27 +8,17 @@ import { DisplaySections, Transaction, TransactionForm } from "@utils/Types";
 import useDashboardData from "@hooks/useDashboardData";
 import FilterSection from "./FilterSection";
 import { deleteRequest, postRequest } from "@utils/Api";
+import { useInfiniteScroll } from "@hooks/index";
 
-const fetcher = (url: string, filters: TransactionForm, setTotal: (n: number) => void) => {
-  const q = new URLSearchParams(url.substring(url.indexOf("?") + 1));
+function dateConverter(items: Transaction[]) {
+  if (Array.isArray(items)) {
+    return items.map((item: Transaction) => {
+      item.date = new Date(item.date);
+      return item;
+    });
+  } else return [];
+}
 
-  return postRequest<any>(url, {
-    ...filters,
-    skip: parseInt(q.get("skip")) || 0,
-    take: parseInt(q.get("take")) || 12,
-  }).then((res) => {
-    setTotal(res.total);
-
-    if (Array.isArray(res.items)) {
-      return res.items.map((item: Transaction) => {
-        item.date = new Date(item.date);
-        return item;
-      });
-    } else {
-      return [];
-    }
-  });
-};
 const PAGE_SIZE = 25;
 
 export interface TransactionSidebarProps {
@@ -39,28 +27,24 @@ export interface TransactionSidebarProps {
 }
 
 export default function TransactionSidebar(props: TransactionSidebarProps) {
-  const classes = classNames("tSidebar", {});
-  const thisRef = useRef<HTMLDivElement>(null);
+  const observerTarget = useRef(null);
+
+  const balanceDateRange = useRecoilValue(balanceChartDateRange);
   const [searchForm, setSearchForm] = useRecoilState(filterFormState);
   const [_, setTotalCount] = useRecoilState(transactionsCount);
-  const { data, error, size, setSize, mutate } = useSWRInfinite<Transaction>(
-    (index) => `/api/transactions/search?skip=${index * PAGE_SIZE}&take=${PAGE_SIZE}`,
-    (url: string) => fetcher(url, searchForm, setTotalCount)
-  );
   const { mutate: dashMutate } = useDashboardData();
-  const balanceDateRange = useRecoilValue(balanceChartDateRange);
 
-  function onLoadMore() {
-    setSize(size + 1);
-  }
+  const { mutate, items, loading, empty } = useInfiniteScroll<Transaction>(observerTarget, async function (page) {
+    let { total, items } = await postRequest<{ total: number; items: Transaction[] }>("/api/transactions/search", {
+      ...searchForm,
+      skip: (page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+    });
 
-  const t: Transaction[] = data ? [].concat(...data) : [];
+    setTotalCount(total);
 
-  const isLoadingInitialData = !data && !error;
-  const isLoading = isLoadingInitialData || (size > 0 && data && typeof data[size - 1] === "undefined");
-  const isEmpty = t.length === 0;
-  const lastFetch: Transaction[] = data ? data[data?.length - 1] : ([] as any);
-  const isEnd = isEmpty || t.length < PAGE_SIZE || lastFetch?.length < PAGE_SIZE;
+    return dateConverter(items);
+  });
 
   function apiDeleteTransaction(id: string) {
     deleteRequest("/api/transactions/deleteBulk", {
@@ -92,9 +76,10 @@ export default function TransactionSidebar(props: TransactionSidebarProps) {
   }, []);
 
   return (
-    <div className={classes} ref={thisRef}>
+    <div className="tSidebar">
       <FilterSection open={props.searchFormOpen} setOpen={props.setSearchFormOpen} />
-      <TransactionList showLoadMore={!isEnd} showSkeletons={isLoading} transactions={t} onLoadMore={onLoadMore} onDelete={apiDeleteTransaction} />
+      <TransactionList showSkeletons={loading} showEmpty={empty} transactions={items} onDelete={apiDeleteTransaction} />
+      <div ref={observerTarget} className="pixel" />
     </div>
   );
 }

@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import useSWRInfinite from "swr/infinite";
+import { useEffect, useState, useRef } from "react";
 
 import { ImportList, TagList } from "@molecules/index";
 import { toDisplayDate } from "@utils/Date";
@@ -8,12 +7,9 @@ import { Import } from "@utils/Types";
 import { Drawer, Message } from "@atoms/index";
 import { ReadLogsResponse } from "@endpoint/imports/readLogs";
 import { deleteRequest, getRequest } from "@utils/Api";
+import { useInfiniteScroll } from "@hooks/index";
 
-const fetcher = (url: string) =>
-  fetch(url)
-    .then((res) => res.json())
-    .then((res) => res.items);
-const PAGE_SIZE = 12;
+const PAGE_SIZE = 15;
 
 interface ImportSidebarProps {
   setSubtitle: (subtitle: string) => void;
@@ -23,23 +19,17 @@ interface ImportSidebarProps {
 
 export default function ImportSidebar(props: ImportSidebarProps) {
   const [message, setMessage] = useState("");
-  const { data, error, size, setSize, mutate } = useSWRInfinite<Import>((index) => `/api/imports/read?skip=${index * PAGE_SIZE}&take=${PAGE_SIZE}`, fetcher);
+  const observerTarget = useRef(null);
   const [importLogsData, setImportLogsData] = useState<ReadLogsResponse | null>(null);
 
-  function onLoadMore() {
-    setSize(size + 1);
-  }
+  const { mutate, items, loading, empty } = useInfiniteScroll<Import>(observerTarget, async function (page) {
+    const { items } = await getRequest<{ total: number; items: Import[] }>("/api/imports/read", {
+      skip: (page - 1) * PAGE_SIZE,
+      take: PAGE_SIZE,
+    });
 
-  const imports: Import[] = data ? [].concat(...data) : [];
-
-  const isLoadingInitialData = !data && !error;
-  const isLoadingMore = isLoadingInitialData || (size > 0 && data && typeof data[size - 1] === "undefined");
-  const isEmpty = imports.length === 0;
-  const lastFetch: Import[] = data ? data[data?.length - 1] : ([] as any);
-  const isEnd = isEmpty || imports.length < PAGE_SIZE || lastFetch?.length < PAGE_SIZE;
-
-  const latestImport = imports[0];
-  const latestImportDate = latestImport ? `Last import ${toDisplayDate(latestImport.date)} • Showing ${imports.length} imports` : "No imports yet";
+    return items;
+  });
 
   function onUndo(importId: string) {
     deleteRequest<any>("/api/imports/undo", { importId }).then((data) => {
@@ -61,13 +51,15 @@ export default function ImportSidebar(props: ImportSidebarProps) {
   }
 
   useEffect(() => {
+    const latestImportDate = items[0] ? `Last import ${toDisplayDate(items[0].date)} • Showing ${items.length} imports` : "No imports yet";
+
     props.setSubtitle(latestImportDate);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
+  }, [items]);
 
   useEffect(() => {
     if (!props.runningImportId) {
-      const running = imports.find((o) => o.importState === "running");
+      const running = items.find((o) => o.importState === "running");
 
       if (running) {
         props.setRunningImportId(running._id);
@@ -76,19 +68,19 @@ export default function ImportSidebar(props: ImportSidebarProps) {
       mutate();
     }
 
-    const running = imports.find((o) => o._id === props.runningImportId);
+    const running = items.find((o) => o._id === props.runningImportId);
 
     if (running) {
       if (running.importState === "success") {
         props.setRunningImportId("");
       } else {
-        const interval = setInterval(() => mutate(), 5000);
+        const interval = setInterval(mutate, 5000);
 
         return () => clearInterval(interval);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [props, data, mutate]);
+  }, [props.runningImportId]);
 
   return (
     <>
@@ -97,13 +89,12 @@ export default function ImportSidebar(props: ImportSidebarProps) {
       </Message>
       <ImportList
         onUndo={onUndo}
-        items={imports}
-        showEmpty={isEmpty}
-        showLoadMore={!isEnd}
-        showSkeletons={isLoadingMore}
-        onLoadMore={onLoadMore}
+        items={items}
+        showEmpty={empty}
+        showSkeletons={loading}
         onClick={onShowLogs}
       />
+      <div ref={observerTarget} className="pixel" />
       {importLogsData !== null && (
         <Drawer onClose={() => setImportLogsData(null)} open title="Import logs" subtitle={getImportTitle(importLogsData)}>
           <p className="text" style={{ marginBottom: 8 }}>{`Balance was ${importLogsData.balanceWasAltered ? "" : "not "}altered`}</p>

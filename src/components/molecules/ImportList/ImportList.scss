@@ -41,11 +41,6 @@
 .iList {
   display: flex;
   flex-direction: column;
-  height: 100%;
-
-  &__loadMore {
-    padding: $unit;
-  }
 
   &--empty {
     height: 100%;
