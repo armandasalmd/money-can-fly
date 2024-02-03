@@ -36,23 +36,24 @@ export function AuthContextProvider({ children }) {
 
   useEffect(() => {
     async function fn() {
+      !loading && setLoading(true);
+
       let { authorised } = await getRequest<any>("/api/status");
       
       if (user && !authorised) {
         await loginToApi(user);
-        return;
+        router.push("/");
       } else if (!user && authorised) {
         await logout();
-        return;
-      }
-
-      // Invalid pathways should be put on correct track
-      let isPrivatePath = !Constants.publicRoutes.includes(router.pathname);
-
-      if (isPrivatePath && !authorised) {
-        router.push("/login");
-      } else if (!isPrivatePath && authorised) {
-        router.push("/"); // User cant use public paths when authorized. Thus redirect
+      } else {
+        // Invalid pathways should be put on correct track
+        let isPrivatePath = !Constants.publicRoutes.includes(router.pathname);
+  
+        if (isPrivatePath && !authorised) {
+          router.push("/login");
+        } else if (!isPrivatePath && authorised) {
+          router.push("/"); // User cant use public paths when authorized. Thus redirect
+        }
       }
 
       // When (Firebase Ready & Api Ready) OR (Firebase Not Ready & Api Not Ready)
