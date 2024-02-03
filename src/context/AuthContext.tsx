@@ -1,15 +1,15 @@
 import { createContext, useContext, useEffect, useState } from "react";
 import {
-  onAuthStateChanged,
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
+  onIdTokenChanged,
   type User,
   type UserCredential,
 } from "firebase/auth";
 import { useRouter } from "next/router";
 import { auth } from "../../firebase";
-import AuthUtils from "@utils/Auth";
 import { getRequest, postRequest } from "@utils/Api";
+import Constants from "@utils/Constants";
 
 export interface UseAuthProps {
   user: User;
@@ -28,88 +28,59 @@ const AuthContext = createContext<UseAuthProps>({
 export const useAuth = () => useContext<UseAuthProps>(AuthContext);
 
 export function AuthContextProvider({ children }) {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User>(undefined);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
+  useEffect(() => onIdTokenChanged(auth, setUser), []);
+
   useEffect(() => {
-    AuthUtils.setApiLoginInProgress(false);
-
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      setUser(user);
+    async function fn() {
+      let { authorised } = await getRequest<any>("/api/status");
       
-      if (user || AuthUtils.isApiTokenExpired()) {
-        if (!AuthUtils.apiLoginInProgress()) {
-          AuthUtils.clearApiExpiry();
-          loginToApi(user).then((success) => {
-            setUser(success ? user : null);
-          });
-        }
+      if (user && !authorised) {
+        await loginToApi(user);
+        return;
+      } else if (!user && authorised) {
+        await logout();
+        return;
       }
 
-      if (!user) {
+      // Invalid pathways should be put on correct track
+      let isPrivatePath = !Constants.publicRoutes.includes(router.pathname);
+
+      if (isPrivatePath && !authorised) {
         router.push("/login");
-        logout();
+      } else if (!isPrivatePath && authorised) {
+        router.push("/"); // User cant use public paths when authorized. Thus redirect
       }
 
+      // When (Firebase Ready & Api Ready) OR (Firebase Not Ready & Api Not Ready)
       setLoading(false);
-    });
-
-    return () => unsubscribe();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  async function loginToApi(user: User): Promise<boolean> {
-    if (!user) return true;
-    AuthUtils.setApiLoginInProgress(true);
-    const token = await user.getIdToken(true);
-    const data = await postRequest<any>("/api/auth/login", { userIdToken: token });
-    
-    AuthUtils.setApiLoginInProgress(false);
-
-    if (data?.success === true && data.user?.exp) {
-      AuthUtils.setApiExpiry(data.user.exp);
-      
-      return true;
     }
 
-    return false;
+    // Initial state (undefined) should not trigger fn. We should wait for firebase to either set it null OR user
+    if (user !== undefined) fn();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user]);
+
+  async function loginToApi(user: User): Promise<void> {
+    const token = await user.getIdToken();
+
+    await postRequest("/api/auth/login", { userIdToken: token });
   }
 
   async function register(email: string, password: string) {
-    const user = await createUserWithEmailAndPassword(auth, email, password);
-
-    if (!await loginToApi(user.user)) {
-      await logout();
-      return;
-    }
-
-    return user;
+    return await createUserWithEmailAndPassword(auth, email, password);
   }
 
   async function login(email: string, password: string) {
-    const user = await signInWithEmailAndPassword(auth, email, password);
-
-    if (!await loginToApi(user.user)) {
-      await logout();
-      return;
-    }
-
-    return user;
+    return await signInWithEmailAndPassword(auth, email, password);
   }
 
   async function logout() {
-    AuthUtils.clearApiExpiry();
-    
-    AuthUtils.setApiLoginInProgress(true);
-    const data = await getRequest<any>("/api/auth/logout");
-    AuthUtils.setApiLoginInProgress(false);
-
-    if (data?.success === true) {
-      setUser(null);
-    }
-
-    return await auth.signOut();
+    await getRequest<any>("/api/auth/logout");
+    await auth.signOut();
   }
 
   return <AuthContext.Provider value={{ user, login, register, logout }}>{loading ? null : children}</AuthContext.Provider>;
