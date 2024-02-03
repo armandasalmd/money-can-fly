@@ -41,11 +41,6 @@ export default function Navbar(props: NavbarProps) {
   const displayName = user.displayName || user.email.split("@")[0];
   const classses = classNames("navbar", props.className);
 
-  function handleLogout() {
-    logout();
-    router.push("/login");
-  }
-
   function toggleTheme() {
     setTheme(theme === "dark" ? "light" : "dark");
   }
@@ -71,7 +66,7 @@ export default function Navbar(props: NavbarProps) {
             tooltip="Toggle theme"
           />
           <Button tall icon={Faders} onClick={() => setPreferencesOpen(true)} tooltip="App settings" />
-          <PopConfirm icon={SignOut} description="" title="Do you want to logout?" onConfirm={handleLogout} placement="bottomRight" >
+          <PopConfirm icon={SignOut} description="" title="Do you want to logout?" onConfirm={logout} placement="bottomRight" >
             <Button tall icon={User}>
               {displayName}
             </Button>
