@@ -65,7 +65,7 @@ export function AuthContextProvider({ children }) {
   }, [user]);
 
   async function loginToApi(user: User): Promise<void> {
-    const token = await user.getIdToken();
+    const token = await user.getIdToken(true);
 
     await postRequest("/api/auth/login", { userIdToken: token });
   }
