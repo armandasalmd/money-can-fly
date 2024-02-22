@@ -82,12 +82,10 @@ export default function TransactionFullList(props: PredictionPreviewListProps) {
   const onSearchCallback = useCallback(onSearch, [reset]);
 
   useEffect(() => {
-    subscribe("transactionSearchFormSubmit", onSearchCallback);
-    subscribe("mutateTransactions", onSearchCallback);
+    subscribe("searchFormSubmit", onSearchCallback);
 
     return () => {
-      unsubscribe("transactionSearchFormSubmit", onSearchCallback);
-      unsubscribe("mutateTransactions", onSearchCallback);
+      unsubscribe("searchFormSubmit", onSearchCallback);
     };
   }, [onSearchCallback]);
 

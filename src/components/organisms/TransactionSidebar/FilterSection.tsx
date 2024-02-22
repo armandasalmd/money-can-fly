@@ -3,8 +3,7 @@ import { NoteBlank } from "phosphor-react";
 
 import { Button, Drawer } from "@atoms/index";
 import { TagList, TransactionSearchForm } from "@molecules/index";
-import { selectedFilterTags, filterFormState } from "@recoil/transactions/atoms";
-import { publish } from "@utils/Events";
+import { selectedFilterTags, filterFormState } from "@recoil/dashboard/atoms";
 
 interface FilterSectionProps {
   open: boolean;
@@ -15,11 +14,6 @@ export default function FilterSection(props: FilterSectionProps) {
   const filterTags = useRecoilValue(selectedFilterTags);
   const resetFilters = useResetRecoilState(filterFormState);
 
-  function onApply() {
-    props.setOpen(false);
-    publish("transactionSearchFormSubmit", null);
-  }
-
   const clearButton = <Button type="text" icon={NoteBlank} onClick={resetFilters}>Clear</Button>;
 
   return (
@@ -27,12 +21,12 @@ export default function FilterSection(props: FilterSectionProps) {
       <Drawer
         size="small"
         open={props.open}
-        onClose={onApply}
+        onClose={props.setOpen}
         title="Filter transactions"
         subtitle="Choose filters on close"
         extra={clearButton}
       >
-        <TransactionSearchForm />
+        <TransactionSearchForm filterFormState={filterFormState} showSubmitButton />
       </Drawer>
       <TagList type="easy" values={filterTags} />
     </div>

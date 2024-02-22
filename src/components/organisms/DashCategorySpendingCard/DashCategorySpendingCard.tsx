@@ -27,7 +27,7 @@ export default function DashCategorySpendingCard() {
   }
 
   function onCaterogyClick(category: Category) {
-    publish("transactionSearchFormSubmit", {
+    publish("searchFormSubmit", {
       category,
       dateRange: dateRange
     });

@@ -17,7 +17,7 @@ export default function DashboardBody() {
   const actionButtons = tabId !== "investments" ? [<Button small key="add" type="primary" onClick={() => setAddOpen(true)}>Add transaction</Button>] : [];
 
   function postSave() {
-    publish("transactionSearchFormSubmit", null);
+    publish("searchFormSubmit", null);
   }
 
   return (

@@ -106,7 +106,7 @@ export default function CalibrateDrawer(props: CalibrateDrawerProps) {
       balanceAnalysisDateRange,
       spendingChartRanges,
     });
-    publish("transactionSearchFormSubmit", null);
+    publish("searchFormSubmit", null);
     props.setOpen(false);
   }
 

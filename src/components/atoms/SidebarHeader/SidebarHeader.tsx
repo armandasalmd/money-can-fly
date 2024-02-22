@@ -2,7 +2,7 @@ import classNames from "classnames";
 import Button, { ButtonProps } from "@atoms/Button/Button";
 
 export interface SidebarHeaderProps {
-  actionButton?: ButtonProps;
+  actionButtons?: ButtonProps[];
   className?: string;
   subtitle: string;
   title: string;
@@ -15,7 +15,9 @@ export default function SidebarHeader(props: SidebarHeaderProps) {
         <h1 className="sidebarHeader__title">{props.title}</h1>
         <p className="sidebarHeader__subtitle">{props.subtitle}</p>
       </div>
-      {props.actionButton && <Button className="sidebarHeader__action" {...props.actionButton} />}
+      <div className="sidebarHeader__actions">
+        {props.actionButtons && props.actionButtons.map((o, index) => <Button className="sidebarHeader__action" key={index} {...o} />)}
+      </div>
     </div>
   );
 }

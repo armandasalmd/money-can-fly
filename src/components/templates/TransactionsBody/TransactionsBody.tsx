@@ -39,7 +39,7 @@ export default function TransactionsBody() {
       .then((data) => {
         if (data.success) {
           setSelectedTransactions([]);
-          publish("mutateTransactions", selectedTransactions);
+          publish("searchFormSubmit", selectedTransactions);
         }
       });
   }
@@ -60,7 +60,7 @@ export default function TransactionsBody() {
   }
 
   function postSave(transaction: TransactionWithOptions, isAdd: boolean) {
-    return isAdd ? publish("mutateTransactions", filterForm) : postUpdate(transaction);
+    return isAdd ? publish("searchFormSubmit", filterForm) : postUpdate(transaction);
   }
 
   function postUpdate(transaction: TransactionWithOptions) {
@@ -117,7 +117,7 @@ export default function TransactionsBody() {
         </div>
         <div>
           <div className="transactionsBody__filterForm">
-            <TransactionSearchForm showSubmitButton showImportFilter />
+            <TransactionSearchForm filterFormState={filterFormState} showSubmitButton showImportFilter />
           </div>
         </div>
       </div>
