@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
 import { useRecoilValue, useResetRecoilState } from "recoil";
-import { Funnel } from "phosphor-react";
+import { Funnel, NoteBlank } from "phosphor-react";
 
 import "@utils/ChartJsInit";
 import { SidebarHeaderProps } from "@atoms/index";
 import { TransactionSidebar } from "@organisms/index";
 import { dashboardData, balanceChartDateRange, spendingChartDateRanges, transactionsCount, filterFormState } from "@recoil/dashboard/atoms";
 import { AppLayout, DashboardBody } from "@templates/index";
+import { publish } from "@utils/Events";
 
 export default function DashboardPage() {
   const [searchFormOpen, setSearchFormOpen] = useState(false);
@@ -20,13 +21,22 @@ export default function DashboardPage() {
   const header: SidebarHeaderProps = {
     title: "Transactions",
     subtitle: `${countLabel} results in total`,
-    actionButton: {
-      children: "Filter",
-      icon: Funnel,
-      wrapContent: true,
-      tall: true,
-      onClick: () => setSearchFormOpen(!searchFormOpen),
-    },
+    actionButtons: [
+      {
+        tooltip: "Show filters",
+        icon: Funnel,
+        wrapContent: true,
+        tall: true,
+        onClick: () => setSearchFormOpen(!searchFormOpen),
+      },
+      {
+        icon: NoteBlank,
+        tall: true,
+        onClick: () => publish("searchFormSubmit", null),
+        wrapContent: true,
+        tooltip: "Clear filters"
+      },
+    ],
   };
 
   useEffect(() => {

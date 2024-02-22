@@ -6,6 +6,11 @@
   padding: 0 $unit * 0.75;
   align-items: center;
 
+  &__actions {
+    display: flex;
+    gap: $unit * 0.5;
+  }
+
   &__titles {
     display: flex;
     flex-direction: column;
