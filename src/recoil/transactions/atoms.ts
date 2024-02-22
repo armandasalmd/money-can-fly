@@ -1,11 +1,9 @@
 import { atom, selector } from "recoil";
-import { format } from "date-fns";
 
 import { IRecoilPaginationState } from "@hooks/useRecoilPagination";
 import { Transaction, TransactionForm, TransactionWithOptions } from "@utils/Types";
 import { dateFromNow } from "@utils/Date";
 import constants from "@utils/Constants";
-import { amountFilterSelect, transactionStatusFilterSelect, currencySelect, searchCategoryPreset } from "@utils/SelectItems";
 
 export const pagedTransactionsState = atom<IRecoilPaginationState<Transaction>>({
   key: "pagedTransactions",
@@ -63,39 +61,5 @@ export const paginationLabelState = selector<string>({
     const from = (state.currentPage - 1) * state.itemsPerPage + 1;
     const to = Math.min(from + state.itemsPerPage - 1, state.totalItems);
     return `Showing ${from}-${to} of ${state.totalItems}`;
-  }
-});
-
-export const selectedFilterTags = selector<string[]>({
-  key: "selectedFilterTags",
-  get: ({ get }) => {
-    const state = get(filterFormState);
-    const tags: string[] = [];
-
-    if (state.dateRange && state.dateRange.to) {
-      tags.push(`${format(state.dateRange.from, "yyyy.MM.dd")} - ${format(state.dateRange.to, "yyyy.MM.dd")}`)
-    }
-
-    if (state.category) {
-      tags.push(searchCategoryPreset.find(o => o.value === state.category)?.label);
-    }
-
-    if (state.currency) {
-      tags.push(currencySelect[state.currency]);
-    }
-
-    if (state.statusFilter) {
-      tags.push(transactionStatusFilterSelect[state.statusFilter]);
-    }
-
-    if (state.amountFilter) {
-      tags.push(amountFilterSelect[state.amountFilter]);
-    }
-
-    if (state.searchTerm) {
-      tags.push(`Match: ${state.searchTerm}`);
-    }
-
-    return tags;
   }
 });

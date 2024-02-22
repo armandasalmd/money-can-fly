@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import { atom } from "recoil";
 
 import { ImportList, TagList } from "@molecules/index";
 import { toDisplayDate } from "@utils/Date";
@@ -17,12 +18,17 @@ interface ImportSidebarProps {
   setRunningImportId: (runningImportId: string) => void;
 }
 
+const emptyFiltersAtom = atom({
+  key: "empty",
+  default: null
+});
+
 export default function ImportSidebar(props: ImportSidebarProps) {
   const [message, setMessage] = useState("");
   const observerTarget = useRef(null);
   const [importLogsData, setImportLogsData] = useState<ReadLogsResponse | null>(null);
 
-  const { mutate, items, loading, empty } = useInfiniteScroll<Import>(observerTarget, async function (page) {
+  const { mutate, items, loading, empty } = useInfiniteScroll<Import>(observerTarget, emptyFiltersAtom, async function (page) {
     const { items } = await getRequest<{ total: number; items: Import[] }>("/api/imports/read", {
       skip: (page - 1) * PAGE_SIZE,
       take: PAGE_SIZE,

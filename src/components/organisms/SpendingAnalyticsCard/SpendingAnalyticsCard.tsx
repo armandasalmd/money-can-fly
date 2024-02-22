@@ -27,7 +27,7 @@ export default function SpendingAnalyticsCard() {
 
   function searchTransactions(dateRange: DateRange) {
     if (dateRange) {
-      publish("transactionSearchFormSubmit", {
+      publish("searchFormSubmit", {
         amountFilter: "spendingOnly",
         category: "notInvestments",
         dateRange,

@@ -1,6 +1,6 @@
 import { TextAa, MagnifyingGlass } from "phosphor-react";
 import { DateRange, DayPickerRangeProps } from "react-day-picker/dist/index";
-import { useRecoilState } from "recoil";
+import { RecoilState, useRecoilState } from "recoil";
 
 import { Button, Input, Select, DateRangePicker } from "@atoms/index";
 import {
@@ -10,11 +10,12 @@ import {
   SelectItem,
   transactionStatusPreset,
 } from "@utils/SelectItems";
-import { filterFormState } from "@recoil/transactions/atoms";
 import useSWR from "swr";
 import { publish } from "@utils/Events";
+import { TransactionForm } from "@utils/Types";
 
 interface TransactionSearchFormProps {
+  filterFormState: RecoilState<TransactionForm>;
   showImportFilter?: boolean;
   showSubmitButton?: boolean;
 }
@@ -25,7 +26,7 @@ const fetcher = (url: string) =>
     .then((res) => res.items);
 
 export default function TransactionSearchForm(props: TransactionSearchFormProps) {
-  const [form, setForm] = useRecoilState(filterFormState);
+  const [form, setForm] = useRecoilState(props.filterFormState);
   const { data: importSelectPreset } = useSWR<SelectItem[]>(
     "/api/imports/selectItems",
     props.showImportFilter ? fetcher : () => []
@@ -40,7 +41,7 @@ export default function TransactionSearchForm(props: TransactionSearchFormProps)
   }
 
   function onSubmit() {
-    publish("transactionSearchFormSubmit", null);
+    publish("searchFormSubmit", form);
   }
 
   const pickerOptions: DayPickerRangeProps = {

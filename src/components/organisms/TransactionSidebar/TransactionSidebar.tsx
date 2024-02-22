@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import { useRecoilValue, useRecoilState } from "recoil";
 
 import { TransactionList } from "@molecules/index";
-import { filterFormState, transactionsCount, balanceChartDateRange } from "@recoil/dashboard/atoms";
+import { filterFormState, transactionsCount, balanceChartDateRange, DEFAULT_FILTER_FORM } from "@recoil/dashboard/atoms";
 import { subscribe, unsubscribe } from "@utils/Events";
 import { DisplaySections, Transaction, TransactionForm } from "@utils/Types";
 import useDashboardData from "@hooks/useDashboardData";
@@ -30,17 +30,23 @@ export default function TransactionSidebar(props: TransactionSidebarProps) {
   const observerTarget = useRef(null);
 
   const balanceDateRange = useRecoilValue(balanceChartDateRange);
-  const [searchForm, setSearchForm] = useRecoilState(filterFormState);
-  const [_, setTotalCount] = useRecoilState(transactionsCount);
+  const [, setTotalCount] = useRecoilState(transactionsCount);
+  const [, setFilterForm] = useRecoilState(filterFormState);
   const { mutate: dashMutate } = useDashboardData();
 
-  const { mutate, items, loading, empty } = useInfiniteScroll<Transaction>(observerTarget, async function (page) {
+  const { mutate, items, loading, empty } = useInfiniteScroll<Transaction>(observerTarget, filterFormState, async function (page, detail) {
+    let newFilters = {
+      ...DEFAULT_FILTER_FORM,
+      ...(detail || {})
+    };
+    
     let { total, items } = await postRequest<{ total: number; items: Transaction[] }>("/api/transactions/search", {
-      ...searchForm,
+      ...newFilters,
       skip: (page - 1) * PAGE_SIZE,
-      take: PAGE_SIZE,
+      take: PAGE_SIZE
     });
 
+    setFilterForm(newFilters);
     setTotalCount(total);
 
     return dateConverter(items);
@@ -58,20 +64,13 @@ export default function TransactionSidebar(props: TransactionSidebarProps) {
   }
 
   useEffect(() => {
-    function onFilter(e: CustomEvent) {
-      if (typeof e?.detail === "object") {
-        setSearchForm({
-          ...searchForm,
-          ...e.detail,
-        });
-        setTimeout(mutate);
-      } else {
-        mutate();
-      }
+    function onFilter(e: CustomEvent<TransactionForm>) {
+      mutate(e.detail);
+      props.setSearchFormOpen(false);
     }
 
-    subscribe("transactionSearchFormSubmit", onFilter);
-    return () => unsubscribe("transactionSearchFormSubmit", onFilter);
+    subscribe("searchFormSubmit", onFilter);
+    return () => unsubscribe("searchFormSubmit", onFilter);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

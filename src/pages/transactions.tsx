@@ -2,7 +2,7 @@ import { useResetRecoilState } from "recoil";
 import { useEffect } from "react";
 
 import { AppLayout, TransactionsBody } from "@templates/index";
-import { pagedTransactionsState, filterFormState, selectedTransactionsState, paginationLabelState } from "@recoil/transactions/atoms";
+import { pagedTransactionsState, filterFormState, selectedTransactionsState } from "@recoil/transactions/atoms";
 
 export default function TransactionsPage() {
   const resetFilters = useResetRecoilState(filterFormState);
