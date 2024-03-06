@@ -1,4 +1,4 @@
-import { IsIn, IsPositive, Min, Max, IsArray, IsDateString, ArrayMaxSize, ArrayMinSize } from "class-validator";
+import { IsIn, IsPositive, Min, Max, IsArray, IsDateString, ArrayMaxSize, ArrayMinSize, IsString } from "class-validator";
 
 import { validatedApiRoute } from "@server/core";
 import { Currency } from "@utils/Types";
@@ -13,6 +13,8 @@ export class PeriodWeekRequest {
   moneyIn: number;
   @IsPositive()
   moneyOut: number;
+  @IsString()
+  note: string;
 }
 
 export class SetPeriodRequest {

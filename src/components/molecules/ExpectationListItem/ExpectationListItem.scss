@@ -1,0 +1,48 @@
+.expectationListItem {
+  --bg-selected: rgba(71, 110, 216, 0.18);
+
+  $base: &;
+
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  gap: $halfUnit;
+  border-bottom: $defaultBorder;
+  align-items: center;
+  padding: $unit * 0.5 $unit * 0.75;
+  overflow: hidden;
+
+  &__title {
+    @extend %listItemTitle;
+    margin-right: -$unit; // compensate hidden delete button width
+  }
+
+  &__subtitle {
+    @extend %listItemSubtitle;
+  }
+
+  &__actions {
+    display: flex;
+    gap: $halfUnit;
+    opacity: 0;
+  }
+
+  &--selected {
+    background-color: var(--bg-selected) !important;
+  }
+
+  &:hover {
+    background-color: var(--shade5);
+    cursor: pointer;
+
+    #{$base}__actions {
+      animation: fadeIn 0.3s ease-in-out, slideInFromRight 0.3s ease-in-out;
+      opacity: 1;
+    }
+  }
+}
+
+#{$themeDarkClass} {
+  .expectationListItem {
+    --bg-selected: rgba(92, 130, 234, 0.2);
+  }
+}

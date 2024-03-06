@@ -26,17 +26,18 @@
 @import "@molecules/CalibrateFixOptions/CalibrateFixOptions.scss";
 @import "@molecules/CalibrateLatestInput/CalibrateLatestInput.scss";
 @import "@molecules/CreateInvestmentDrawer/CreateInvestmentDrawer.scss";
-@import "@molecules/CreateUpdatePredictionForm/CreateUpdatePredictionForm.scss";
 @import "@molecules/CreateUpdateTransactionForm/CreateUpdateTransactionForm.scss";
-@import "@molecules/CurrencyInput/CurrencyInput.scss";
+@import "@molecules/ExpectationDetailsForm/ExpectationDetailsForm.scss";
+@import "@molecules/ExpectationFormRow/ExpectationFormRow.scss";
+@import "@molecules/ExpectationListItem/ExpectationListItem.scss";
 @import "@molecules/DashboardTabs/DashboardTabs.scss";
+@import "@molecules/CurrencyInput/CurrencyInput.scss";
 @import "@molecules/ImportList/ImportList.scss";
 @import "@molecules/ImportSettingsDrawer/ImportSettingsDrawer.scss";
 @import "@molecules/InvestmentList/InvestmentList.scss";
 @import "@molecules/InsightsCollection/InsightsCollection.scss";
 @import "@molecules/Navbar/Navbar.scss";
 @import "@molecules/Pagination/Pagination.scss";
-@import "@molecules/PredictionPreviewList/PredictionPreviewList.scss";
 @import "@molecules/Tabs/Tabs.scss";
 @import "@molecules/TransactionFullList/TransactionFullList.scss";
 @import "@molecules/TransactionList/TransactionList.scss";
@@ -47,7 +48,7 @@
 @import "@organisms/DashCategorySpendingCard/DashCategorySpendingCard.scss";
 @import "@organisms/DashChartCard/DashChartCard.scss";
 @import "@organisms/InvestmentTimeline/InvestmentTimeline.scss";
-@import "@organisms/SetPredictionSidebar/SetPredictionSidebar.scss";
+@import "@organisms/ExpectationsSidebar/ExpectationsSidebar.scss";
 @import "@organisms/SpendingAnalyticsCard/SpendingAnalyticsCard.scss";
 @import "@organisms/TransactionSidebar/TransactionSidebar.scss";
 @import "@organisms/ImportConfigForm/ImportConfigForm.scss";
@@ -56,5 +57,5 @@
 @import "@templates/AuthPage/AuthPage.scss";
 @import "@templates/DashboardBody/DashboardBody.scss";
 @import "@templates/ImportsBody/ImportsBody.scss";
-@import "@templates/PredictionsBody/PredictionsBody.scss";
+@import "@templates/ExpectationsBody/ExpectationsBody.scss";
 @import "@templates/TransactionsBody/TransactionsBody.scss";

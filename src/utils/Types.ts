@@ -85,7 +85,7 @@ export interface Import {
 }
 
 export interface WeekPrediction {
-  label?: string;
+  note?: string;
   week: number;
   moneyIn: number;
   moneyOut: number;

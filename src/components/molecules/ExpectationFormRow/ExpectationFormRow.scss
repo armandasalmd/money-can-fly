@@ -1,0 +1,28 @@
+.expectationFormRow {
+  display: grid;
+  grid-template-columns: $unit * 7 1fr 1fr 3fr;
+  align-items: flex-end;
+  margin-bottom: $unit * 0.5;
+  gap: $unit * 0.5;
+
+  &__label {
+    @extend %inputBase;
+
+    color: var(--color-text);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: $defaultBorder;
+    margin-right: $unit * 0.5;
+
+    &:hover {
+      outline: none;
+      background: var(--bg-input-hover);
+      @include focusOutline;
+    }
+  }
+
+  .input {
+    width: unset !important;
+  }
+}

@@ -7,6 +7,7 @@ type ReactTabItemProps = PropsWithChildren<TabItemProps>;
 interface TabsProps {
   children: ReactElement<ReactTabItemProps>[];
   spaceEvenly?: boolean;
+  noPadding?: boolean;
   onTabChange?(id: string): void;
   tabId: string;
 }
@@ -14,6 +15,7 @@ interface TabsProps {
 export default function Tabs(props: TabsProps) {
   const classes = classNames("tabs", {
     "tabs--spaceEvenly": props.spaceEvenly,
+    "tabs--noPadding": props.noPadding
   });
 
   let activeContainer: ReactNode = null;
