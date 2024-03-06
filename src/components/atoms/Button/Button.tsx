@@ -46,7 +46,12 @@ export default function Button(props: ButtonProps) {
   }
 
   return (
-    <div title={props.tooltip} className={classes} style={props.style} onClick={props.disabled ? undefined : (e) => props?.onClick(e as unknown as MouseEvent)}>
+    <div
+      title={props.tooltip}
+      className={classes}
+      style={props.style}
+      onClick={props.disabled || !props.onClick ? undefined : (e) => props.onClick(e as unknown as MouseEvent)}
+    >
       {props.icon &&
         createElement(props.icon, {
           weight: "bold",
