@@ -124,7 +124,8 @@ export class PeriodPredictionManager {
 
       return existing.toJSON<IPeriodPredictionModel>();
     } else {
-      await PeriodPredictionModel.create(model);
+      let createDoc = await PeriodPredictionModel.create(model);
+      model._id = createDoc.id;
     }
 
     return model;

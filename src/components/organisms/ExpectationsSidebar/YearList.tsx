@@ -19,14 +19,18 @@ export default function YearList(props: YearListProps) {
 
   useEffect(() => {
     function onExpectationSaved({ detail }: { detail: MonthPrediction }) {
-      setExpectations(expectations.map(o => o.id === detail.id ? detail : o));
-      // console.log("SAVED", expectations.findIndex(o => o.id === detail.id));
+      let indexOfMonthUpdated = expectations.findIndex(o => o.period.from === detail.period.from);
+      if (indexOfMonthUpdated >= 0) {
+        expectations[indexOfMonthUpdated] = { ...detail };
+      }
+
+      setSelected(expectations[indexOfMonthUpdated]);
+      setExpectations(expectations);
     }
 
     subscribe("expectationSaved", onExpectationSaved);
     return () => unsubscribe("expectationSaved", onExpectationSaved);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [setExpectations, setSelected, expectations]);
 
   useEffect(() => {
     async function fn() {
@@ -36,8 +40,6 @@ export default function YearList(props: YearListProps) {
     }
 
     fn();
-
-    return () => setSelected(null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.year]);
 
@@ -54,17 +56,17 @@ export default function YearList(props: YearListProps) {
   function onDelete(model: MonthPrediction) {
     if (!model.id) return;
     
-    deleteRequest("/api/predictions/resetPeriod", { predictionId: model.id });
-
     props.setLoading(true);
-    fn();
-    
-    async function fn() {
-      let response = await getRequest<MonthPrediction[]>("/api/predictions/read", { year: props.year });
-      setExpectations(response || []);
-      props.setLoading(false);
-    }
-    // console.log("SAVED", expectations.findIndex(o => o.id === detail.id));
+
+    deleteRequest("/api/predictions/resetPeriod", { predictionId: model.id })
+      .then(async () => {
+        let response = await getRequest<MonthPrediction[]>("/api/predictions/read", { year: props.year });
+        setExpectations(response || []);
+        setSelected((selected && response?.find(o => o.id === selected.id)) || null);
+      })
+      .finally(() => {
+        props.setLoading(false);
+      });
   }
 
   function onSelect(model: MonthPrediction) {
@@ -73,10 +75,10 @@ export default function YearList(props: YearListProps) {
 
   return (
     <div>
-      {expectations.map((o, index) => (
+      {expectations.map((o) => (
         <ExpectationListItem
-          key={o.period?.from?.toString() || index}
-          isSelected={o === selected}
+          key={new Date(o.period.from).toISOString()}
+          isSelected={o.period.from === selected?.period?.from}
           hasSelected={!!selected}
           model={o}
           onCopy={onCopy}

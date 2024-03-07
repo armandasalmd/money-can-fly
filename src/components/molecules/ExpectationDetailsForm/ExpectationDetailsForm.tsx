@@ -6,9 +6,10 @@ import { currencyPreset } from "@utils/SelectItems";
 import { round } from "@server/utils/Global";
 import { putRequest } from "@utils/Api";
 import { getLastDayOfMonth } from "@utils/Date";
-import { Currency, MonthPrediction, WeekPrediction } from "@utils/Types";
+import { Currency, MonthPrediction, SuccessResponse, WeekPrediction } from "@utils/Types";
 import { SetPeriodRequest } from "@endpoint/predictions/setPeriod";
 import { publish } from "@utils/Events";
+import { IPeriodPredictionModel, PeriodPredictionModel } from '@server/models';
 
 function cloneExpectation(expectation: MonthPrediction): MonthPrediction {
   return {
@@ -44,15 +45,21 @@ export default function ExpectationDetailsForm(props: ExpectationDetailsFormProp
 
   function onSave() {
     if (savedIndicator) return;
-    putRequest("/api/predictions/setPeriod", {
+    putRequest<SuccessResponse<IPeriodPredictionModel>>("/api/predictions/setPeriod", {
       currency: formState.currency,
       periodMonth: new Date(formState.period.from).toISOString(),
       predictions: formState.predictions
-    } as SetPeriodRequest).then(() => {
+    } as SetPeriodRequest).then((response) => {
       setSavedIndicator(true);
       setTimeout(() => {
         setSavedIndicator(false);
       }, 2000);
+
+      if (!formState.id) {
+        formState.id = response?.data?._id; // if previously not saved item was saved, attach new id
+      }
+
+      formState.totalChange = formState.predictions.reduce((acc, curr) => acc + curr.moneyIn - curr.moneyOut, 0);
 
       // Update sidebar (Year list)
       publish("expectationSaved", formState);
@@ -63,6 +70,7 @@ export default function ExpectationDetailsForm(props: ExpectationDetailsFormProp
     if (props.selectedExpectation) {
       setFormState(cloneExpectation(props.selectedExpectation));
     }
+    // eslint-disable-next-line
   }, [props.selectedExpectation]);
 
   let formRows = formState.predictions.map((o) => (
