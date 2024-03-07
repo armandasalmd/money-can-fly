@@ -14,6 +14,10 @@ const WeekPredictionSchema = new Schema<IWeekPredictionModel>({
   moneyOut: {
     type: Number,
     required: true,
+  },
+  note: {
+    type: String,
+    required: false
   }
 });
 

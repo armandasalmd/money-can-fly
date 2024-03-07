@@ -85,7 +85,7 @@ export interface Import {
 }
 
 export interface WeekPrediction {
-  label?: string;
+  note?: string;
   week: number;
   moneyIn: number;
   moneyOut: number;
@@ -146,3 +146,8 @@ export interface InvestmentSummary {
 export type FieldErrors<T> = Partial<{
   [key in keyof T]: string;
 }>
+
+export type SuccessResponse<TData> = {
+  success: boolean;
+  data: TData;
+}

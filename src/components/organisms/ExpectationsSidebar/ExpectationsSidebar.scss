@@ -1,0 +1,9 @@
+.expectationsSidebar {
+  height: 100%;
+  position: relative;
+
+  &__loader {
+    z-index: 1;
+    @extend %loaderBackgroundFill;
+  }
+}

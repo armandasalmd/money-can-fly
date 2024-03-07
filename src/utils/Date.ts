@@ -93,3 +93,20 @@ export function toLocalDate(UTCDate: Date) {
 export function toUTCDate(localDate: Date) {
   return localDate && new Date(Date.UTC(localDate.getFullYear(), localDate.getMonth(), localDate.getDate()));
 }
+
+export function getLastDayOfMonth(date: Date) {
+  date = new Date(date);
+  let m = date.getMonth() + 1;
+  let y = date.getFullYear();
+  return m===2 ? y & 3 || !(y%25) && y & 15 ? 28 : 29 : 30 + (m+(m>>3)&1);
+}
+
+export function getWeekLabelAsDayRange(week: number, lastDayOfMonth: number) {
+  if (week <= 0) return;
+  if (week === 5) {
+    return lastDayOfMonth >= 30 ? `Days 29 - ${lastDayOfMonth}` : "Day 29 only";
+  }
+
+  let weekStartDay = (week - 1) * 7 + 1;
+  return `Days ${weekStartDay} - ${weekStartDay + 6}`;
+}

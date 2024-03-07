@@ -21,6 +21,12 @@
     padding: $unit $paddingX;
     height: 100%;
   }
+  
+  &--noPadding {
+    #{$base}__content {
+      padding: 0;
+    }
+  }
 
   &--spaceEvenly {
     #{$base}__heading {

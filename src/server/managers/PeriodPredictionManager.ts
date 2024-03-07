@@ -3,6 +3,7 @@ import { CookieUser } from "@server/core";
 import { SetPeriodRequest } from "@endpoint/predictions/setPeriod";
 import { Currency, Money, MonthPrediction } from "@utils/Types";
 import { CurrencyRateManager } from "./CurrencyRateManager";
+import { UserSettingsManager } from "./UserSettingsManager";
 
 interface ITotalSpendingResult extends Money {
   monthDate: Date;
@@ -12,7 +13,7 @@ export class PeriodPredictionManager {
 
   public constructor(private user: CookieUser) {}
 
-  public async GetPredictions(year?: number): Promise<MonthPrediction[]> {
+  public async GetPredictions(year: number): Promise<MonthPrediction[]> {
     let result: PeriodPredictionDocument[] = [];
     
     if (year) {
@@ -20,23 +21,37 @@ export class PeriodPredictionManager {
       const to = new Date(year, 11, 31);
 
       result = await PeriodPredictionModel.find({ userUID: this.user.userUID, monthDate: { $gte: from, $lte: to } });
-    } else {
-      result = await PeriodPredictionModel.find({ userUID: this.user.userUID });
     }
 
-    return result.map((x) => {
-      return {
-        id: x.id,
-        totalChange: x.predictions.reduce((a, b) => a + b.moneyIn - b.moneyOut, 0),
-        currency: x.currency,
-        periodMonth: x.monthDate.toISOString(),
-        predictions: x.predictions,
-        period: {
-          from: x.monthDate,
-          to: x.monthDate,
-        }
-      };
-    });
+    let currency = await new UserSettingsManager(this.user).GetDefaultCurrency();
+
+    return this.FillMissingYearMonthsAndSort(result.map((o) => ({
+      id: o.id,
+      totalChange: o.predictions.reduce((a, b) => a + b.moneyIn - b.moneyOut, 0),
+      currency: o.currency,
+      predictions: o.predictions,
+      period: {
+        from: o.monthDate,
+        to: o.monthDate,
+      }
+    })), currency, year);
+  }
+
+  private FillMissingYearMonthsAndSort(input: MonthPrediction[], currency: Currency, year: number): MonthPrediction[] {
+    let output: MonthPrediction[] = [];
+
+    for (let month = 0; month < 12; month++) {
+      let existing = input.find(o => o.period.from.getMonth() === month);
+
+      output.push(existing || {
+        currency,
+        totalChange: 0,
+        period: { from: new Date(Date.UTC(year, month, 1)) },
+        predictions: [1, 2, 3, 4, 5].map(week => ({ moneyIn: 0, moneyOut: 0, week }))
+      });
+    }
+
+    return output;
   }
 
   public async GetPredictionByMonth(month: Date): Promise<MonthPrediction> {
@@ -109,7 +124,8 @@ export class PeriodPredictionManager {
 
       return existing.toJSON<IPeriodPredictionModel>();
     } else {
-      await PeriodPredictionModel.create(model);
+      let createDoc = await PeriodPredictionModel.create(model);
+      model._id = createDoc.id;
     }
 
     return model;

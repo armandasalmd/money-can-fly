@@ -29,12 +29,14 @@ export default function PopConfirm(props: PopConfirmProps) {
 
   useOutsideClick(popupRef, () => setVisible(false), targetRef);
 
-  function onCancel() {
+  function onCancel(e: MouseEvent) {
+    e.stopPropagation();
     setVisible(false);
     callIfFunction(props.onCancel);
   }
-
-  function onConfirm() {
+  
+  function onConfirm(e: MouseEvent) {
+    e.stopPropagation();
     setVisible(false);
     props.onConfirm();
   }
@@ -124,7 +126,10 @@ export default function PopConfirm(props: PopConfirmProps) {
 
   return (
     <div className="popConfirm">
-      <div className="popConfirm__target" ref={targetRef} onClick={() => setVisible(!visible)}>
+      <div className="popConfirm__target" ref={targetRef} onClick={(e) => {
+        e.stopPropagation();
+        setVisible(!visible);
+      }}>
         {props.children}
       </div>
       {visible && popup}

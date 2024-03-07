@@ -10,7 +10,7 @@ export interface ButtonProps extends PropsWithChildren {
   disabled?: boolean;
   ellipsis?: boolean;
   icon?: IconComponentType;
-  onClick?(): void;
+  onClick?(e: MouseEvent): void;
   style?: CSSProperties;
   tall?: boolean;
   type?: ButtonType;
@@ -46,7 +46,12 @@ export default function Button(props: ButtonProps) {
   }
 
   return (
-    <div title={props.tooltip} className={classes} style={props.style} onClick={props.disabled ? undefined : props.onClick}>
+    <div
+      title={props.tooltip}
+      className={classes}
+      style={props.style}
+      onClick={props.disabled || !props.onClick ? undefined : (e) => props.onClick(e as unknown as MouseEvent)}
+    >
       {props.icon &&
         createElement(props.icon, {
           weight: "bold",

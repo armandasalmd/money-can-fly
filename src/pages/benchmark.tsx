@@ -168,7 +168,6 @@ export default function BenchmarkPage() {
   }
 
   function captureResult(latency: number, size: number) {
-    // console.log(latency,size);
     setSizes([...sizes, size]);
     setLatencies([...latencies, latency]);
   }
