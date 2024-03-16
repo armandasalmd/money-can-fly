@@ -5,6 +5,7 @@ import { Funnel, NoteBlank } from "phosphor-react";
 import "@utils/ChartJsInit";
 import { SidebarHeaderProps } from "@atoms/index";
 import { TransactionSidebar } from "@organisms/index";
+import { DEFAULT_FILTER_FORM } from '@recoil/dashboard/atoms';
 import { dashboardData, balanceChartDateRange, spendingChartDateRanges, transactionsCount, filterFormState } from "@recoil/dashboard/atoms";
 import { AppLayout, DashboardBody } from "@templates/index";
 import { publish } from "@utils/Events";
@@ -32,7 +33,7 @@ export default function DashboardPage() {
       {
         icon: NoteBlank,
         tall: true,
-        onClick: () => publish("searchFormSubmit", null),
+        onClick: () => publish("searchFormSubmit", DEFAULT_FILTER_FORM),
         wrapContent: true,
         tooltip: "Clear filters"
       },
