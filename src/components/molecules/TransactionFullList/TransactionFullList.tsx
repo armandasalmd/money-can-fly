@@ -1,4 +1,4 @@
-import { useRecoilState, useRecoilValue } from "recoil";
+import { useRecoilValue } from "recoil";
 import { useCallback, useEffect } from "react";
 
 import TransactionFullListItem from "./TransactionFullListItem";
@@ -26,8 +26,7 @@ export default function TransactionFullList(props: PredictionPreviewListProps) {
     postPageChange
   );
 
-  const [displayState, setDisplayState] = useRecoilState(pagedTransactionsState);
-  const { loading } = displayState;
+  const { loading } = useRecoilValue(pagedTransactionsState);
 
   function onSelect(t: Transaction) {
     if (selectedTransactions.includes(t)) {
@@ -54,31 +53,6 @@ export default function TransactionFullList(props: PredictionPreviewListProps) {
     reset(event.detail);
   }
 
-  function toggleActive(transaction: Transaction) {
-    patchRequest<any>("/api/transactions/setActive", {
-      id: transaction._id,
-      active: !transaction.isActive,
-    }).then((data) => {
-      if (data.success) {
-        const itemIdx = displayState.displayedItems.findIndex((t) => t._id === transaction._id);
-
-        if (itemIdx > -1) {
-          const newItems = [...displayState.displayedItems];
-
-          newItems[itemIdx] = {
-            ...newItems[itemIdx],
-            isActive: !newItems[itemIdx].isActive,
-          };
-
-          setDisplayState({
-            ...displayState,
-            displayedItems: newItems,
-          });
-        }
-      }
-    });
-  }
-
   const onSearchCallback = useCallback(onSearch, [reset]);
 
   useEffect(() => {
@@ -95,7 +69,6 @@ export default function TransactionFullList(props: PredictionPreviewListProps) {
         {currentData?.map((t, index) => (
           <TransactionFullListItem
             onEdit={props.onEdit}
-            onToggleActive={toggleActive}
             onSelect={onSelect}
             selected={selectedTransactions.includes(t)}
             transaction={t}

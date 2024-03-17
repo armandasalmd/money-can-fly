@@ -3,12 +3,11 @@ import { atom, selector } from "recoil";
 
 import { DisplayModelResponse } from "@endpoint/dashboard/displayModel";
 import { getOneMonthRange, dateFromNow } from "@utils/Date";
-import { amountFilterSelect, currencySelect, searchCategoryPreset, transactionStatusFilterSelect } from "@utils/SelectItems";
+import { amountFilterSelect, currencySelect, searchCategoryPreset } from "@utils/SelectItems";
 import { DateRange, TransactionForm } from "@utils/Types";
 
 export const DEFAULT_FILTER_FORM: TransactionForm = {
   amountFilter: undefined,
-  statusFilter: undefined,
   category: "notInvestments",
   currency: undefined,
   dateRange: {
@@ -55,10 +54,6 @@ export const selectedFilterTags = selector<string[]>({
 
     if (state.currency) {
       tags.push(currencySelect[state.currency]);
-    }
-
-    if (state.statusFilter) {
-      tags.push(transactionStatusFilterSelect[state.statusFilter]);
     }
 
     if (state.amountFilter) {

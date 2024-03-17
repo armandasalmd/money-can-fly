@@ -25,7 +25,6 @@ export const filterFormState = atom<TransactionForm>({
   key: "filterForm",
   default: {
     amountFilter: undefined,
-    statusFilter: undefined,
     category: "notInvestments",
     currency: undefined,
     dateRange: {
@@ -46,6 +45,7 @@ export const addEditTransactionState = atom<TransactionWithOptions>({
     date: new Date(),
     description: "",
     isActive: true,
+    isImported: undefined,
     source: "cash",
     dateUpdated: new Date(),
     alterBalance: true
