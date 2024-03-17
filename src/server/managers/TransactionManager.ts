@@ -8,7 +8,7 @@ import { BalanceManager, CurrencyRateManager } from "@server/managers";
 import { SearchRequest, SearchResponse } from "@endpoint/transactions/search";
 import { escapeRegExp, round } from "@server/utils/Global";
 import constants from "@server/utils/Constants";
-import { Currency, Money, TransactionBank } from "@utils/Types";
+import { Currency, Money, Transaction, TransactionBank } from "@utils/Types";
 import { isNegative } from "@utils/Category";
 
 interface DeleteManyTransaction extends Money {
@@ -324,5 +324,23 @@ export class TransactionManager {
     ]);
 
     return results?.length ? results.map<number>(o => o.importHash) : [];
+  }
+
+  public async GetAllImportTransactionsAsync(importId: string): Promise<Transaction[]> {
+    return await TransactionModel.find({
+      userUID: this.user.userUID,
+      importId: importId
+    }, {
+      date: 1,
+      amount: 1,
+      category: 1,
+      description: 1,
+      currency: 1,
+      isActive: 1
+    }, {
+      sort: {
+        date: -1
+      }
+    });
   }
 }

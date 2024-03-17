@@ -15,6 +15,7 @@ interface CsvRow {
 interface ImportRowMetaData {
   importHash?: number;
   isDuplicate: boolean;
+  isActive: boolean;
 }
 
 export interface ImportRow extends ImportRowMetaData {
@@ -94,7 +95,8 @@ export class ImportCsvEntity {
       currency: this.getCellValue(row, map.currency) as string,
       transactionFee: this.getCellValue(row, map.transactionFee) as number,
       rowId: index + 2,
-      isDuplicate: false
+      isDuplicate: false,
+      isActive: true
     };
   }
 

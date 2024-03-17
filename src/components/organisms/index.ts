@@ -3,6 +3,7 @@ export { default as CalibrateDrawer } from "./CalibrateDrawer/CalibrateDrawer";
 export { default as DashCategorySpendingCard } from "./DashCategorySpendingCard/DashCategorySpendingCard";
 export { default as DashChartCard } from "./DashChartCard/DashChartCard";
 export { default as ImportConfigForm } from "./ImportConfigForm/ImportConfigForm";
+export { default as ImportDetails } from "./ImportDetails/ImportDetails";
 export { default as ImportSidebar } from "./ImportSidebar/ImportSidebar";
 export { default as InvestmentProfitCard } from "./InvestmentProfitCard/InvestmentProfitCard";
 export { default as InvestmentsCard } from "./InvestmentsCard/InvestmentsCard";

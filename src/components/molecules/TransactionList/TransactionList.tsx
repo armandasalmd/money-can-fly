@@ -1,6 +1,6 @@
-import { Transaction } from "@utils/Types";
-import TransactionItem from "./TransactionItem";
 import { Empty, SkeletonItem } from "@atoms/index";
+import { TransactionItem } from "@molecules/index";
+import { Transaction } from "@utils/Types";
 
 export interface TransactionListProps {
   transactions: Transaction[];
