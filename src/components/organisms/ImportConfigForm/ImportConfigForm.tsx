@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Bank, CurrencyGbp, CurrencyDollar, CurrencyEur, Coin, Article, Tag, BracketsAngle, ArchiveTray } from "phosphor-react";
+import { Bank, CurrencyGbp, CurrencyDollar, CurrencyEur, Coin, Article, Tag, BracketsAngle, ArchiveTray, ClockAfternoon } from "phosphor-react";
 
 import { Button, Checkbox, Card, Message, Select, Input } from "@atoms/index";
 import importPresets, { ImportFormState, ImportPreset } from "./ImportPresets";
@@ -162,6 +162,14 @@ export default function ImportConfigForm(props: ImportConfigFormProps) {
                 icon={BracketsAngle}
                 name="ignoreDescriptionPattern"
                 value={formState.ignoreDescriptionPattern}
+                onChange={onInputChange}
+              />
+              <Input
+                title="Date format"
+                placeholder="Automatic parse"
+                icon={ClockAfternoon}
+                name="dateFormat"
+                value={formState.dateFormat}
                 onChange={onInputChange}
               />
               <Checkbox

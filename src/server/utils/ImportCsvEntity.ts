@@ -1,3 +1,4 @@
+import { parse } from "date-fns";
 import { ImportError } from "./ImportError";
 
 export type CsvCellValueType = "string" | "number" | "date";
@@ -33,7 +34,7 @@ export class ImportCsvEntity {
   public headerIds: Record<string, number> = {};
   rows: CsvRow[] = [];
 
-  constructor(public headerMappings: ImportRowColumnMapping) {}
+  constructor(public headerMappings: ImportRowColumnMapping, public dateParseFormat: string) {}
   
   public load(csv: string) {
     const lines = csv.split("\n");
@@ -132,15 +133,8 @@ export class ImportCsvEntity {
         return parsedValue;
       }
       case "date": {
-        let parsedDate = new Date(rawValue.replace(/([0-9]+)\/([0-9]+)/,'$2/$1'));
-
-        if (isFinite(+parsedDate)) {
-          return parsedDate;
-        } else {
-          parsedDate = new Date(rawValue);
-          return isFinite(+parsedDate) ? parsedDate : null;
-        }
-
+        let parsedDate = this.dateParseFormat ? parse(rawValue, this.dateParseFormat, new Date(0)) : new Date(rawValue);
+        return isFinite(+parsedDate) ? parsedDate : null;
       }
       default:
         return null;

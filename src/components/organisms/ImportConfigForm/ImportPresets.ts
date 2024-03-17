@@ -4,6 +4,7 @@ export interface ImportFormState {
   alterBalance: boolean;
   bank: TransactionBank;
   ignoreDescriptionPattern: string;
+  dateFormat?: string;
   defaultCurrency: Currency,
   hasCurrencyColumn: boolean;
   hasCategoryColumn: boolean;
@@ -27,6 +28,7 @@ const customImportPreset: ImportPreset = {
     alterBalance: true,
     bank: "cash",
     ignoreDescriptionPattern: "Empty",
+    dateFormat: "",
     defaultCurrency: "USD",
     categoryColumn: "",
     hasCurrencyColumn: false,
@@ -47,6 +49,7 @@ const barclaysImportPreset: ImportPreset = {
     bank: "barclays",
     ignoreDescriptionPattern: "BARCLAYS,Empty",
     defaultCurrency: "GBP",
+    dateFormat: "",
     categoryColumn: "",
     hasCurrencyColumn: false,
     hasTransactionFeeColumn: false,
@@ -63,12 +66,13 @@ const revolutImportPreset: ImportPreset = {
     alterBalance: true,
     bank: "revolut",
     ignoreDescriptionPattern: "Cash at,Empty",
+    dateFormat: "",
     defaultCurrency: "EUR",
     categoryColumn: "",
     hasCurrencyColumn: true,
     hasTransactionFeeColumn: true,
     hasCategoryColumn: false,
-    transactionDateColumn: "Completed Date",
+    transactionDateColumn: "Started Date",
     descriptionColumn: "Description",
     amountColumn: "Amount",
     currencyColumn: "Currency",
@@ -81,14 +85,15 @@ const swedbankImportPreset: ImportPreset = {
   formState: {
     alterBalance: true,
     bank: "swedbank",
-    ignoreDescriptionPattern: "Apyvarta,Likutis",
+    ignoreDescriptionPattern: "Apyvarta,Likutis,Empty",
+    dateFormat: "",
     defaultCurrency: "EUR",
     categoryColumn: "",
     hasCurrencyColumn: true,
     hasTransactionFeeColumn: false,
     hasCategoryColumn: false,
     transactionDateColumn: "Data",
-    descriptionColumn: "Paaiškinimai",
+    descriptionColumn: "Gavėjas",
     amountColumn: "Suma",
     currencyColumn: "Valiuta",
   },

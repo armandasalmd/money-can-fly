@@ -107,7 +107,7 @@ export class ImportProcessManager extends BaseImportProcessManager {
       transactionDate: this.options.transactionDateColumn,
       transactionFee: this.options.transactionFeeColumn,
       rowId: null
-    });
+    }, this.options.dateFormat);
 
     try {
       this.csvEntity.load(csvData);
