@@ -60,6 +60,18 @@ export default function ImportSidebar(props: ImportSidebarProps) {
     const latestImportDate = items[0] ? `Last import ${toDisplayDate(items[0].date)} • Showing ${items.length} imports` : "No imports yet";
 
     props.setSubtitle(latestImportDate);
+
+    const running = items.find((o) => o._id === props.runningImportId);
+
+    if (running) {
+      if (running.importState !== "running") {
+        props.setRunningImportId("");
+      } else {
+        const interval = setTimeout(mutate, 2500);
+
+        return () => clearTimeout(interval);
+      }
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [items]);
 
@@ -72,18 +84,6 @@ export default function ImportSidebar(props: ImportSidebarProps) {
       }
     } else {
       mutate();
-    }
-
-    const running = items.find((o) => o._id === props.runningImportId);
-
-    if (running) {
-      if (running.importState === "success") {
-        props.setRunningImportId("");
-      } else {
-        const interval = setInterval(mutate, 5000);
-
-        return () => clearInterval(interval);
-      }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [props.runningImportId]);

@@ -44,8 +44,7 @@ export default function useInfiniteScroll<TListItem>(
     setHasMore(true);
     setLoading(false);
     setPage(1);
-
-    return setTimeout(() => loadNext(detail));
+    return setTimeout(() => loadNext(detail), 1);
   };
 
   useEffect(() => {

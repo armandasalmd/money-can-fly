@@ -26,6 +26,9 @@ export class StartImportRequest{
   @IsDefined()
   @IsString()
   transactionDateColumn: string;
+  @IsOptional()
+  @IsString()
+  dateFormat?: string;
   @IsDefined()
   @IsString()
   descriptionColumn: string;
