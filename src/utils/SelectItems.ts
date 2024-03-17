@@ -1,4 +1,4 @@
-import { TransactionBank, Currency, AmountFilter, Sort, ChartColor } from "@utils/Types";
+import { TransactionBank, Currency, AmountFilter, Sort, ChartColor, RowImportStatus } from '@utils/Types';
 import { allCategories } from "./Category";
 
 export type SelectItemsObject<T extends string> = { [key in T]: string };
@@ -61,6 +61,11 @@ const chartColorSelect: SelectItemsObject<ChartColor> = {
   yellow: "Yellow"
 };
 
+const importRowStateSelect: SelectItemsObject<Exclude<RowImportStatus, "failed">> = {
+  skipped: "Skipped",
+  success: "Non-skipped"
+};
+
 export const categotyPreset: SelectItem[] = Object.values(allCategories);
 
 export const searchCategoryPreset: SelectItem[] = [{
@@ -74,3 +79,4 @@ export const bankNamesPreset = toSelectItems(bankNamesSelect);
 export const chartColorPreset = toSelectItems(chartColorSelect);
 export const currencyPreset = toSelectItems(currencySelect);
 export const sortPreset = toSelectItems(sortSelect);
+export const importRowStatePreset = toSelectItems(importRowStateSelect);

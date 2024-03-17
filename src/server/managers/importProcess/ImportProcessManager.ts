@@ -9,10 +9,8 @@ import { escapeRegExp } from "@server/utils/Global";
 import { CsvCellValueType, ImportCsvEntity, ImportRow } from "@server/utils/ImportCsvEntity";
 import { ImportError } from "@server/utils/ImportError";
 import { hashString } from "@server/utils/Global"
-import { Category, Currency, ImportState } from "@utils/Types";
+import { Category, Currency, ImportState, RowImportStatus } from "@utils/Types";
 import { capitalise } from "@utils/Global";
-
-type RowImportStatus = "success" | "skipped" | "failed";
 
 export class ImportProcessManager extends BaseImportProcessManager {
   private csvEntity: ImportCsvEntity;
@@ -204,9 +202,13 @@ export class ImportProcessManager extends BaseImportProcessManager {
       if (this.IsIgnored(row.description)) {
         this.AddLog(`Row ${row.rowId} skipped - ignore term match - ${row.description}`);
         ignoreCount++;
+
+        row.isActive = false; // Note: Ignored rows are still processed but inserted as inactive
       } else {
-        items.push(row);
+        row.isActive = true;
       }
+
+      items.push(row);
     }
 
     if (this.options.bank === "barclays") this.StepCleanupBarclaysDescription(items);
@@ -234,7 +236,7 @@ export class ImportProcessManager extends BaseImportProcessManager {
       {
         failed: 0,
         skipped: ignoreCount,
-        success: 0,
+        success: -ignoreCount,
       } as Record<RowImportStatus, number>
     );
 
@@ -362,7 +364,7 @@ export class ImportProcessManager extends BaseImportProcessManager {
       description: row.description,
       importHash: row.importHash ?? 0,
       importId: this.importId,
-      isActive: true,
+      isActive: row.isActive,
       isImported: true,
       isInvestment: false,
       source: this.options.bank,

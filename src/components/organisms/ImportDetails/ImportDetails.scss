@@ -1,0 +1,45 @@
+.importDetails {
+  $base: &;
+
+  position: relative;
+  
+  &__header {
+    display: flex;
+    padding: $unit * 0.75;
+    flex-direction: column;
+    gap: $unit * 0.5;
+  }
+
+  &__highlight {
+    display: flex;
+    gap: $unit * 0.5;
+    align-items: center;
+    padding: $unit * 0.5;
+    background-color: var(--shade2);
+    border-radius: $defaultBorderRadius;
+    min-height: $unit * 2.5;
+
+    #{$base}__icon {
+      color: var(--shade50);
+      transform: translateY(2px);
+    }
+
+    #{$base}__text {
+      color: var(--color-text);
+    }
+  }
+
+  &__filters {
+    border-top: $defaultBorder;
+    border-bottom: $defaultBorder;
+    padding: $unit * 0.75;
+    display: flex;
+    flex-direction: column;
+    gap: $unit * 0.5;
+    background: var(--bg-card);
+    z-index: 1;
+
+    position: sticky;
+    top: -1px;
+  }
+}

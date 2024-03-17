@@ -4,6 +4,7 @@ import { ReadImportsResponse } from "@endpoint/imports/read";
 import { SelectItem } from "@utils/SelectItems";
 import { capitalise } from "@utils/Global";
 import { ReadLogsResponse } from "@endpoint/imports/readLogs";
+import { TransactionManager } from "./TransactionManager";
 
 export class ImportManager {
   public constructor(private readonly user: CookieUser) {}
@@ -25,9 +26,15 @@ export class ImportManager {
       message: 1,
       date: 1,
       balanceWasAltered: 1,
+      importState: 1,
       source: 1,
       fileName: 1
     });
+
+    let importItems = [];
+    if (importItem.importState === "success") {
+      importItems = await new TransactionManager(this.user).GetAllImportTransactionsAsync(importId);
+    }
 
     return importItem ? {
       logs: importItem.logs? importItem.logs.split("\n") : [],
@@ -35,7 +42,10 @@ export class ImportManager {
       date: importItem.date,
       balanceWasAltered: importItem.balanceWasAltered,
       source: importItem.source,
-      fileName: importItem.fileName
+      importState: importItem.importState,
+      fileName: importItem.fileName,
+      importId,
+      importItems
     } : null;
   }
 

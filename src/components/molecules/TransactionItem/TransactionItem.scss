@@ -1,0 +1,85 @@
+.tItem {
+  $base: &;
+
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  gap: $halfUnit;
+  border-bottom: $defaultBorder;
+  align-items: center;
+  padding: $unit * 0.5 $unit * 0.75;
+  overflow: hidden;
+
+  &:hover {
+    background-color: var(--shade5);
+
+    #{$base}__amount,
+    #{$base}__icon {
+      transform: translateX(0);
+    }
+
+    #{$base}__icon {
+      animation: fadeIn 0.3s ease-in-out;
+      opacity: 1;
+    }
+  }
+
+  &__title {
+    @extend %listItemTitle;
+    margin-right: -$unit; // compensate hidden delete button width
+  }
+
+  &__subtitle {
+    @extend %listItemSubtitle;
+  }
+
+  &__amount {
+    @extend %listItemAmount;
+    transition-property: transform;
+    transition-duration: 0.3s;
+  }
+
+  &__amount,
+  &__icon {
+    transform: translateX($unit * 2);
+  }
+
+  &__icon {
+    cursor: pointer;
+    user-select: none;
+    opacity: 0;
+  }
+
+  &--positive {
+    background-color: rgba($colorSuccess, 0.11);
+
+    #{$base}__amount {
+      color: var(--color-success);
+    }
+
+    &:hover {
+      background-color: rgba($colorSuccess, 0.25);
+    }
+  }
+
+  &--investment {
+    background-color: rgba($colorWarning, 0.1);
+
+    #{$base}__amount {
+      color: var(--color-warning);
+    }
+
+    &:hover {
+      background-color: rgba($colorWarning, 0.22);
+    }
+  }
+
+  &--inactive {
+    filter: grayscale(1);
+    opacity: 0.5;
+    
+    h3, h5 {
+      color: var(--color-text);
+      text-decoration: line-through;
+    }
+  }
+}

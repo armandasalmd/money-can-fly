@@ -38,6 +38,7 @@ $themeLightClass: ".theme--light";
   --shade15: #{$shade15};
   --shade10: #{$shade10};
   --shade5: #{$shade5};
+  --shade2: #{$shade2};
   --shade0: #{$shade0};
 
   --card-shadow: #{$shadowDefault};
@@ -87,6 +88,7 @@ $themeLightClass: ".theme--light";
   --shade15: #5f5e67;
   --shade10: #46464b;
   --shade5: #35353b;
+  --shade2: #2a2a30;
   --shade0: #{lighten(#000, 8%)};
 
   --card-shadow: #{$shadowDefaultDark};

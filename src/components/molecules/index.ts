@@ -11,12 +11,14 @@ export { default as ExpectationFormRow } from "./ExpectationFormRow/ExpectationF
 export { default as ExpectationListItem } from "./ExpectationListItem/ExpectationListItem";
 export { default as ImportSettingsDrawer } from "./ImportSettingsDrawer/ImportSettingsDrawer";
 export { default as ImportList } from "./ImportList/ImportList";
+export { default as ImportTransactionItem } from "./TransactionItem/ImportTransactionItem";
 export { default as InsightsCollection } from "./InsightsCollection/InsightsCollection";
 export { default as InvestmentList } from "./InvestmentList/InvestmentList";
 export { default as Navbar } from "./Navbar/Navbar";
 export { default as Pagination } from "./Pagination/Pagination";
 export { default as TransactionList } from "./TransactionList/TransactionList";
 export { default as TransactionFullList } from "./TransactionFullList/TransactionFullList";
+export { default as TransactionItem } from "./TransactionItem/TransactionItem";
 export { default as TransactionSearchForm } from "./TransactionSearchForm/TransactionSearchForm";
 export { default as Tabs } from "./Tabs/Tabs";
 export { default as TagList } from "./TagList/TagList";

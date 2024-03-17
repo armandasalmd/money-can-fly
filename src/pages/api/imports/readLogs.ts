@@ -1,6 +1,7 @@
+import { IsMongoId } from "class-validator";
 import { validatedApiRoute } from "@server/core";
 import { ImportManager } from "@server/managers";
-import { IsMongoId } from "class-validator";
+import { ImportState, Transaction } from "@utils/Types";
 
 class ReadLogsRequest {
   @IsMongoId()
@@ -14,6 +15,9 @@ export class ReadLogsResponse {
   balanceWasAltered: boolean;
   source: string;
   fileName: string;
+  importState: ImportState;
+  importId: string;
+  importItems: Transaction[];
 }
 
 export default validatedApiRoute("GET", ReadLogsRequest, async (request, response, user) => {
@@ -21,6 +25,6 @@ export default validatedApiRoute("GET", ReadLogsRequest, async (request, respons
 
   return response.status(200).json({
     success: !!result,
-    result,
+    data: result,
   });
 });

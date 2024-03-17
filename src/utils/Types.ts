@@ -37,6 +37,7 @@ export type InvestmentEventType = "deposit" | "adjustment" | "withdrawal" | "cre
 export type ImportState = "running" | "success" | "error" | "undo";
 export type Theme = "light" | "dark";
 export type TransactionBank = "barclays" | "revolut" | "swedbank" | "cash";
+export type RowImportStatus = "success" | "skipped" | "failed";
 
 export type Balances = {
   [key in Currency]: Money;
@@ -82,6 +83,7 @@ export interface Import {
   source: TransactionBank;
   message: string;
   importState: ImportState;
+  balanceWasAltered: boolean;
 }
 
 export interface WeekPrediction {
