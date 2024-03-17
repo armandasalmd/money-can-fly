@@ -7,7 +7,6 @@ const constants = {
     currencies: ["USD", "EUR", "GBP"],
     categories: allCategoryValues,
     importStates: ["running", "success", "error"],
-    transactionStatusFilters: ["active", "inactive"],
     amountFilters: [
       "incomeOnly",
       "spendingOnly",

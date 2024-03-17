@@ -209,12 +209,8 @@ export class TransactionManager {
       query.importId = request.importId;
     }
 
-    if (request.statusFilter) {
-      if (request.statusFilter === "active") {
-        query.isActive = true;
-      } else if (request.statusFilter === "inactive") {
-        query.isActive = false;
-      }
+    if (!request.includeInactive) {
+      query.isActive = true;
     }
 
     if (request.amountFilter) {

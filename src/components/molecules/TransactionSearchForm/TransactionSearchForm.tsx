@@ -8,7 +8,6 @@ import {
   searchCategoryPreset,
   currencyPreset,
   SelectItem,
-  transactionStatusPreset,
 } from "@utils/SelectItems";
 import useSWR from "swr";
 import { publish } from "@utils/Events";
@@ -54,11 +53,11 @@ export default function TransactionSearchForm(props: TransactionSearchFormProps)
     <div className="tSearchForm">
       <div className="tSearchForm__inputs">
         <Select
-          placeholder="All"
-          items={searchCategoryPreset}
-          title="Category"
-          value={form.category}
-          name="category"
+          placeholder="None"
+          items={amountFilterPreset}
+          title="Amount filter"
+          value={form.amountFilter}
+          name="amountFilter"
           onChange={onInputChange}
         />
         <Select
@@ -70,19 +69,12 @@ export default function TransactionSearchForm(props: TransactionSearchFormProps)
           onChange={onInputChange}
         />
         <Select
+          className="tSearchForm__spanFull"
           placeholder="All"
-          items={transactionStatusPreset}
-          title="Status filter"
-          value={form.statusFilter}
-          name="statusFilter"
-          onChange={onInputChange}
-        />
-        <Select
-          placeholder="None"
-          items={amountFilterPreset}
-          title="Amount filter"
-          value={form.amountFilter}
-          name="amountFilter"
+          items={searchCategoryPreset}
+          title="Category"
+          value={form.category}
+          name="category"
           onChange={onInputChange}
         />
         {props.showImportFilter && (

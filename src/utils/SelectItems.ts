@@ -1,4 +1,4 @@
-import { TransactionBank, Currency, TransactionStatusFilter, AmountFilter, Sort, ChartColor } from "@utils/Types";
+import { TransactionBank, Currency, AmountFilter, Sort, ChartColor } from "@utils/Types";
 import { allCategories } from "./Category";
 
 export type SelectItemsObject<T extends string> = { [key in T]: string };
@@ -24,11 +24,6 @@ export const currencySelect: SelectItemsObject<Currency> = {
   USD: "USD",
   EUR: "EUR",
   GBP: "GBP",
-};
-
-export const transactionStatusFilterSelect: SelectItemsObject<TransactionStatusFilter> = {
-  active: "Active",
-  inactive: "Inactive",
 };
 
 const sortSelect: SelectItemsObject<Sort> = {
@@ -79,4 +74,3 @@ export const bankNamesPreset = toSelectItems(bankNamesSelect);
 export const chartColorPreset = toSelectItems(chartColorSelect);
 export const currencyPreset = toSelectItems(currencySelect);
 export const sortPreset = toSelectItems(sortSelect);
-export const transactionStatusPreset = toSelectItems(transactionStatusFilterSelect);

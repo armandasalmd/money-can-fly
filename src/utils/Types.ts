@@ -37,7 +37,6 @@ export type InvestmentEventType = "deposit" | "adjustment" | "withdrawal" | "cre
 export type ImportState = "running" | "success" | "error" | "undo";
 export type Theme = "light" | "dark";
 export type TransactionBank = "barclays" | "revolut" | "swedbank" | "cash";
-export type TransactionStatusFilter = "active" | "inactive";
 
 export type Balances = {
   [key in Currency]: Money;
@@ -69,6 +68,7 @@ export interface Transaction extends Money {
   source: TransactionBank;
   isActive: boolean;
   isInvestment?: boolean;
+  isImported: boolean;
   investmentEventType?: InvestmentEventType;
 }
 
@@ -101,7 +101,7 @@ export interface MonthPrediction {
 
 export interface TransactionForm {
   amountFilter?: AmountFilter;
-  statusFilter?: TransactionStatusFilter;
+  includeInactive?: boolean;
   category?: SearchCategory;
   currency?: Currency;
   dateRange?: DateRange;
