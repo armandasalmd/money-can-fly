@@ -3,6 +3,7 @@ import { Plus, Minus } from "phosphor-react";
 import { Button } from "@atoms/index";
 import { CurrencyInput } from "@molecules/index";
 import { Money } from "@utils/Types";
+import { KeyboardEvent, useEffect } from "react";
 
 export type UpdateTargetCommand = "subtract" | "set" | "add";
 
@@ -24,8 +25,16 @@ export default function CalibrateLatestInput(props: CalibrateLatestInputProps) {
     }
   }
 
+  function onKeyPress(e: KeyboardEvent) {
+    if (e.key === "+") {
+      onUpdate("add");
+    } else if (e.key === "-") {
+      onUpdate("subtract");
+    }
+  }
+
   return (
-    <div className="calibrateLatestInput">
+    <div className="calibrateLatestInput" onKeyUp={onKeyPress}>
       <CurrencyInput onlyPositive value={props.value} onChange={props.setValue} onSubmit={() => onUpdate("set")} fixedWidth title="Update target column" />
       <Button icon={Minus} wrapContent tooltip="Subtract input amount" onClick={() => onUpdate("subtract")} />
       <Button wrapContent onClick={() => onUpdate("set")}>
